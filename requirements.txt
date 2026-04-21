@@ -1,3 +1,11 @@
 Flask==3.0.3
 Werkzeug==3.0.3
+Jinja2==3.1.2
+flask-login==0.6.3
 requests==2.31.0
+beautifulsoup4==4.12.2
+mysql-connector-python==8.2.0
+reportlab==4.0.9
+playwright==1.40.0
+groq==0.4.1
+crawl4ai==0.3.1
