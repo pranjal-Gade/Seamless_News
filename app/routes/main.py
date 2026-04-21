@@ -1373,7 +1373,6 @@ def view_websites():
 def chatbot():
     return render_template("main/chatbot.html")
 
-
 @main_bp.route('/api/chatbot', methods=['POST'])
 @login_required
 def chatbot_api():
@@ -1383,7 +1382,6 @@ def chatbot_api():
 @login_required
 def chatbot_history_api():
     return handle_chatbot_get_history()
-
 
 @main_bp.route("/view-news-type", methods=["GET", "POST"])
 @login_required
