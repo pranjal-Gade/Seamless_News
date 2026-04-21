@@ -1,4 +1,7 @@
+__pycache__/
+*.pyc
 .env
 .env.*
-__pycache__/
-config.py
+*.egg-info/
+.DS_Store
+process/
