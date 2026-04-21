@@ -14,10 +14,10 @@ except ImportError:
     GROQ_AVAILABLE = False
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-GROQ_API_KEY    = os.environ.get("GROQ_API_KEY", "")
+GROQ_API_KEY    = os.environ.get("GROQ_API_KEY", "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")
 OPENWEATHER_KEY = "2baab2dc7ad18ffef8b81c014e893e1c"
 AGMARK_BASE     = "https://api.agmarknet.gov.in/v1"
-GROQ_MODEL      = "llama3-8b-8192"
+GROQ_MODEL      = "llama-3.3-70b-versatile"
 
 groq_client = Groq(api_key=GROQ_API_KEY) if (GROQ_AVAILABLE and GROQ_API_KEY) else None
 
