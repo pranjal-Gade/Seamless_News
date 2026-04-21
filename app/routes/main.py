@@ -26,6 +26,7 @@ from flask import (
     request,
     send_from_directory,
     url_for,
+    session
 )
 
 main_bp = Blueprint("main", __name__)
@@ -72,32 +73,6 @@ def _get_mail_cfg() -> dict:
         "BASE_URL": cfg.get("BASE_URL", "http://127.0.0.1:5000"),
     }
 
-
-# def _parse_sched_from_form(form, prefix):
-#     mode = (form.get(f"{prefix}_schedule_mode") or "").strip()
-#     interval = (form.get(f"{prefix}_interval") or "").strip()
-#     time_value = (form.get(f"{prefix}_time") or "").strip()
-
-#     payload = {}
-
-#     if mode:
-#         payload["mode"] = mode
-#     if interval:
-#         payload["interval"] = interval
-#     if time_value:
-#         payload["time"] = time_value
-
-#     return json.dumps(payload) if payload else "{}"
-
-
-# def _safe_json_load(raw_value):
-#     raw = (raw_value or "").strip()
-#     if not raw or raw == "{}":
-#         return {}
-#     try:
-#         return json.loads(raw)
-#     except Exception:
-#         return {}
 def _parse_sched_from_form(form, cat_key):
     stype = form.get(f"sched_{cat_key}_type")
     
@@ -131,47 +106,6 @@ def _safe_json_load(val):
     except Exception:
         return {}
 
-# def _interval_minutes_from_schedule(schedule_dict):
-#     interval = str(schedule_dict.get("interval", "")).strip().lower()
-
-#     mapping = {
-#         "1 minute": 1,
-#         "5 minutes": 5,
-#         "10 minutes": 10,
-#         "15 minutes": 15,
-#         "30 minutes": 30,
-#         "45 minutes": 45,
-#         "60 minutes": 60,
-#         "1 hour": 60,
-#         "2 hours": 120,
-#         "3 hours": 180,
-#         "6 hours": 360,
-#         "12 hours": 720,
-#         "24 hours": 1440,
-#         "daily": 1440,
-#     }
-
-#     if interval in mapping:
-#         return mapping[interval]
-
-#     try:
-#         return int(interval)
-#     except Exception:
-#         return None
-
-
-# def _is_due(last_run_at, schedule_dict):
-#     if not schedule_dict:
-#         return False
-
-#     interval_mins = _interval_minutes_from_schedule(schedule_dict)
-#     if not interval_mins:
-#         return False
-
-#     if last_run_at is None:
-#         return True
-
-#     return datetime.now() >= (last_run_at + timedelta(minutes=interval_mins))
 
 def _interval_minutes_from_schedule(schedule_dict):
     if not schedule_dict:
@@ -702,26 +636,6 @@ def _bg_scraper(
 def index():
     return render_template("main/landing.html")
 
-
-def get_weather_overview(temp, humidity, wind, desc):
-    wind_status = "Breezy" if wind > 5.0 else "Calm"
-    precip_status = "Rain likely" if "rain" in desc.lower() else "Dry"
-
-    impacts = (
-        "Hazardous for spraying or sensitive tasks."
-        if wind > 5.0 or "rain" in desc.lower()
-        else "Ideal for field work."
-    )
-
-    overview = (
-        f"* ADVISORY: {desc.upper()} in effect.\n"
-        f"* WHAT: Temp {temp}°C with {humidity}% humidity.\n"
-        f"* WIND: {wind_status} ({wind} m/s).\n"
-        f"* IMPACTS: {precip_status} conditions. {impacts}"
-    )
-    return overview
-
-
 @main_bp.route("/agri-dashboard")
 @login_required
 def agri_dashboard():
@@ -774,12 +688,15 @@ def get_recent_months(year_str, month_str, count=6):
     months.reverse()
     return months
 
-
+# for agriculture trends
 def build_sparkline_points(values, width=220, height=52, padding=6):
     clean_values = [v for v in values if v is not None]
 
     if not clean_values:
-        return {"line_points": "", "fill_points": ""}
+        return {
+            "line_points": "",
+            "fill_points": "",
+        }
 
     if len(values) == 1:
         values = [values[0], values[0]]
@@ -807,8 +724,10 @@ def build_sparkline_points(values, width=220, height=52, padding=6):
     base_y = height - padding
     fill_points = f"{points[0][0]},{base_y} " + line_points + f" {points[-1][0]},{base_y}"
 
-    return {"line_points": line_points, "fill_points": fill_points}
-
+    return {
+        "line_points": line_points,
+        "fill_points": fill_points,
+    }
 
 def fetch_month_average_for_crop(crop_id, year_num, month_num, agmark_headers, month_names):
     try:
@@ -823,7 +742,7 @@ def fetch_month_average_for_crop(crop_id, year_num, month_num, agmark_headers, m
             "export": "false",
         }
 
-        resp = requests.get(url, params=params, headers=agmark_headers, timeout=15)
+        resp = requests.get(url, params=params, headers=agmark_headers, timeout=6)
         resp.raise_for_status()
         data = resp.json()
 
@@ -839,28 +758,118 @@ def fetch_month_average_for_crop(crop_id, year_num, month_num, agmark_headers, m
         if not values:
             return None
 
-        return sum(values) / len(values)
+        return round(sum(values) / len(values), 2)
 
     except Exception as e:
         print(f"Month average fetch error for crop_id={crop_id}, {month_num}/{year_num}: {e}")
         return None
 
-
-@main_bp.route("/home")
+@main_bp.route("/api/weather-data")
 @login_required
-def home():
+def api_weather_data():
+    import time
+
     api_key = "2baab2dc7ad18ffef8b81c014e893e1c"
+    city = request.args.get("city", "").strip()
 
-    search_query = request.args.get("city_search", "").strip()
+    if not city:
+        return jsonify({"success": False, "message": "City is required"})
 
-    current_year = datetime.now().year
-    current_month = datetime.now().month
+    weather_cache = session.get("weather_cache_v3", {})
+    cache_key = city.lower()
+
+    if cache_key in weather_cache and (time.time() - weather_cache[cache_key]["ts"] < 600):
+        return jsonify({"success": True, "data": weather_cache[cache_key]["data"]})
+
+    try:
+        geo_url = (
+            f"https://api.openweathermap.org/geo/1.0/direct"
+            f"?q={city}&limit=1&appid={api_key}"
+        )
+        geo_resp = requests.get(geo_url, timeout=3).json()
+
+        if not geo_resp:
+            return jsonify({"success": False, "message": "City not found"})
+
+        lat = geo_resp[0]["lat"]
+        lon = geo_resp[0]["lon"]
+        resolved_city = geo_resp[0].get("name", city)
+
+        w_url = (
+            f"https://api.openweathermap.org/data/2.5/weather"
+            f"?lat={lat}&lon={lon}&units=metric&appid={api_key}"
+        )
+        w_resp = requests.get(w_url, timeout=3).json()
+
+        if not w_resp.get("main"):
+            return jsonify({"success": False, "message": "Weather unavailable"})
+
+        weather_desc = w_resp["weather"][0]["description"].title()
+        temp = round(w_resp["main"].get("temp", 0))
+        feels_like = round(w_resp["main"].get("feels_like", 0))
+        temp_min = round(w_resp["main"].get("temp_min", 0))
+        temp_max = round(w_resp["main"].get("temp_max", 0))
+        hum = w_resp["main"].get("humidity", "--")
+        pressure = w_resp["main"].get("pressure", "--")
+        wind = w_resp.get("wind", {}).get("speed", "--")
+        visibility = w_resp.get("visibility", 0)
+        visibility_km = round(visibility / 1000, 1) if visibility else "--"
+        clouds = w_resp.get("clouds", {}).get("all", "--")
+        country = w_resp.get("sys", {}).get("country", "--")
+
+        sunrise_unix = w_resp.get("sys", {}).get("sunrise")
+        sunset_unix = w_resp.get("sys", {}).get("sunset")
+
+        sunrise = datetime.fromtimestamp(sunrise_unix).strftime("%I:%M %p") if sunrise_unix else "--"
+        sunset = datetime.fromtimestamp(sunset_unix).strftime("%I:%M %p") if sunset_unix else "--"
+
+        data = {
+            "location": resolved_city,
+            "country": country,
+            "temp": temp,
+            "feels_like": feels_like,
+            "temp_min": temp_min,
+            "temp_max": temp_max,
+            "desc": weather_desc,
+            "icon": w_resp["weather"][0]["icon"],
+            "humidity": hum,
+            "wind": wind,
+            "pressure": pressure,
+            "visibility": visibility_km,
+            "clouds": clouds,
+            "sunrise": sunrise,
+            "sunset": sunset
+        }
+
+        weather_cache[cache_key] = {
+            "ts": time.time(),
+            "data": data
+        }
+        session["weather_cache_v3"] = weather_cache
+
+        return jsonify({"success": True, "data": data})
+
+    except Exception as e:
+        print(f"Weather API Error: {e}")
+        return jsonify({"success": False, "message": "Something went wrong"})
+
+@main_bp.route("/api/agri-data")
+@login_required
+def api_agri_data():
+    import time
 
     selected_id = request.args.get("cmdt_id", "").strip()
-    selected_year = request.args.get("year", str(current_year)).strip()
-    selected_month = request.args.get("month", str(current_month)).strip()
+    selected_year = request.args.get("year", "").strip()
+    selected_month = request.args.get("month", "").strip()
 
-    year_options = [str(current_year - 2), str(current_year - 1), str(current_year)]
+    if not selected_id or not selected_year or not selected_month:
+        return jsonify({"success": False, "message": "Missing required parameters"})
+
+    agri_cache = session.get("agri_cache_v1", {})
+    cache_key = f"{selected_id}_{selected_year}_{selected_month}"
+
+    if cache_key in agri_cache and (time.time() - agri_cache[cache_key]["ts"] < 1800):
+        return jsonify({"success": True, "data": agri_cache[cache_key]["data"]})
 
     month_names = {
         1: "january", 2: "february", 3: "march", 4: "april",
@@ -893,199 +902,256 @@ def home():
         ),
     }
 
+    try:
+        current_month_num = int(selected_month)
+        current_year_num = int(selected_year)
+        prev_month_num, prev_year_num = get_previous_month_year(selected_month, selected_year)
+
+        current_price_key = f"prices_{month_names[current_month_num]}_{current_year_num}"
+        previous_price_key = f"prices_{month_names[prev_month_num]}_{prev_year_num}"
+
+        current_price_label = f"{month_short[str(current_month_num)]} {current_year_num}"
+        previous_price_label = f"{month_short[str(prev_month_num)]} {prev_year_num}"
+
+        url = "https://api.agmarknet.gov.in/v1/price-trend/wholesale-prices-monthly"
+        params = {
+            "report_mode": "Statewise",
+            "commodity": selected_id,
+            "year": selected_year,
+            "month": selected_month,
+            "state": "0",
+            "district": "0",
+            "export": "false",
+        }
+
+        resp = requests.get(url, params=params, headers=agmark_headers, timeout=8)
+        resp.raise_for_status()
+        result = resp.json()
+
+        data = {
+            "rows": result.get("rows", []),
+            "title": result.get("title", "Price Analysis"),
+            "current_price_key": current_price_key,
+            "previous_price_key": previous_price_key,
+            "current_price_label": current_price_label,
+            "previous_price_label": previous_price_label,
+        }
+
+        agri_cache[cache_key] = {
+            "ts": time.time(),
+            "data": data
+        }
+        session["agri_cache_v1"] = agri_cache
+
+        return jsonify({"success": True, "data": data})
+
+    except Exception as e:
+        print(f"Agri API Error: {e}")
+        return jsonify({"success": False, "message": "Unable to fetch agri data"})
+
+
+@main_bp.route("/home")
+@login_required
+def home():
+    import time
+
+    db = None
+    cursor = None
+
+    pending_count = 0
+    recent_news = []
+    latest_headlines = []
+    hero_news = None
+
+    news_categories = ["General", "Agri", "Finance", "Commodity"]
+    category_news = {category: [] for category in news_categories}
+
+    search_query = request.args.get("city_search", "").strip()
+
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+
+    selected_id = request.args.get("cmdt_id", "").strip()
+    selected_year = request.args.get("year", str(current_year)).strip()
+    selected_month = request.args.get("month", str(current_month)).strip()
+
+    year_options = [str(current_year - 2), str(current_year - 1), str(current_year)]
+
+    # ---------------------------------------------------
+    # DATABASE: NEWS ONLY
+    # ---------------------------------------------------
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT COUNT(*) AS count
+            FROM non_published_news
+            WHERE published = 0
+        """)
+        pending_count = cursor.fetchone()["count"]
+
+        cursor.execute("""
+            SELECT id, news_headline, news_type, news_url
+            FROM non_published_news
+            WHERE published = 0
+            ORDER BY COALESCE(news_date, DATE(date_of_insert)) DESC, id DESC
+            LIMIT 6
+        """)
+        latest_headlines = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT id, news_date, news_type, news_headline, news_text, news_url, date_of_insert
+            FROM non_published_news
+            WHERE published = 0
+            ORDER BY COALESCE(news_date, DATE(date_of_insert)) DESC, id DESC
+            LIMIT 1
+        """)
+        hero_news = cursor.fetchone()
+
+        for category in news_categories:
+            cursor.execute("""
+                SELECT id, news_date, news_type, news_headline, news_text, news_url, date_of_insert
+                FROM non_published_news
+                WHERE published = 0 AND LOWER(news_type) = LOWER(%s)
+                ORDER BY COALESCE(news_date, DATE(date_of_insert)) DESC, id DESC
+                LIMIT 10
+            """, (category,))
+            category_news[category] = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT id, news_date, news_type, news_headline, news_url, date_of_insert
+            FROM non_published_news
+            WHERE published = 0
+            ORDER BY COALESCE(news_date, DATE(date_of_insert)) DESC, id DESC
+            LIMIT 5
+        """)
+        recent_news = cursor.fetchall()
+
+    except Exception as e:
+        print(f"DB ERROR: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+
+    # ---------------------------------------------------
+    # COMMODITY DROPDOWN (CACHED)
+    # ---------------------------------------------------
+    agmark_headers = {
+        "accept": "application/json, text/plain, */*",
+        "accept-language": "en-US,en;q=0.8",
+        "origin": "https://www.agmarknet.gov.in",
+        "referer": "https://www.agmarknet.gov.in/",
+        "user-agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/146.0.0.0 Safari/537.36"
+        ),
+    }
+
+    all_options = session.get("commodity_options_v3", [])
+
+    if not all_options:
+        try:
+            commodity_url = "https://api.agmarknet.gov.in/v1/dashboard-commodities-filter"
+            commodity_resp = requests.get(commodity_url, headers=agmark_headers, timeout=8)
+            commodity_resp.raise_for_status()
+
+            commodity_payload = commodity_resp.json()
+
+            if isinstance(commodity_payload, dict):
+                raw_commodities = (
+                    commodity_payload.get("data")
+                    or commodity_payload.get("rows")
+                    or commodity_payload.get("result")
+                    or commodity_payload.get("commodities")
+                    or []
+                )
+            elif isinstance(commodity_payload, list):
+                raw_commodities = commodity_payload
+            else:
+                raw_commodities = []
+
+            seen_ids = set()
+            normalized_options = []
+
+            for item in raw_commodities:
+                if not isinstance(item, dict):
+                    continue
+
+                item_id = (
+                    item.get("id")
+                    or item.get("commodity_id")
+                    or item.get("value")
+                    or item.get("commodity")
+                )
+                item_name = (
+                    item.get("cmdt_name")
+                    or item.get("commodity_name")
+                    or item.get("name")
+                    or item.get("label")
+                    or item.get("commodity")
+                )
+
+                if item_id in (None, "") or not item_name:
+                    continue
+
+                item_id = str(item_id).strip()
+                item_name = str(item_name).strip()
+
+                if item_id not in seen_ids:
+                    seen_ids.add(item_id)
+                    normalized_options.append({
+                        "id": item_id,
+                        "cmdt_name": item_name,
+                    })
+
+            all_options = sorted(normalized_options, key=lambda x: x["cmdt_name"].lower())
+            session["commodity_options_v3"] = all_options
+
+        except Exception as e:
+            print(f"Commodity API Load Error: {e}")
+            all_options = session.get("commodity_options_v3", [])
+
+    # ---------------------------------------------------
+    # FEATURED CARDS (OPTIONAL CACHE)
+    # keep cached values only; do not recalculate on page load
+    # ---------------------------------------------------
+    featured_cards = session.get("featured_cards_cache_v3", [])
+
+    # ---------------------------------------------------
+    # DEFAULT WEATHER PLACEHOLDER
+    # real data will come from /api/weather-data
+    # ---------------------------------------------------
     weather_card = {
         "location": "Search City",
+        "country": "--",
         "temp": "--",
+        "feels_like": "--",
+        "temp_min": "--",
+        "temp_max": "--",
         "desc": "Waiting for input",
         "icon": "01d",
         "humidity": "--",
         "wind": "--",
+        "pressure": "--",
+        "visibility": "--",
+        "clouds": "--",
+        "sunrise": "--",
+        "sunset": "--",
         "overview": "Enter a city name to see weather advisories."
     }
 
-    if search_query:
-        try:
-            geo_url = (
-                f"https://api.openweathermap.org/geo/1.0/direct"
-                f"?q={search_query}&limit=1&appid={api_key}"
-            )
-            geo_resp = requests.get(geo_url, timeout=5).json()
-
-            if geo_resp:
-                lat = geo_resp[0]["lat"]
-                lon = geo_resp[0]["lon"]
-                resolved_city = geo_resp[0].get("name", search_query)
-
-                w_url = (
-                    f"https://api.openweathermap.org/data/2.5/weather"
-                    f"?lat={lat}&lon={lon}&units=metric&appid={api_key}"
-                )
-                w_resp = requests.get(w_url, timeout=5).json()
-
-                if w_resp.get("main"):
-                    weather_desc = w_resp["weather"][0]["description"].title()
-                    temp = round(w_resp["main"]["temp"])
-                    hum = w_resp["main"]["humidity"]
-                    wind = w_resp["wind"]["speed"]
-
-                    weather_card.update({
-                        "location": resolved_city,
-                        "temp": temp,
-                        "desc": weather_desc,
-                        "icon": w_resp["weather"][0]["icon"],
-                        "humidity": hum,
-                        "wind": wind,
-                        "overview": get_weather_overview(temp, hum, wind, weather_desc)
-                    })
-                else:
-                    weather_card.update({
-                        "location": search_query,
-                        "desc": "Weather unavailable",
-                        "overview": "Weather data could not be fetched for this city right now."
-                    })
-            else:
-                weather_card.update({
-                    "location": search_query,
-                    "desc": "City not found",
-                    "overview": "No matching city was found. Please check the spelling and try again."
-                })
-
-        except Exception as e:
-            print(f"Weather Error for {search_query}: {e}")
-            weather_card.update({
-                "location": search_query or "Search City",
-                "desc": "Weather unavailable",
-                "overview": "Something went wrong while fetching weather data."
-            })
-
-    all_options = []
-    try:
-        commodity_url = "https://api.agmarknet.gov.in/v1/dashboard-commodities-filter"
-        commodity_resp = requests.get(commodity_url, headers=agmark_headers, timeout=20)
-        commodity_resp.raise_for_status()
-
-        commodity_payload = commodity_resp.json()
-
-        if isinstance(commodity_payload, dict):
-            raw_commodities = (
-                commodity_payload.get("data")
-                or commodity_payload.get("rows")
-                or commodity_payload.get("result")
-                or commodity_payload.get("commodities")
-                or []
-            )
-        elif isinstance(commodity_payload, list):
-            raw_commodities = commodity_payload
-        else:
-            raw_commodities = []
-
-        seen_ids = set()
-        normalized_options = []
-
-        for item in raw_commodities:
-            if not isinstance(item, dict):
-                continue
-
-            item_id = (
-                item.get("id")
-                or item.get("commodity_id")
-                or item.get("value")
-                or item.get("commodity")
-            )
-            item_name = (
-                item.get("cmdt_name")
-                or item.get("commodity_name")
-                or item.get("name")
-                or item.get("label")
-                or item.get("commodity")
-            )
-
-            if item_id in (None, "") or not item_name:
-                continue
-
-            item_id = str(item_id).strip()
-            item_name = str(item_name).strip()
-
-            if item_id not in seen_ids:
-                seen_ids.add(item_id)
-                normalized_options.append({
-                    "id": item_id,
-                    "cmdt_name": item_name,
-                })
-
-        all_options = sorted(normalized_options, key=lambda x: x["cmdt_name"].lower())
-        print(f"DEBUG: Loaded {len(all_options)} commodities from Agmarknet API.")
-
-    except Exception as e:
-        print(f"Commodity API Load Error: {e}")
-
-    featured_cards = []
-
-    def build_featured_card(crop_name, crop_id):
-        try:
-            recent_months = get_recent_months(selected_year, selected_month, count=6)
-
-            history_values = []
-            for year_num, month_num in recent_months:
-                avg_price = fetch_month_average_for_crop(
-                    crop_id=crop_id,
-                    year_num=year_num,
-                    month_num=month_num,
-                    agmark_headers=agmark_headers,
-                    month_names=month_names,
-                )
-                history_values.append(avg_price)
-
-            usable_values = [v for v in history_values if v is not None]
-            if not usable_values:
-                return None
-
-            for i in range(len(history_values)):
-                if history_values[i] is None:
-                    history_values[i] = usable_values[0] if i == 0 else history_values[i - 1]
-
-            current_price = history_values[-1]
-            previous_price = history_values[-2] if len(history_values) > 1 else history_values[-1]
-
-            if previous_price and previous_price != 0:
-                percent_change = ((current_price - previous_price) / previous_price) * 100
-            else:
-                percent_change = 0
-
-            sparkline = build_sparkline_points(history_values)
-
-            return {
-                "name": crop_name,
-                "price": f"{current_price:,.2f}",
-                "change": f"{abs(percent_change):.2f}",
-                "signed_change": round(percent_change, 2),
-                "is_positive": percent_change >= 0,
-                "line_points": sparkline["line_points"],
-                "fill_points": sparkline["fill_points"],
-            }
-
-        except Exception as e:
-            print(f"Featured card error for {crop_name}: {e}")
-            return None
-
-    featured_crop_names = [
-        "Rice", "Wheat", "Maize", "Soyabean",
-        "Cotton", "Groundnut", "Onion", "Sugarcane",
-    ]
-
-    featured_lookup = {item["cmdt_name"].strip().lower(): item["id"] for item in all_options}
-
-    for crop in featured_crop_names:
-        crop_id = featured_lookup.get(crop.lower())
-        if crop_id:
-            card = build_featured_card(crop, crop_id)
-            if card:
-                featured_cards.append(card)
-
+    # ---------------------------------------------------
+    # DEFAULT AGRI PLACEHOLDERS
+    # real data will come from /api/agri-data
+    # ---------------------------------------------------
     state_data = []
     cmdt_title = ""
     current_price_label = ""
     previous_price_label = ""
+
     commodity_summary = {
         "commodity_name": "",
         "avg_price": "N/A",
@@ -1096,116 +1162,7 @@ def home():
         "avg_change": "N/A",
     }
 
-    if selected_id:
-        try:
-            current_month_num = int(selected_month)
-            current_year_num = int(selected_year)
-
-            prev_month_num, prev_year_num = get_previous_month_year(selected_month, selected_year)
-
-            current_price_key = f"prices_{month_names[current_month_num]}_{current_year_num}"
-            previous_price_key = f"prices_{month_names[prev_month_num]}_{prev_year_num}"
-
-            current_price_label = f"{month_short[str(current_month_num)]} {current_year_num}"
-            previous_price_label = f"{month_short[str(prev_month_num)]} {prev_year_num}"
-
-            url = "https://api.agmarknet.gov.in/v1/price-trend/wholesale-prices-monthly"
-            params = {
-                "report_mode": "Statewise",
-                "commodity": selected_id,
-                "year": selected_year,
-                "month": selected_month,
-                "state": "0",
-                "district": "0",
-                "export": "false",
-            }
-
-            resp = requests.get(url, params=params, headers=agmark_headers, timeout=20)
-            resp.raise_for_status()
-            data = resp.json()
-
-            raw_rows = data.get("rows", []) if isinstance(data, dict) else []
-            cmdt_title = data.get("title", "Price Analysis") if isinstance(data, dict) else "Price Analysis"
-
-            if not cmdt_title:
-                selected_item = next((item for item in all_options if item["id"] == selected_id), None)
-                cmdt_title = selected_item["cmdt_name"] if selected_item else "Price Analysis"
-
-            normalized_rows = []
-            for row in raw_rows:
-                if not isinstance(row, dict):
-                    continue
-
-                normalized_rows.append({
-                    "state": row.get("state", ""),
-                    "current_price": row.get(current_price_key, "N/A"),
-                    "previous_price": row.get(previous_price_key, "N/A"),
-                    "change_over_previous_month": row.get("change_over_previous_month", 0),
-                })
-
-            state_data = normalized_rows
-
-            if state_data:
-                price_rows = []
-                change_values = []
-
-                for row in state_data:
-                    curr_price = to_float(row.get("current_price"))
-                    change_val = to_float(row.get("change_over_previous_month"))
-
-                    if curr_price is not None:
-                        price_rows.append({
-                            "state": row.get("state", "-"),
-                            "price": curr_price
-                        })
-
-                    if change_val is not None:
-                        change_values.append(change_val)
-
-                if price_rows:
-                    avg_price = sum(item["price"] for item in price_rows) / len(price_rows)
-                    highest_item = max(price_rows, key=lambda x: x["price"])
-                    lowest_item = min(price_rows, key=lambda x: x["price"])
-
-                    commodity_summary.update({
-                        "commodity_name": cmdt_title,
-                        "avg_price": f"{avg_price:,.2f}",
-                        "highest_price": f"{highest_item['price']:,.2f}",
-                        "highest_state": highest_item["state"],
-                        "lowest_price": f"{lowest_item['price']:,.2f}",
-                        "lowest_state": lowest_item["state"],
-                    })
-
-                if change_values:
-                    avg_change = sum(change_values) / len(change_values)
-                    commodity_summary["avg_change"] = f"{avg_change:.1f}"
-
-            print(f"DEBUG: Received {len(state_data)} rows from Agmarknet")
-
-        except Exception as e:
-            print(f"Agmarknet API Error: {e}")
-
-    pending_count = 0
-    recent_news = []
-
-    try:
-        db = get_db()
-        cursor = db.cursor(dictionary=True)
-
-        cursor.execute("SELECT COUNT(*) AS count FROM non_published_news")
-        pending_count = cursor.fetchone()["count"]
-
-        cursor.execute("SELECT * FROM non_published_news ORDER BY id DESC LIMIT 5")
-        recent_news = cursor.fetchall()
-
-    except Exception as e:
-        print(f"Database Error: {e}")
-
-    finally:
-        try:
-            cursor.close()
-        except Exception:
-            pass
+    recent_searches = session.get("recent_searches", [])
 
     return render_template(
         "main/home.html",
@@ -1222,9 +1179,16 @@ def home():
         previous_price_label=previous_price_label,
         pending_count=pending_count,
         recent_news=recent_news,
+        latest_headlines=latest_headlines,
+        hero_news=hero_news,
+        news_categories=news_categories,
+        category_news=category_news,
         commodity_summary=commodity_summary,
-        featured_cards=featured_cards
+        featured_cards=featured_cards,
+        recent_searches=recent_searches,
     )
+
+
 
 
 # ════════════════════════════════════════════════════════════════
@@ -1409,7 +1373,6 @@ def view_websites():
 def chatbot():
     return render_template("main/chatbot.html")
 
-
 @main_bp.route('/api/chatbot', methods=['POST'])
 @login_required
 def chatbot_api():
@@ -1419,7 +1382,6 @@ def chatbot_api():
 @login_required
 def chatbot_history_api():
     return handle_chatbot_get_history()
-
 
 @main_bp.route("/view-news-type", methods=["GET", "POST"])
 @login_required
@@ -1507,84 +1469,6 @@ def view_news_type():
 # ════════════════════════════════════════════════════════════════
 # COMMODITY
 # ════════════════════════════════════════════════════════════════
-
-# @main_bp.route("/view-commodity", methods=["GET", "POST"])
-# @login_required
-# def view_commodity():
-#     db = get_db()
-#     cursor = db.cursor(dictionary=True)
-
-#     if request.method == "POST":
-#         action = request.form.get("action")
-
-#         if action == "add":
-#             sr_no = request.form.get("sr_no", "").strip()
-#             val = request.form.get("commodity", "").strip()
-
-#             if not sr_no or not val:
-#                 flash("Both fields required.", "danger")
-#             else:
-#                 try:
-#                     sr_no = int(sr_no)
-#                     cursor.execute("SELECT id FROM commodity WHERE sr_no=%s", (sr_no,))
-#                     if cursor.fetchone():
-#                         flash("Sr. No exists.", "danger")
-#                     else:
-#                         cursor.execute(
-#                             "INSERT INTO commodity(sr_no, commodity) VALUES(%s, %s)",
-#                             (sr_no, val)
-#                         )
-#                         db.commit()
-#                         flash("Commodity added.", "success")
-#                 except ValueError:
-#                     flash("Sr. No must be a number.", "danger")
-#                 except Exception as e:
-#                     db.rollback()
-#                     flash(f"Error: {e}", "danger")
-
-#             cursor.close()
-#             return redirect(url_for("main.view_commodity"))
-
-#         elif action == "edit":
-#             cid = request.form.get("commodity_id", "").strip()
-#             val = request.form.get("edit_commodity", "").strip()
-
-#             if not cid or not val:
-#                 flash("Both fields required.", "danger")
-#             else:
-#                 try:
-#                     cursor.execute("UPDATE commodity SET commodity=%s WHERE id=%s", (val, cid))
-#                     db.commit()
-#                     flash("Updated." if cursor.rowcount else "Not found.",
-#                           "success" if cursor.rowcount else "warning")
-#                 except Exception as e:
-#                     db.rollback()
-#                     flash(f"Error: {e}", "danger")
-
-#             cursor.close()
-#             return redirect(url_for("main.view_commodity"))
-
-#         elif action == "bulk_delete":
-#             ids = request.form.getlist("selected_commodities")
-#             if not ids:
-#                 flash("Select at least one.", "warning")
-#             else:
-#                 try:
-#                     ph = ",".join(["%s"] * len(ids))
-#                     cursor.execute(f"DELETE FROM commodity WHERE id IN ({ph})", tuple(ids))
-#                     db.commit()
-#                     flash("Deleted.", "success")
-#                 except Exception as e:
-#                     db.rollback()
-#                     flash(f"Error: {e}", "danger")
-
-#             cursor.close()
-#             return redirect(url_for("main.view_commodity"))
-
-#     cursor.execute("SELECT id, sr_no, commodity FROM commodity ORDER BY sr_no ASC")
-#     commodities = cursor.fetchall()
-#     cursor.close()
-#     return render_template("main/view_commodity.html", commodities=commodities)
 
 @main_bp.route("/view-commodity", methods=["GET", "POST"])
 @login_required
@@ -1938,52 +1822,6 @@ def refresh_news_status():
     return jsonify(state)
 
 
-# ════════════════════════════════════════════════════════════════
-# TODAY'S PUBLISHED NEWS
-# ════════════════════════════════════════════════════════════════
-
-# @main_bp.route("/today-published-news")
-# @login_required
-# def today_published_news():
-#     db = get_db()
-#     cursor = db.cursor(dictionary=True)
-#     today = date.today()
-#     page = max(1, int(request.args.get("page", 1)))
-
-#     try:
-#         cursor.execute(
-#             "SELECT COUNT(*) AS cnt FROM published_news WHERE DATE(published_at)=%s",
-#             (today,)
-#         )
-#         total = cursor.fetchone()["cnt"]
-#         total_pages = max(1, (total + PER_PAGE - 1) // PER_PAGE)
-#         page = min(page, total_pages)
-#         offset = (page - 1) * PER_PAGE
-
-#         cursor.execute(
-#             "SELECT id, news_date, news_type, news_headline, "
-#             "news_url, pdf_path, published_at "
-#             "FROM published_news WHERE DATE(published_at)=%s "
-#             "ORDER BY published_at DESC LIMIT %s OFFSET %s",
-#             (today, PER_PAGE, offset)
-#         )
-#         news = cursor.fetchall()
-
-#     except Exception as e:
-#         flash(f"Error loading published news: {e}", "danger")
-#         news, total, total_pages, page = [], 0, 1, 1
-#     finally:
-#         cursor.close()
-
-#     return render_template(
-#         "main/today_published_news.html",
-#         news=news,
-#         today=today,
-#         page=page,
-#         total_pages=total_pages,
-#         total=total,
-#         per_page=PER_PAGE,
-#     ) 
 @main_bp.route("/today-published-news")
 @login_required
 def today_published_news():

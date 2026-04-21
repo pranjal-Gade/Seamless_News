@@ -16,8 +16,14 @@
     --navy-dark: #111c4e;
   }
 
+  .dashboard-shell,
+  .container,
+  #latest-news {
+    overflow: visible;
+  }
+
   .dashboard-shell {
-    padding: 24px 15px 0;
+    padding: 24px 15px 30px;
     background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.05), transparent 20%);
     min-height: 100vh;
   }
@@ -42,36 +48,232 @@
     margin-bottom: 18px;
   }
 
-  .commodity-table tr {
-    transition: background-color 0.2s ease;
-  }
-
-  .commodity-table tr:hover {
-    background-color: #f8fafc;
-  }
-
-  .lp-footer {
-    background: var(--navy-dark);
-    padding: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .dashboard-panel {
+    background: var(--panel);
     border-radius: var(--radius-md);
-    margin-top: 40px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--stroke);
+    margin-bottom: 30px;
   }
 
-  .lp-footer-copy {
-    font-size: 13px;
-    color: rgba(255,255,255,0.4);
-    margin: 0;
+  .dashboard-panel h3 {
+    margin: 0 0 15px 0;
+    color: var(--navy-dark);
+    font-size: 18px;
   }
 
-  .lp-footer-links a {
-    font-size: 13px;
-    color: rgba(255,255,255,0.6);
+  .hidden {
+    display: none !important;
+  }
+
+  /* TOP NEWS */
+  .news-top-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+    padding: 14px 20px;
+    margin-bottom: 18px;
+    position: sticky;
+    top: 70px;
+    z-index: 9999;
+    background: rgba(245, 247, 251, 0.98);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid #e5e7eb;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  }
+
+  .news-top-nav-item {
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    cursor: pointer;
+    padding: 8px 0;
+  }
+
+  .news-top-nav-item.active {
+    color: #dc2626;
+  }
+
+  .news-top-nav-link {
     text-decoration: none;
-    margin-left: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    padding: 8px 0;
   }
+
+  .news-top-nav-link:hover {
+    color: #2563eb;
+  }
+
+  .news-category-panel {
+    display: none;
+  }
+
+  .news-category-panel.active {
+    display: block;
+  }
+
+  .category-top-news-layout {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 22px;
+    margin-bottom: 32px;
+    align-items: stretch;
+  }
+
+  .category-top-news-main {
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  }
+
+  .category-top-news-header {
+    font-size: 22px;
+    font-weight: 800;
+    color: #dc2626;
+    margin-bottom: 14px;
+  }
+
+  .category-top-news-side-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 14px;
+  }
+
+  .selected-category-main-news {
+    margin-bottom: 22px;
+  }
+
+  .selected-category-sub-news {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .news-main-type,
+  .news-side-type {
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .top-news-headline {
+    margin: 8px 0 16px;
+    font-size: 40px;
+    line-height: 1.2;
+    color: #111827;
+    font-weight: 800;
+  }
+
+  .top-news-image {
+    width: 100%;
+    height: 220px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #e5e7eb;
+    margin-bottom: 16px;
+  }
+
+  .news-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    color: #6b7280;
+  }
+
+  .top-news-summary {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #4b5563;
+  }
+
+  .hero-read-btn {
+    display: inline-block;
+    margin-top: 14px;
+    text-decoration: none;
+    background: #dc2626;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .top-news-list-card {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 14px;
+  }
+
+  .top-news-list-card h4 {
+    margin: 6px 0 10px;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #111827;
+    font-weight: 700;
+  }
+
+  .top-news-list-card a {
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .category-top-news-side {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  }
+
+  .category-top-news-side-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 12px;
+  }
+
+  .category-top-news-side-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .category-top-news-side-item:last-child {
+    border-bottom: none;
+  }
+
+  .category-top-news-side-item a {
+    text-decoration: none;
+    color: #2563eb;
+    font-size: 15px;
+    line-height: 1.55;
+    font-weight: 700;
+  }
+
+  .category-top-news-empty {
+    color: var(--muted);
+    font-size: 14px;
+    padding: 10px 0;
+  }
+
+  /* MARKET SNAPSHOT */
   .featured-cards-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -79,9 +281,392 @@
     margin-bottom: 10px;
   }
 
+  .featured-placeholder {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  /* AGRI */
+  .agri-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+    margin-bottom: 26px;
+  }
+
+  .summary-box {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border: 1px solid #dbe4f0;
+    border-radius: 20px;
+    padding: 24px 22px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .summary-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.09);
+  }
+
+  .summary-box.primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  .summary-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 0.4px;
+    margin-bottom: 10px;
+  }
+
+  .summary-box.primary .summary-label {
+    color: rgba(255,255,255,0.85);
+  }
+
+  .summary-value {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .summary-box.primary .summary-value {
+    color: #fff;
+  }
+
+  .summary-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .summary-box.primary .summary-note {
+    color: rgba(255,255,255,0.9);
+  }
+
+  .results-empty {
+    text-align: center;
+    padding: 36px;
+    color: var(--muted);
+    border: 2px dashed var(--stroke);
+    border-radius: var(--radius-md);
+    margin-bottom: 0;
+  }
+
+  .commodity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .commodity-table tr:hover {
+    background-color: #f8fafc;
+  }
+
+  /* LOADER */
+  .loader-overlay {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    padding: 30px 20px;
+    border: 2px dashed var(--stroke);
+    border-radius: var(--radius-md);
+    background: #f8fafc;
+    margin-top: 16px;
+  }
+
+  .loader-overlay.show {
+    display: flex;
+  }
+
+  .loader-spinner {
+    width: 42px;
+    height: 42px;
+    border: 4px solid #dbeafe;
+    border-top: 4px solid var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .loader-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* WEATHER */
+  .weather-card-shell {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border: 1px solid #dbe4f0;
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+  }
+
+  .weather-hero {
+    display: grid;
+    grid-template-columns: 1.7fr 0.9fr;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+
+  .weather-hero-left {
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%);
+    border: 1px solid #dbeafe;
+    border-radius: 20px;
+    padding: 22px;
+  }
+
+  .weather-top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .weather-location {
+    color: var(--navy-dark);
+    font-size: 28px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .weather-description {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .weather-badge {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .weather-temp-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .weather-temp {
+    font-size: 54px;
+    line-height: 1;
+    font-weight: 900;
+    color: #0f172a;
+  }
+
+  .weather-icon-wrap {
+    width: 82px;
+    height: 82px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dbeafe;
+  }
+
+  .weather-icon {
+    width: 64px;
+    height: 64px;
+    display: none;
+  }
+
+  .weather-feelslike {
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .weather-hero-right {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .weather-mini-stat {
+    background: #ffffff;
+    border: 1px solid var(--stroke);
+    border-radius: 18px;
+    padding: 18px 16px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+  }
+
+  .weather-mini-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.4px;
+  }
+
+  .weather-mini-value {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text);
+  }
+
+  .weather-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .premium-weather-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 0;
+  }
+
+  .metric-card {
+    background: #f8fafc;
+    border: 1px solid var(--stroke);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  .premium-metric-card {
+    background: #ffffff;
+    border: 1px solid #e5edf7;
+    border-radius: 18px;
+    padding: 18px 16px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .metric-value {
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 800;
+  }
+
+  .simple-news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .simple-news-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 0;
+    border-bottom: 1px solid #dfe6ee;
+  }
+
+  .simple-news-item:last-child {
+    border-bottom: none;
+  }
+
+  .simple-news-bullet {
+    color: #6b7280;
+    font-size: 18px;
+    line-height: 1.2;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .simple-news-item a {
+    text-decoration: none;
+    color: #111827;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  .simple-news-item a:hover {
+    color: #2563eb;
+  }
+
+  /* RESPONSIVE */
   @media (max-width: 1100px) {
+    .category-top-news-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .selected-category-sub-news {
+      grid-template-columns: 1fr;
+    }
+
+    .top-news-headline {
+      font-size: 30px;
+    }
+
     .featured-cards-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .agri-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .weather-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .premium-weather-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .weather-temp {
+      font-size: 42px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .agri-summary-grid,
+    .premium-weather-grid,
+    .selected-category-sub-news {
+      grid-template-columns: 1fr;
+    }
+
+    .weather-temp-row {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .weather-top-row {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 
@@ -94,60 +679,65 @@
 
 <div class="dashboard-shell">
   <div class="container">
-    {% if featured_cards %}
-    <div style="margin-bottom: 26px;">
-      <div class="section-tag">Featured Agri Markets</div>
 
-      <div class="featured-cards-grid">
-        {% for card in featured_cards %}
-        <div style="background:#ffffff; border:1px solid var(--stroke); border-radius:16px; padding:18px; box-shadow:var(--shadow); min-height:140px;">
-          <div style="font-size:14px; font-weight:800; color:var(--text); margin-bottom:6px;">
-            {{ card.name }}
+    <div id="latest-news">
+      <div class="news-top-nav">
+        {% for category in news_categories %}
+          <button type="button"
+                  class="news-top-nav-item {% if loop.first %}active{% endif %}"
+                  onclick="showNewsCategory('{{ category|lower }}', this)">
+            {{ category }}
+          </button>
+        {% endfor %}
+        <a href="#agri-intelligence" class="news-top-nav-link">Agri Market Intelligence</a>
+        <a href="#weather-search" class="news-top-nav-link">Weather Search</a>
+      </div>
+
+      {% for category in news_categories %}
+      <div id="panel-{{ category|lower }}" class="news-category-panel {% if loop.first %}active{% endif %}">
+        <div class="category-top-news-layout">
+          <div class="category-top-news-main">
+            <div class="category-top-news-header">In The {{ category }} News</div>
+
+            {% if category_news[category] %}
+              <div class="simple-news-list">
+                {% for item in category_news[category][:6] %}
+                <div class="simple-news-item">
+                  <span class="simple-news-bullet">◦</span>
+                  <a href="{{ item.news_url or '#' }}" target="_blank">{{ item.news_headline }}</a>
+                </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="category-top-news-empty">No {{ category }} news available.</div>
+            {% endif %}
           </div>
 
-          <div style="font-size:28px; font-weight:800; color:var(--navy-dark); line-height:1.2; margin-bottom:6px;">
-            ₹{{ card.price }}
-          </div>
+          <div class="category-top-news-side">
+            <div class="category-top-news-side-title">Top Trending News</div>
 
-          <div style="font-size:13px; font-weight:700; color:{% if card.is_positive %}#166534{% else %}#991b1b{% endif %}; margin-bottom:10px;">
-            {% if card.is_positive %}▲{% else %}▼{% endif %} {{ card.change }}%
-          </div>
-
-          <div style="margin-top: 10px; height: 54px; border-radius: 12px; overflow: hidden; background: {% if card.is_positive %}linear-gradient(180deg, rgba(22,163,74,0.08) 0%, rgba(22,163,74,0.02) 100%){% else %}linear-gradient(180deg, rgba(220,38,38,0.08) 0%, rgba(220,38,38,0.02) 100%){% endif %};">
-            <svg viewBox="0 0 220 52" width="100%" height="52" preserveAspectRatio="none">
-              <polygon
-                points="{{ card.fill_points }}"
-                fill="{% if card.is_positive %}rgba(34,197,94,0.16){% else %}rgba(239,68,68,0.16){% endif %}">
-              </polygon>
-
-              <polyline
-                points="{{ card.line_points }}"
-                fill="none"
-                stroke="{% if card.is_positive %}#43a047{% else %}#ef4444{% endif %}"
-                stroke-width="2.2"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-              </polyline>
-            </svg>
+            {% if category_news['General'] %}
+              {% for item in category_news['General'][:5] %}
+              <div class="category-top-news-side-item">
+                <a href="{{ item.news_url or '#' }}" target="_blank">{{ item.news_headline }}</a>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="category-top-news-empty">No General news available.</div>
+            {% endif %}
           </div>
         </div>
-        {% endfor %}
       </div>
+      {% endfor %}
     </div>
-    {% endif %}
 
-    <div style="background: var(--panel); border-radius: var(--radius-md); padding: 25px; box-shadow: var(--shadow); border: 1px solid var(--stroke); margin-bottom: 30px;">
-      <h3 style="margin: 0 0 15px 0; color: var(--navy-dark); font-size: 18px;">Agri Market Intelligence</h3>
+    <div id="agri-intelligence" class="dashboard-panel">
+      <h3>Agri Market Intelligence</h3>
 
-      <form action="{{ url_for('main.home') }}" method="GET" style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
-        <input type="hidden" name="city_search" value="{{ search_query }}">
-
+      <form id="agriForm" onsubmit="return false;" style="display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 8px;">
         <div style="flex: 2; min-width: 200px;">
           <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase;">Commodity</label>
-          <select
-            name="cmdt_id"
-            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--stroke); background: #f8fafc; font-weight: 600;"
-          >
+          <select id="cmdt_id" name="cmdt_id" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--stroke); background: #f8fafc; font-weight: 600;">
             <option value="">-- Choose a Commodity --</option>
             {% for item in all_options %}
               <option value="{{ item.id }}" {% if selected_id == item.id|string %}selected{% endif %}>
@@ -159,7 +749,7 @@
 
         <div style="flex: 1; min-width: 100px;">
           <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase;">Year</label>
-          <select name="year" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--stroke); background: #f8fafc; font-weight: 600;">
+          <select id="year" name="year" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--stroke); background: #f8fafc; font-weight: 600;">
             {% for y in year_options %}
               <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>{{ y }}</option>
             {% endfor %}
@@ -168,7 +758,7 @@
 
         <div style="flex: 1; min-width: 120px;">
           <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase;">Month</label>
-          <select name="month" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--stroke); background: #f8fafc; font-weight: 600;">
+          <select id="month" name="month" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--stroke); background: #f8fafc; font-weight: 600;">
             {% set months = [('1','Jan'), ('2','Feb'), ('3','Mar'), ('4','Apr'), ('5','May'), ('6','Jun'), ('7','Jul'), ('8','Aug'), ('9','Sep'), ('10','Oct'), ('11','Nov'), ('12','Dec')] %}
             {% for val, name in months %}
               <option value="{{ val }}" {% if selected_month == val %}selected{% endif %}>{{ name }}</option>
@@ -176,330 +766,426 @@
           </select>
         </div>
 
-        <button type="submit" style="background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 800; cursor: pointer; height: 42px;">
+        <button id="analyzeBtn" type="button" onclick="loadAgriData()" style="background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 800; cursor: pointer; height: 42px;">
           ANALYZE
         </button>
       </form>
-    </div>
 
-    {% if state_data %}
-    <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:16px; margin-bottom:22px;">
-  <div style="background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%); color:#fff; border-radius:16px; padding:20px; box-shadow:var(--shadow);">
-    <div style="font-size:11px; font-weight:700; text-transform:uppercase; opacity:0.85; margin-bottom:8px;">Main Price</div>
-    <div style="font-size:28px; font-weight:800; line-height:1.2;">₹{{ commodity_summary.avg_price }}</div>
-    <div style="font-size:13px; opacity:0.9; margin-top:6px;">Average across states</div>
-  </div>
-
-  <div style="background:#ffffff; border:1px solid var(--stroke); border-radius:16px; padding:20px; box-shadow:var(--shadow);">
-    <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:8px;">Highest Price</div>
-    <div style="font-size:24px; font-weight:800; color:var(--text); line-height:1.2;">₹{{ commodity_summary.highest_price }}</div>
-    <div style="font-size:13px; color:var(--muted); margin-top:6px;">{{ commodity_summary.highest_state }}</div>
-  </div>
-
-  <div style="background:#ffffff; border:1px solid var(--stroke); border-radius:16px; padding:20px; box-shadow:var(--shadow);">
-    <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:8px;">Lowest Price</div>
-    <div style="font-size:24px; font-weight:800; color:var(--text); line-height:1.2;">₹{{ commodity_summary.lowest_price }}</div>
-    <div style="font-size:13px; color:var(--muted); margin-top:6px;">{{ commodity_summary.lowest_state }}</div>
-  </div>
-
-  <div style="background:#ffffff; border:1px solid var(--stroke); border-radius:16px; padding:20px; box-shadow:var(--shadow);">
-    <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:8px;">Avg Monthly Change</div>
-    <div style="font-size:24px; font-weight:800; color:{% if commodity_summary.avg_change|float > 0 %}#166534{% elif commodity_summary.avg_change|float < 0 %}#991b1b{% else %}#0f172a{% endif %}; line-height:1.2;">
-      {{ commodity_summary.avg_change }}%
-    </div>
-    <div style="font-size:13px; color:var(--muted); margin-top:6px;">Compared to previous month</div>
-  </div>
-</div>
-    <div class="results-container" style="animation: fadeIn 0.5s ease; margin-bottom: 40px;">
-      <h4 style="color: var(--navy-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-        <span style="background: var(--accent); width: 4px; height: 20px; border-radius: 2px; display: inline-block;"></span>
-        {{ table_title }}
-      </h4>
-
-      <div style="background: var(--panel); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--stroke);">
-        <div style="overflow-x: auto; max-height: 500px;">
-          <table class="commodity-table" style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
-            <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 1;">
-              <tr style="border-bottom: 2px solid var(--stroke);">
-                <th style="padding: 15px 10px;">State</th>
-                <th style="padding: 15px 10px;">Price ({{ current_price_label }})</th>
-                <th style="padding: 15px 10px;">Prev Month ({{ previous_price_label }})</th>
-                <th style="padding: 15px 10px;">Monthly Change</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for row in state_data %}
-              {% set change_val = row.change_over_previous_month|default(0)|float %}
-              <tr style="border-bottom: 1px solid #f1f5f9;">
-                <td style="padding: 15px 10px; font-weight: 700;">{{ row.state }}</td>
-                <td style="padding: 15px 10px; color: var(--accent); font-weight: 800;">₹{{ row.current_price }}</td>
-                <td style="padding: 15px 10px; color: var(--muted);">₹{{ row.previous_price }}</td>
-                <td style="padding: 15px 10px;">
-                  <span style="padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: 11px; {% if change_val > 0 %}background:#dcfce7; color:#166534;{% elif change_val < 0 %}background:#fee2e2; color:#991b1b;{% else %}background:#e2e8f0; color:#334155;{% endif %}">
-                    {% if change_val > 0 %}▲{% elif change_val < 0 %}▼{% else %}■{% endif %}
-                    {{ row.change_over_previous_month }}%
-                  </span>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    {% else %}
-    <div style="text-align: center; padding: 60px; color: var(--muted); border: 2px dashed var(--stroke); border-radius: var(--radius-md); margin-bottom: 40px;">
-      <div style="font-size: 40px; margin-bottom: 10px;">📊</div>
-      <p>Select a commodity from the dropdown above to view real-time market trends across India.</p>
-    </div>
-    {% endif %}
-
-    <div class="section-tag">Weather Search</div>
-    <div style="background: var(--panel); border: 1px solid var(--stroke); border-radius: var(--radius-md); padding: 22px; box-shadow: var(--shadow); margin-bottom: 30px;">
-  <form action="{{ url_for('main.home') }}" method="GET" style="display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-bottom: 18px;">
-    <input type="hidden" name="cmdt_id" value="{{ selected_id }}">
-    <input type="hidden" name="year" value="{{ selected_year }}">
-    <input type="hidden" name="month" value="{{ selected_month }}">
-
-    <div style="flex: 1; min-width: 260px;">
-      <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase;">
-        Search City
-      </label>
-      <input
-        type="text"
-        name="city_search"
-        placeholder="Enter city name..."
-        value="{{ search_query }}"
-        style="width: 100%; border: 1px solid var(--stroke); border-radius: 10px; font-size: 14px; padding: 12px 14px; outline: none; background: #f8fafc; box-sizing: border-box;"
-      >
-    </div>
-
-    <button type="submit" style="background: var(--accent); color: white; border: none; border-radius: 10px; padding: 12px 18px; font-size: 13px; cursor: pointer; font-weight: 800; height: 44px;">
-      SEARCH
-    </button>
-  </form>
-
-  <div style="background: #ffffff; border: 1px solid var(--stroke); border-radius: 16px; padding: 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 18px;">
-      <div>
-        <strong style="color: var(--navy-dark); font-size: 22px; display: block; margin-bottom: 4px;">
-          {{ weather_card.location }}
-        </strong>
-        <div style="font-size: 14px; color: var(--accent); font-weight: 700;">
-          {{ weather_card.desc }}
-        </div>
-      </div>
-
-      {% if weather_card.temp != "--" %}
-      <div style="text-align: right;">
-        <span style="font-size: 34px; font-weight: 800; color: var(--text);">{{ weather_card.temp }}°C</span>
-        <img src="https://openweathermap.org/img/wn/{{ weather_card.icon }}@2x.png" style="width: 56px; display: block; margin-left: auto;">
-      </div>
-      {% endif %}
-    </div>
-
-    <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px;">
-      <div style="background: #f8fafc; border: 1px solid var(--stroke); border-radius: 12px; padding: 12px 14px; min-width: 140px;">
-        <div style="font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Humidity</div>
-        <div style="font-size: 16px; color: var(--text); font-weight: 800;">{{ weather_card.humidity }}%</div>
-      </div>
-
-      <div style="background: #f8fafc; border: 1px solid var(--stroke); border-radius: 12px; padding: 12px 14px; min-width: 140px;">
-        <div style="font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Wind Speed</div>
-        <div style="font-size: 16px; color: var(--text); font-weight: 800;">{{ weather_card.wind }} m/s</div>
-      </div>
-    </div>
-
-    <div style="margin-top: 12px; background: #f8fafc; padding: 12px 14px; border-radius: 12px; border-left: 4px solid var(--accent); font-family: 'Courier New', Courier, monospace;">
-      <p style="font-size: 11px; margin: 0; color: #1e293b; white-space: pre-line; line-height: 1.6;">
-        {{ weather_card.overview }}
-      </p>
-    </div>
-  </div>
-</div>
-
-
-    <div class="dashboard-stack">
-      <footer
-        style="
-          background:#111c4e;
-          margin-top:40px;
-          border-radius:20px; 
-          padding:32px 28px;
-          width:100%;
-          box-sizing:border-box;
-        "
-      >
-      <div
-        style="
-          display:flex;
-          justify-content:space-between;
-          align-items:flex-start;
-          gap:30px;
-          flex-wrap:wrap;
-          width:100%;
-          margin-bottom:24px;
-        "
-      >
-        <div style="flex:1 1 280px; min-width:260px;">
-          <h4
-            style="
-              margin:0 0 10px 0;
-              color:#ffffff;
-              font-size:22px;
-              font-weight:800;
-              line-height:1.3;
-            "
-          >
-            Seamless Automations
-          </h4>
-          <p
-            style="
-              margin:0;
-              color:rgba(255,255,255,0.85);
-              font-size:14px;
-              line-height:1.8;
-            "
-          >
-            © 2026 Seamless Infinite Innovations. All rights reserved.
-          </p>
-        </div>
-
-        <div style="flex:1 1 220px; min-width:220px;">
-          <div
-            style="
-              margin-bottom:10px;
-              color:rgba(255,255,255,0.65);
-              font-size:11px;
-              font-weight:700;
-              text-transform:uppercase;
-              letter-spacing:0.8px;
-            "
-          >
-            Address
+      <div id="agriSummarySection" style="display:none;">
+        <div class="agri-summary-grid">
+          <div class="summary-box primary">
+            <div class="summary-label">Main Price</div>
+            <div class="summary-value" id="avgPrice">N/A</div>
+            <div class="summary-note">Average across states</div>
           </div>
-          <div
-            style="
-              color:rgba(255,255,255,0.95);
-              font-size:15px;
-              line-height:1.8;
-            "
-          >
-            B-1081, Oberoi Garden Estate,<br>
-            Chandivali, Saki Naka,<br>
-            Mumbai - 400072
+
+          <div class="summary-box">
+            <div class="summary-label">Highest Price</div>
+            <div class="summary-value" id="highestPrice">N/A</div>
+            <div class="summary-note" id="highestState">-</div>
+          </div>
+
+          <div class="summary-box">
+            <div class="summary-label">Lowest Price</div>
+            <div class="summary-value" id="lowestPrice">N/A</div>
+            <div class="summary-note" id="lowestState">-</div>
+          </div>
+
+          <div class="summary-box">
+            <div class="summary-label">Avg Monthly Change</div>
+            <div class="summary-value" id="avgChange">N/A</div>
+            <div class="summary-note">Compared to previous month</div>
           </div>
         </div>
 
-        <div style="flex:1 1 180px; min-width:180px;">
-          <div
-            style="
-              margin-bottom:10px;
-              color:rgba(255,255,255,0.65);
-              font-size:11px;
-              font-weight:700;
-              text-transform:uppercase;
-              letter-spacing:0.8px;
-            "
-          >
-            Contact Number
-          </div>
-          <div
-            style="
-              color:rgba(255,255,255,0.95);
-              font-size:15px;
-              line-height:1.8;
-            "
-          >
-            +91 8850298276<br>
-            +91 2266661567
+        <div class="dashboard-panel" style="padding:20px; margin-bottom:0;">
+          <h4 id="agriTableTitle" style="color: var(--navy-dark); margin-bottom: 15px;"></h4>
+
+          <div style="overflow-x: auto; max-height: 500px;">
+            <table class="commodity-table">
+              <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 1;">
+                <tr style="border-bottom: 2px solid var(--stroke);">
+                  <th style="padding: 15px 10px;">State</th>
+                  <th style="padding: 15px 10px;" id="currLabel">Current</th>
+                  <th style="padding: 15px 10px;" id="prevLabel">Previous</th>
+                  <th style="padding: 15px 10px;">Monthly Change</th>
+                </tr>
+              </thead>
+              <tbody id="agriTableBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <div
-        style="
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          gap:20px;
-          flex-wrap:wrap;
-          width:100%;
-          padding-top:18px;
-          border-top:1px solid rgba(255,255,255,0.12);
-        "
-      >
-        <div style="flex:1 1 260px; min-width:240px;">
-          <div
-            style="
-              margin-bottom:8px;
-              color:rgba(255,255,255,0.65);
-              font-size:11px;
-              font-weight:700;
-              text-transform:uppercase;
-              letter-spacing:0.8px;
-            "
+      <div id="agriEmptyState" class="results-empty hidden">
+        <div style="font-size: 40px; margin-bottom: 10px;">📊</div>
+        <p>Please choose a commodity, year, and month, then click <strong>ANALYZE</strong> to view market trends.</p>
+      </div>
+
+      <div id="agriLoader" class="loader-overlay hidden">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Fetching agri market data...</div>
+      </div>
+    </div>
+
+    <div id="weather-search" class="section-tag">Weather Search</div>
+
+    <div class="dashboard-panel">
+      <form id="weatherForm" onsubmit="return false;" style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin-bottom: 20px;">
+        <div style="flex: 1; min-width: 260px;">
+          <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase;">
+            Search City
+          </label>
+          <input
+            type="text"
+            id="city_search"
+            name="city_search"
+            placeholder="Enter city name..."
+            value="{{ search_query }}"
+            style="width: 100%; border: 1px solid var(--stroke); border-radius: 12px; font-size: 14px; padding: 13px 14px; outline: none; background: #f8fafc; box-sizing: border-box;"
           >
-            Email
+        </div>
+
+        <button id="weatherBtn" type="button" onclick="loadWeather()" style="background: var(--accent); color: white; border: none; border-radius: 12px; padding: 12px 20px; font-size: 13px; cursor: pointer; font-weight: 800; height: 46px;">
+          SEARCH
+        </button>
+      </form>
+
+      <div id="weatherLoader" class="loader-overlay hidden" style="margin-bottom:18px;">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Fetching weather data...</div>
+      </div>
+
+      <div class="weather-card-shell">
+        <div class="weather-hero">
+          <div class="weather-hero-left">
+            <div class="weather-top-row">
+              <div>
+                <strong id="weatherLocation" class="weather-location">{{ weather_card.location }}</strong>
+                <div id="weatherDesc" class="weather-description">{{ weather_card.desc }}</div>
+              </div>
+              <div id="weatherBadge" class="weather-badge">Live Weather</div>
+            </div>
+
+            <div class="weather-temp-row">
+              <div id="weatherTemp" class="weather-temp">{{ weather_card.temp }}°C</div>
+              <div class="weather-icon-wrap">
+                <img id="weatherIcon" src="" alt="Weather icon" class="weather-icon">
+              </div>
+            </div>
+
+            <div id="feelsLikeText" class="weather-feelslike">
+              {% if weather_card.feels_like and weather_card.feels_like != "--" %}
+              Feels like {{ weather_card.feels_like }}°C
+              {% else %}
+              Feels like --
+              {% endif %}
+            </div>
           </div>
-          <div
-            style="
-              color:rgba(255,255,255,0.95);
-              font-size:15px;
-              line-height:1.8;
-              word-break:break-word;
-            "
-          >
-            sales@seamlessautomations.com
+
+          <div class="weather-hero-right">
+            <div class="weather-mini-stat">
+              <div class="weather-mini-label">Humidity</div>
+              <div class="weather-mini-value" id="mHumidity">{{ weather_card.humidity }}%</div>
+            </div>
+            <div class="weather-mini-stat">
+              <div class="weather-mini-label">Wind Speed</div>
+              <div class="weather-mini-value" id="mWind">{{ weather_card.wind }} m/s</div>
+            </div>
+            <div class="weather-mini-stat">
+              <div class="weather-mini-label">Visibility</div>
+              <div class="weather-mini-value" id="mVisibility">{{ weather_card.visibility }} km</div>
+            </div>
           </div>
         </div>
 
-        <div
-          style="
-            display:flex;
-            gap:24px;
-            flex-wrap:wrap;
-            align-items:center;
-            justify-content:flex-end;
-          "
-        >
-          <a
-            href="#"
-            style="
-              color:rgba(255,255,255,0.9);
-              text-decoration:none;
-              font-size:14px;
-              font-weight:600;
-            "
-          >
-            Privacy
-          </a>
-          <a
-            href="#"
-            style="
-              color:rgba(255,255,255,0.9);
-              text-decoration:none;
-              font-size:14px;
-              font-weight:600;
-            "
-          >
-            Terms
-          </a>
-          <a
-            href="#"
-            style="
-              color:rgba(255,255,255,0.9);
-              text-decoration:none;
-              font-size:14px;
-              font-weight:600;
-            "
-          >
-            Contact
-          </a>
+        <div class="weather-metrics-grid premium-weather-grid">
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Feels Like</div>
+            <div class="metric-value" id="mFeelsLike">{{ weather_card.feels_like }}°C</div>
+          </div>
+
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Pressure</div>
+            <div class="metric-value" id="mPressure">{{ weather_card.pressure }} hPa</div>
+          </div>
+
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Cloud Cover</div>
+            <div class="metric-value" id="mClouds">{{ weather_card.clouds }}%</div>
+          </div>
+
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Min Temp</div>
+            <div class="metric-value" id="mMinTemp">{{ weather_card.temp_min }}°C</div>
+          </div>
+
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Max Temp</div>
+            <div class="metric-value" id="mMaxTemp">{{ weather_card.temp_max }}°C</div>
+          </div>
+
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Sunrise</div>
+            <div class="metric-value" id="mSunrise">{{ weather_card.sunrise }}</div>
+          </div>
+
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Sunset</div>
+            <div class="metric-value" id="mSunset">{{ weather_card.sunset }}</div>
+          </div>
         </div>
       </div>
-    </footer>
     </div>
+
   </div>
 </div>
+
+<script>
+  function showNewsCategory(category, btn) {
+    document.querySelectorAll('.news-category-panel').forEach(panel => {
+      panel.classList.remove('active');
+    });
+
+    document.querySelectorAll('.news-top-nav-item').forEach(tab => {
+      tab.classList.remove('active');
+    });
+
+    document.getElementById('panel-' + category).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function formatNumber(value) {
+    if (value === null || value === undefined || value === "" || value === "N/A") return "N/A";
+    const num = Number(String(value).replace(/,/g, ""));
+    if (Number.isNaN(num)) return value;
+    return num.toLocaleString("en-IN", { maximumFractionDigits: 2 });
+  }
+
+  function toFloat(value) {
+    if (value === null || value === undefined || value === "" || value === "N/A" || value === "-") return null;
+    const num = Number(String(value).replace(/,/g, "").replace("₹", "").trim());
+    return Number.isNaN(num) ? null : num;
+  }
+
+  async function loadWeather() {
+    const cityInput = document.getElementById("city_search");
+    const city = cityInput.value.trim();
+    if (!city) {
+      alert("Please enter a city name.");
+      return;
+    }
+
+    const loader = document.getElementById("weatherLoader");
+    loader.classList.remove("hidden");
+    loader.classList.add("show");
+
+    try {
+      const res = await fetch(`/api/weather-data?city=${encodeURIComponent(city)}`);
+      const result = await res.json();
+
+      if (!result.success) {
+        alert(result.message || "Unable to fetch weather data.");
+        return;
+      }
+
+      const data = result.data;
+
+      document.getElementById("weatherLocation").textContent =
+        data.country && data.country !== "--" ? `${data.location}, ${data.country}` : data.location;
+
+      document.getElementById("weatherDesc").textContent = data.desc || "--";
+      document.getElementById("weatherTemp").textContent = `${data.temp}°C`;
+      document.getElementById("feelsLikeText").textContent = `Feels like ${data.feels_like}°C`;
+
+      const iconEl = document.getElementById("weatherIcon");
+      if (data.icon) {
+        iconEl.src = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
+        iconEl.style.display = "block";
+      } else {
+        iconEl.style.display = "none";
+      }
+
+      document.getElementById("mHumidity").textContent = `${data.humidity}%`;
+      document.getElementById("mWind").textContent = `${data.wind} m/s`;
+      document.getElementById("mVisibility").textContent = `${data.visibility} km`;
+      document.getElementById("mFeelsLike").textContent = `${data.feels_like}°C`;
+      document.getElementById("mPressure").textContent = `${data.pressure} hPa`;
+      document.getElementById("mClouds").textContent = `${data.clouds}%`;
+      document.getElementById("mMinTemp").textContent = `${data.temp_min}°C`;
+      document.getElementById("mMaxTemp").textContent = `${data.temp_max}°C`;
+      document.getElementById("mSunrise").textContent = data.sunrise || "--";
+      document.getElementById("mSunset").textContent = data.sunset || "--";
+
+      const badge = document.getElementById("weatherBadge");
+      if ((data.desc || "").toLowerCase().includes("rain") || (data.desc || "").toLowerCase().includes("storm")) {
+        badge.textContent = "Caution";
+        badge.style.background = "#fee2e2";
+        badge.style.color = "#b91c1c";
+        badge.style.borderColor = "#fecaca";
+      } else if ((data.desc || "").toLowerCase().includes("clear")) {
+        badge.textContent = "Stable";
+        badge.style.background = "#dcfce7";
+        badge.style.color = "#166534";
+        badge.style.borderColor = "#bbf7d0";
+      } else {
+        badge.textContent = "Live Weather";
+        badge.style.background = "#dbeafe";
+        badge.style.color = "#1d4ed8";
+        badge.style.borderColor = "#bfdbfe";
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while loading weather.");
+    } finally {
+      loader.classList.remove("show");
+      loader.classList.add("hidden");
+    }
+  }
+
+  async function loadAgriData() {
+    const cmdtSelect = document.getElementById("cmdt_id");
+    const yearSelect = document.getElementById("year");
+    const monthSelect = document.getElementById("month");
+
+    const cmdtId = cmdtSelect.value;
+    const year = yearSelect.value;
+    const month = monthSelect.value;
+
+    if (!cmdtId || !year || !month) {
+      alert("Please select commodity, year, and month.");
+      return;
+    }
+
+    const emptyState = document.getElementById("agriEmptyState");
+    const summarySection = document.getElementById("agriSummarySection");
+    const loader = document.getElementById("agriLoader");
+
+    emptyState.classList.add("hidden");
+    summarySection.style.display = "none";
+    loader.classList.remove("hidden");
+    loader.classList.add("show");
+
+    try {
+      const res = await fetch(`/api/agri-data?cmdt_id=${encodeURIComponent(cmdtId)}&year=${encodeURIComponent(year)}&month=${encodeURIComponent(month)}`);
+      const result = await res.json();
+
+      if (!result.success) {
+        alert(result.message || "Unable to fetch agri data.");
+        emptyState.classList.remove("hidden");
+        return;
+      }
+
+      const data = result.data || {};
+      const rows = data.rows || [];
+      const currentKey = data.current_price_key;
+      const previousKey = data.previous_price_key;
+
+      if (!rows.length) {
+        emptyState.innerHTML = `
+          <div style="font-size: 40px; margin-bottom: 10px;">📭</div>
+          <p>No agri data found for the selected commodity and period.</p>
+        `;
+        emptyState.classList.remove("hidden");
+        return;
+      }
+
+      document.getElementById("agriTableTitle").textContent = data.title || "Price Analysis";
+      document.getElementById("currLabel").textContent = `Price (${data.current_price_label || "Current"})`;
+      document.getElementById("prevLabel").textContent = `Prev Month (${data.previous_price_label || "Previous"})`;
+
+      const tbody = document.getElementById("agriTableBody");
+      tbody.innerHTML = "";
+
+      let priceRows = [];
+      let changeValues = [];
+
+      rows.forEach(row => {
+        const currentPrice = row[currentKey] || "N/A";
+        const previousPrice = row[previousKey] || "N/A";
+        const changeValue = toFloat(row.change_over_previous_month);
+
+        const tr = document.createElement("tr");
+        tr.style.borderBottom = "1px solid #f1f5f9";
+
+        let badgeBg = "#e2e8f0";
+        let badgeColor = "#334155";
+        let symbol = "■";
+
+        if (changeValue !== null) {
+          if (changeValue > 0) {
+            badgeBg = "#dcfce7";
+            badgeColor = "#166534";
+            symbol = "▲";
+          } else if (changeValue < 0) {
+            badgeBg = "#fee2e2";
+            badgeColor = "#991b1b";
+            symbol = "▼";
+          }
+        }
+
+        tr.innerHTML = `
+          <td style="padding: 15px 10px; font-weight: 700;">${row.state || "-"}</td>
+          <td style="padding: 15px 10px; color: var(--accent); font-weight: 800;">₹${currentPrice}</td>
+          <td style="padding: 15px 10px; color: var(--muted);">₹${previousPrice}</td>
+          <td style="padding: 15px 10px;">
+            <span style="padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: 11px; background:${badgeBg}; color:${badgeColor};">
+              ${symbol} ${row.change_over_previous_month ?? 0}%
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+
+        const curr = toFloat(currentPrice);
+        if (curr !== null) {
+          priceRows.push({ state: row.state || "-", price: curr });
+        }
+        if (changeValue !== null) {
+          changeValues.push(changeValue);
+        }
+      });
+
+      if (priceRows.length > 0) {
+        const avgPrice = priceRows.reduce((a, b) => a + b.price, 0) / priceRows.length;
+        const highest = priceRows.reduce((a, b) => a.price > b.price ? a : b);
+        const lowest = priceRows.reduce((a, b) => a.price < b.price ? a : b);
+
+        document.getElementById("avgPrice").textContent = `₹${formatNumber(avgPrice)}`;
+        document.getElementById("highestPrice").textContent = `₹${formatNumber(highest.price)}`;
+        document.getElementById("highestState").textContent = highest.state;
+        document.getElementById("lowestPrice").textContent = `₹${formatNumber(lowest.price)}`;
+        document.getElementById("lowestState").textContent = lowest.state;
+      } else {
+        document.getElementById("avgPrice").textContent = "N/A";
+        document.getElementById("highestPrice").textContent = "N/A";
+        document.getElementById("highestState").textContent = "-";
+        document.getElementById("lowestPrice").textContent = "N/A";
+        document.getElementById("lowestState").textContent = "-";
+      }
+
+      if (changeValues.length > 0) {
+        const avgChange = changeValues.reduce((a, b) => a + b, 0) / changeValues.length;
+        document.getElementById("avgChange").textContent = `${avgChange.toFixed(1)}%`;
+      } else {
+        document.getElementById("avgChange").textContent = "N/A";
+      }
+
+      emptyState.classList.add("hidden");
+      summarySection.style.display = "block";
+
+      cmdtSelect.selectedIndex = 0;
+      yearSelect.selectedIndex = 0;
+      monthSelect.selectedIndex = 0;
+
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while loading agri data.");
+      emptyState.classList.remove("hidden");
+    } finally {
+      loader.classList.remove("show");
+      loader.classList.add("hidden");
+    }
+  }
+</script>
 {% endblock %}
