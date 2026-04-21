@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% block title %}Published News — Seamless{% endblock %}
+
+{% block content %}
+<style>
+  .table-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .tbl-search{
+    display:flex;align-items:center;gap:10px;
+    background:#f6f8fc;border:1px solid #d9e3f2;
+    border-radius:14px;padding:0 14px;min-height:42px;
+  }
+  .tbl-search input{
+    border:none;outline:none;background:transparent;
+    font-size:.88rem;color:var(--text-dark);
+  }
+  .tbl-search input[type="text"]{width:200px;}
+  .tbl-search input[type="date"]{cursor:pointer;font-size:.87rem;}
+
+  .pagination{
+    display:flex;align-items:center;gap:6px;
+    padding:14px 16px;border-top:1px solid var(--border);
+    background:#f8f9fc;flex-wrap:wrap;
+  }
+  .page-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:34px;height:34px;padding:0 10px;
+    border:1px solid #d9e3f2;border-radius:8px;
+    font-size:.82rem;font-weight:600;color:var(--text-muted);
+    background:#fff;text-decoration:none;cursor:pointer;transition:all .15s;
+  }
+  .page-btn:hover{border-color:#2350b8;color:#2350b8;background:#eef5ff;}
+  .page-btn.active{background:#1a2a6c;color:#fff;border-color:#1a2a6c;pointer-events:none;}
+  .page-btn.disabled{opacity:.4;pointer-events:none;cursor:default;}
+  .page-info{font-size:.82rem;color:var(--text-muted);margin-left:auto;}
+
+  .pdf-pending{
+    font-size:.75rem;color:#97630a;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .pdf-pending::before{
+    content:'';display:inline-block;width:10px;height:10px;
+    border:2px solid #f3dfab;border-top-color:#97630a;
+    border-radius:50%;animation:spin .75s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  tr.news-row{transition:background .1s;}
+  tr.news-row:hover{background:#f4f7fd;}
+
+  .today-badge{
+    display:inline-block;font-size:.75rem;color:#1a2a6c;
+    background:#e0e9ff;border-radius:20px;padding:2px 10px;
+    font-weight:700;margin-left:8px;vertical-align:middle;
+  }
+  .date-nav-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:34px;height:34px;border:1px solid #d9e3f2;border-radius:8px;
+    background:#fff;color:var(--text-muted);font-size:.95rem;
+    text-decoration:none;transition:all .15s;cursor:pointer;flex-shrink:0;
+  }
+  .date-nav-btn:hover{border-color:#2350b8;color:#2350b8;background:#eef5ff;}
+  .date-nav-btn.disabled{opacity:.35;pointer-events:none;}
+</style>
+
+<div class="page-container">
+  <div class="page-head">
+    <div class="breadcrumb-row">
+      <a href="{{ url_for('main.home') }}">Dashboard</a>
+      <span class="sep">›</span><span>News Processing</span>
+      <span class="sep">›</span><span>Published News</span>
+    </div>
+    <h1>
+      Published News
+      {% if selected_date == today %}
+        <!-- <span class="today-badge">Today</span> -->
+      {% endif %}
+    </h1>
+    <p>Browsing articles published on <strong>{{ selected_date.strftime('%d %B %Y') }}</strong></p>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        {% for cat, msg in messages %}
+          {% if cat == 'success' %}
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;background:#eefaf3;border:1px solid #c9ecd7;color:#17623c;font-size:.91rem;font-weight:600;">✅ {{ msg }}</div>
+          {% elif cat == 'danger' %}
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;background:#fff1f1;border:1px solid #f7c9c9;color:#9f1f1f;font-size:.91rem;font-weight:600;">❌ {{ msg }}</div>
+          {% elif cat == 'warning' %}
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;background:#fff8e8;border:1px solid #f3dfab;color:#97630a;font-size:.91rem;font-weight:600;">⚠️ {{ msg }}</div>
+          {% else %}
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;background:#eef5ff;border:1px solid #cadcff;color:#2350b8;font-size:.91rem;font-weight:600;">ℹ️ {{ msg }}</div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="table-card">
+    <div class="table-card-header">
+      <div>
+        <div class="table-card-title">Published News</div>
+        <div class="table-card-subtitle">
+          {{ total }} article(s) — showing page {{ page }} of {{ total_pages }}
+        </div>
+      </div>
+      <div class="table-controls">
+
+        <!-- Date navigation -->
+        <form method="GET" action="{{ url_for('main.today_published_news') }}"
+              id="dateForm"
+              style="display:flex;align-items:center;gap:6px;">
+
+          <!-- Prev day -->
+          <a href="{{ url_for('main.today_published_news', date=(selected_date - timedelta(days=1)).strftime('%Y-%m-%d')) }}"
+             class="date-nav-btn" title="Previous day">‹</a>
+
+          <div class="tbl-search" style="padding:0 12px;gap:7px;">
+            <span style="font-size:.85rem;flex-shrink:0;">📅</span>
+            <input type="date" name="date"
+                   id="datePicker"
+                   value="{{ selected_date.strftime('%Y-%m-%d') }}"
+                   max="{{ today.strftime('%Y-%m-%d') }}"
+                   onchange="document.getElementById('dateForm').submit()"
+                   style="border:none;outline:none;background:transparent;
+                          font-size:.87rem;color:var(--text-dark);cursor:pointer;">
+          </div>
+
+          <!-- Next day (disabled if already on today) -->
+          {% if selected_date < today %}
+            <a href="{{ url_for('main.today_published_news', date=(selected_date + timedelta(days=1)).strftime('%Y-%m-%d')) }}"
+               class="date-nav-btn" title="Next day">›</a>
+          {% else %}
+            <span class="date-nav-btn disabled" title="Already on today">›</span>
+          {% endif %}
+
+          <!-- Jump to today button (only shown when not on today) -->
+          {% if selected_date != today %}
+            <a href="{{ url_for('main.today_published_news') }}"
+               class="btn btn-ghost" style="padding:7px 14px;font-size:.82rem;white-space:nowrap;">
+              Today
+            </a>
+          {% endif %}
+        </form>
+
+        <!-- Search -->
+        <div class="tbl-search">
+          <span>🔍</span>
+          <input id="searchInput" type="text" placeholder="Search this page…">
+        </div>
+
+        {% if total > 0 %}
+        <a href="{{ url_for('main.send_email_today') }}"
+           class="btn btn-primary" style="padding:8px 18px;font-size:.85rem;">
+          📧 Send Email
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div style="width:100%;overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;table-layout:auto;">
+        <thead>
+          <tr style="background:#f0f4fb;">
+            <th style="padding:12px 14px;border:1px solid #dce6f5;text-align:left;font-size:.69rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);white-space:nowrap;width:52px;">Sr. No</th>
+            <th style="padding:12px 14px;border:1px solid #dce6f5;text-align:left;font-size:.69rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);white-space:nowrap;">Date</th>
+            <th style="padding:12px 14px;border:1px solid #dce6f5;text-align:left;font-size:.69rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);min-width:140px;">Type</th>
+            <th style="padding:12px 14px;border:1px solid #dce6f5;text-align:left;font-size:.69rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);min-width:260px;">Headline</th>
+            <th style="padding:12px 14px;border:1px solid #dce6f5;text-align:center;font-size:.69rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);white-space:nowrap;width:90px;">PDF</th>
+          </tr>
+        </thead>
+        <tbody id="newsBody">
+          {% set row_start = (page - 1) * per_page + 1 %}
+          {% if news %}
+            {% for article in news %}
+            <tr class="news-row" data-id="{{ article.id }}" data-has-pdf="{{ '1' if article.pdf_path else '0' }}">
+              <td style="padding:13px 14px;font-size:.84rem;font-weight:700;color:var(--text-muted);vertical-align:middle;border:1px solid #e8eef8;white-space:nowrap;">
+                {{ row_start + loop.index0 }}
+              </td>
+              <td style="padding:13px 14px;font-size:.84rem;vertical-align:middle;border:1px solid #e8eef8;white-space:nowrap;">
+                {{ article.news_date.strftime('%d.%m.%Y') if article.news_date else '—' }}
+              </td>
+              <td style="padding:13px 14px;vertical-align:middle;border:1px solid #e8eef8;">
+                <span style="font-size:.84rem;color:var(--text-dark);line-height:1.5;">{{ article.news_type or '—' }}</span>
+              </td>
+              <td style="padding:13px 14px;vertical-align:middle;border:1px solid #e8eef8;">
+                <span style="font-size:.84rem;font-weight:600;color:var(--text-dark);line-height:1.5;word-break:break-word;">{{ article.news_headline or '—' }}</span>
+              </td>
+              <td style="padding:13px 14px;text-align:center;vertical-align:middle;border:1px solid #e8eef8;" class="pdf-cell">
+                {% if article.pdf_path %}
+                  <a href="{{ url_for('main.download_pdf', news_id=article.id) }}"
+                     title="Download PDF"
+                     style="display:inline-flex;align-items:center;justify-content:center;
+                            width:34px;height:34px;border-radius:8px;
+                            background:#fff1f0;border:1px solid #fecdd3;
+                            color:#dc2626;font-size:1.1rem;transition:all .2s;"
+                     onmouseover="this.style.background='#dc2626';this.style.color='#fff';"
+                     onmouseout="this.style.background='#fff1f0';this.style.color='#dc2626';">
+                    📄
+                  </a>
+                {% else %}
+                  <span class="pdf-pending">Generating</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="5" style="padding:60px 24px;text-align:center;color:var(--text-muted);border:1px solid #e8eef8;">
+                <div style="font-size:2rem;opacity:.3;margin-bottom:10px;">📰</div>
+                <div style="font-size:.94rem;">No published news for {{ selected_date.strftime('%d %B %Y') }}.</div>
+                {% if selected_date != today %}
+                <div style="margin-top:10px;">
+                  <a href="{{ url_for('main.today_published_news') }}"
+                     style="font-size:.84rem;color:#2350b8;text-decoration:none;font-weight:600;">
+                    ← Go to today's news
+                  </a>
+                </div>
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    {% set date_param = selected_date.strftime('%Y-%m-%d') %}
+    {% if total_pages > 1 %}
+    <div class="pagination">
+      {% if page > 1 %}
+        <a href="{{ url_for('main.today_published_news', page=page-1, date=date_param) }}" class="page-btn">‹ Prev</a>
+      {% else %}
+        <span class="page-btn disabled">‹ Prev</span>
+      {% endif %}
+
+      {% for p in range(1, total_pages + 1) %}
+        {% if p == page %}
+          <span class="page-btn active">{{ p }}</span>
+        {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+          <a href="{{ url_for('main.today_published_news', page=p, date=date_param) }}" class="page-btn">{{ p }}</a>
+        {% elif p == page - 3 or p == page + 3 %}
+          <span class="page-btn disabled" style="border:none;">…</span>
+        {% endif %}
+      {% endfor %}
+
+      {% if page < total_pages %}
+        <a href="{{ url_for('main.today_published_news', page=page+1, date=date_param) }}" class="page-btn">Next ›</a>
+      {% else %}
+        <span class="page-btn disabled">Next ›</span>
+      {% endif %}
+
+      <span class="page-info">
+        Showing {{ (page-1)*per_page + 1 }}–{{ [page*per_page, total]|min }} of {{ total }}
+      </span>
+    </div>
+    {% else %}
+    <div class="table-card-footer">
+      <span>Showing <strong>{{ news|length }}</strong> of <strong>{{ total }}</strong> entries</span>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var si = document.getElementById('searchInput');
+  si && si.addEventListener('input', function(){
+    var q = this.value.toLowerCase().trim();
+    document.querySelectorAll('#newsBody .news-row').forEach(function(r){
+      r.style.display = (!q || r.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    });
+  });
+
+  document.querySelectorAll('#newsBody .news-row').forEach(function(r){
+    r.addEventListener('mouseenter', function(){ r.style.background='#f4f7fd'; });
+    r.addEventListener('mouseleave', function(){ r.style.background=''; });
+  });
+
+  var pendingIds = [];
+  document.querySelectorAll('#newsBody .news-row[data-has-pdf="0"]').forEach(function(r){
+    pendingIds.push(parseInt(r.dataset.id));
+  });
+
+  function checkPdf(newsId){
+    fetch('/check-pdf/' + newsId)
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d.ready){
+          var row  = document.querySelector('#newsBody .news-row[data-id="'+newsId+'"]');
+          var cell = row && row.querySelector('.pdf-cell');
+          if(cell){
+            cell.innerHTML =
+              '<a href="/download-pdf/'+newsId+'" title="Download PDF" '+
+              'style="display:inline-flex;align-items:center;justify-content:center;'+
+              'width:34px;height:34px;border-radius:8px;background:#fff1f0;'+
+              'border:1px solid #fecdd3;color:#dc2626;font-size:1.1rem;transition:all .2s;" '+
+              'onmouseover="this.style.background=\'#dc2626\';this.style.color=\'#fff\';" '+
+              'onmouseout="this.style.background=\'#fff1f0\';this.style.color=\'#dc2626\';">'+
+              '📄</a>';
+            row.dataset.hasPdf = '1';
+          }
+          pendingIds = pendingIds.filter(function(id){ return id !== newsId; });
+        }
+      })
+      .catch(function(){});
+  }
+
+  if(pendingIds.length > 0){
+    var pdfTimer = setInterval(function(){
+      if(pendingIds.length === 0){ clearInterval(pdfTimer); return; }
+      pendingIds.slice().forEach(checkPdf);
+    }, 8000);
+  }
+
+})();
+</script>
+{% endblock %}
