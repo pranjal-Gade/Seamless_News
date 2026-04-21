@@ -26,7 +26,7 @@ class Config:
     DATABASE = os.path.join(BASE_DIR, 'instance', 'users.db')
     MYSQL_HOST = "localhost"
     MYSQL_USER = "root"
-    MYSQL_PASSWORD = "root"
+    MYSQL_PASSWORD = "password"
     MYSQL_DB = "news_scrapping"
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
