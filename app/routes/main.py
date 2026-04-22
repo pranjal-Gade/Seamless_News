@@ -42,10 +42,16 @@ _scheduler_started = False
 _scheduler_lock = threading.Lock()
 SCHEDULER_TICK_SECONDS = 30
 
+_commodity_cache = {
+    "data": [],
+    "ts": 0,
+}
 
 # ════════════════════════════════════════════════════════════════
 # HELPERS — DB / MAIL / SETTINGS
 # ════════════════════════════════════════════════════════════════
+
+
 
 def _raw_conn(db_cfg: dict):
     return mysql.connector.connect(**db_cfg)
@@ -628,6 +634,149 @@ def _bg_scraper(
             _scraper_state["running"] = False
 
 
+# Helper Function
+_api_request_times = {
+    "agmarknet": None,
+    "agmarknet_commodities": None,
+    "openweather": None,
+}
+
+MIN_REQUEST_INTERVAL = {
+    "agmarknet": 2.0,
+    "agmarknet_commodities": 5.0,
+    "openweather": 1.0,
+}
+
+
+def _wait_for_rate_limit(api_name: str):
+    last_time = _api_request_times.get(api_name)
+
+    if last_time is None:
+        _api_request_times[api_name] = time.time()
+        return
+
+    elapsed = time.time() - last_time
+    min_interval = MIN_REQUEST_INTERVAL.get(api_name, 1.0)
+
+    if elapsed < min_interval:
+        wait_time = min_interval - elapsed
+        print(f"[RATE LIMIT] Waiting {wait_time:.2f}s before {api_name} request", flush=True)
+        time.sleep(wait_time)
+
+    _api_request_times[api_name] = time.time()
+
+
+def _make_api_request_with_retry(
+    url: str,
+    params: dict = None,
+    headers: dict = None,
+    timeout: int = 8,
+    api_name: str = "default",
+    max_retries: int = 3,
+):
+    for attempt in range(max_retries):
+        try:
+            _wait_for_rate_limit(api_name)
+
+            resp = requests.get(
+                url,
+                params=params,
+                headers=headers,
+                timeout=timeout,
+            )
+
+            if resp.status_code == 429:
+                if attempt < max_retries - 1:
+                    wait_time = 2 ** attempt
+                    print(
+                        f"[RETRY] 429 from {api_name}. Waiting {wait_time}s before retry {attempt + 1}/{max_retries}",
+                        flush=True
+                    )
+                    time.sleep(wait_time)
+                    continue
+                raise Exception(f"Rate limited by {api_name} after {max_retries} retries")
+
+            resp.raise_for_status()
+            return resp.json()
+
+        except requests.exceptions.Timeout:
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            raise Exception(f"Timeout from {api_name}")
+
+        except requests.exceptions.ConnectionError as e:
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            raise Exception(f"Connection error from {api_name}: {e}")
+
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            raise Exception(f"HTTP error from {api_name}: {e}")
+
+    raise Exception(f"Max retries exceeded for {api_name}")
+
+
+def _parse_and_normalize_commodities(payload):
+    if isinstance(payload, dict):
+        raw_commodities = (
+            payload.get("data")
+            or payload.get("rows")
+            or payload.get("result")
+            or payload.get("commodities")
+            or payload.get("filters")
+            or payload.get("items")
+            or []
+        )
+    elif isinstance(payload, list):
+        raw_commodities = payload
+    else:
+        return []
+
+    seen_ids = set()
+    normalized_options = []
+
+    for item in raw_commodities:
+        if not isinstance(item, dict):
+            continue
+
+        item_id = (
+            item.get("id")
+            or item.get("commodity_id")
+            or item.get("commodityId")
+            or item.get("value")
+            or item.get("code")
+        )
+
+        item_name = (
+            item.get("cmdt_name")
+            or item.get("commodity_name")
+            or item.get("commodityName")
+            or item.get("name")
+            or item.get("label")
+            or item.get("text")
+        )
+
+        if item_id in (None, "") or not item_name:
+            continue
+
+        item_id = str(item_id).strip()
+        item_name = str(item_name).strip()
+
+        if not item_id or not item_name or item_id in seen_ids:
+            continue
+
+        seen_ids.add(item_id)
+        normalized_options.append({
+            "id": item_id,
+            "cmdt_name": item_name,
+        })
+
+    return sorted(normalized_options, key=lambda x: x["cmdt_name"].lower())
+
 # ════════════════════════════════════════════════════════════════
 # ROUTES
 # ════════════════════════════════════════════════════════════════
@@ -924,9 +1073,14 @@ def api_agri_data():
             "export": "false",
         }
 
-        resp = requests.get(url, params=params, headers=agmark_headers, timeout=8)
-        resp.raise_for_status()
-        result = resp.json()
+        result = _make_api_request_with_retry(
+            url=url,
+            params=params,
+            headers=agmark_headers,
+            timeout=8,
+            api_name="agmarknet",
+            max_retries=3,
+        )
 
         data = {
             "rows": result.get("rows", []),
@@ -946,8 +1100,9 @@ def api_agri_data():
         return jsonify({"success": True, "data": data})
 
     except Exception as e:
-        print(f"Agri API Error: {e}")
-        return jsonify({"success": False, "message": "Unable to fetch agri data"})
+        print(f"[AGRI API ERROR] {type(e).__name__}: {e}", flush=True)
+        traceback.print_exc()
+        return jsonify({"success": False, "message": f"Unable to fetch agri data: {e}"})
 
 
 @main_bp.route("/home")
@@ -1035,8 +1190,8 @@ def home():
         if cursor:
             cursor.close()
 
-    # ---------------------------------------------------
-    # COMMODITY DROPDOWN (CACHED)
+        # ---------------------------------------------------
+    # COMMODITY DROPDOWN (SERVER CACHE, NOT SESSION)
     # ---------------------------------------------------
     agmark_headers = {
         "accept": "application/json, text/plain, */*",
@@ -1050,69 +1205,38 @@ def home():
         ),
     }
 
-    all_options = session.get("commodity_options_v3", [])
+    all_options = []
+    commodity_cache_age = time.time() - _commodity_cache["ts"]
 
-    if not all_options:
+    if _commodity_cache["data"] and commodity_cache_age < 3600:
+        all_options = _commodity_cache["data"]
+        print(f"[CACHE HIT] Loaded {len(all_options)} commodities from server cache", flush=True)
+    else:
         try:
-            commodity_url = "https://api.agmarknet.gov.in/v1/dashboard-commodities-filter"
-            commodity_resp = requests.get(commodity_url, headers=agmark_headers, timeout=8)
-            commodity_resp.raise_for_status()
+            result = _make_api_request_with_retry(
+                url="https://api.agmarknet.gov.in/v1/dashboard-commodities-filter",
+                headers=agmark_headers,
+                timeout=10,
+                api_name="agmarknet_commodities",
+                max_retries=2,
+            )
 
-            commodity_payload = commodity_resp.json()
+            all_options = _parse_and_normalize_commodities(result)
 
-            if isinstance(commodity_payload, dict):
-                raw_commodities = (
-                    commodity_payload.get("data")
-                    or commodity_payload.get("rows")
-                    or commodity_payload.get("result")
-                    or commodity_payload.get("commodities")
-                    or []
-                )
-            elif isinstance(commodity_payload, list):
-                raw_commodities = commodity_payload
+            if all_options:
+                _commodity_cache["data"] = all_options
+                _commodity_cache["ts"] = time.time()
+                print(f"[API SUCCESS] Loaded {len(all_options)} commodities", flush=True)
             else:
-                raw_commodities = []
-
-            seen_ids = set()
-            normalized_options = []
-
-            for item in raw_commodities:
-                if not isinstance(item, dict):
-                    continue
-
-                item_id = (
-                    item.get("id")
-                    or item.get("commodity_id")
-                    or item.get("value")
-                    or item.get("commodity")
-                )
-                item_name = (
-                    item.get("cmdt_name")
-                    or item.get("commodity_name")
-                    or item.get("name")
-                    or item.get("label")
-                    or item.get("commodity")
-                )
-
-                if item_id in (None, "") or not item_name:
-                    continue
-
-                item_id = str(item_id).strip()
-                item_name = str(item_name).strip()
-
-                if item_id not in seen_ids:
-                    seen_ids.add(item_id)
-                    normalized_options.append({
-                        "id": item_id,
-                        "cmdt_name": item_name,
-                    })
-
-            all_options = sorted(normalized_options, key=lambda x: x["cmdt_name"].lower())
-            session["commodity_options_v3"] = all_options
+                print("[WARNING] Commodity API returned data but parsing produced 0 items", flush=True)
+                all_options = []
 
         except Exception as e:
-            print(f"Commodity API Load Error: {e}")
-            all_options = session.get("commodity_options_v3", [])
+            print(f"[COMMODITY API FAILED] {type(e).__name__}: {e}", flush=True)
+            all_options = _commodity_cache["data"] if _commodity_cache["data"] else []
+
+    print("DEBUG final all_options count:", len(all_options), flush=True)
+
 
     # ---------------------------------------------------
     # FEATURED CARDS (OPTIONAL CACHE)
@@ -1164,6 +1288,8 @@ def home():
 
     recent_searches = session.get("recent_searches", [])
 
+
+    print("DEBUG final all_options count:", len(all_options))
     return render_template(
         "main/home.html",
         weather_card=weather_card,

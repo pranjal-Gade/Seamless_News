@@ -67,6 +67,14 @@
     display: none !important;
   }
 
+  .navbar,
+  .navbar .dropdown-menu,
+  header,
+  header .dropdown-menu {
+    position: relative;
+    z-index: 200;
+  }
+
   /* TOP NEWS */
   .news-top-nav {
     display: flex;
@@ -77,8 +85,8 @@
     padding: 14px 20px;
     margin-bottom: 18px;
     position: sticky;
-    top: 70px;
-    z-index: 9999;
+    top: 78px; /* keep it below main header */
+    z-index: 50; /* lower than main navbar dropdown */
     background: rgba(245, 247, 251, 0.98);
     backdrop-filter: blur(8px);
     border-bottom: 2px solid #e5e7eb;
@@ -689,7 +697,7 @@
             {{ category }}
           </button>
         {% endfor %}
-        <a href="#agri-intelligence" class="news-top-nav-link">Agri Market Intelligence</a>
+        <a href="#agri-intelligence" class="news-top-nav-link">Agriculture Market</a>
         <a href="#weather-search" class="news-top-nav-link">Weather Search</a>
       </div>
 
@@ -732,7 +740,7 @@
     </div>
 
     <div id="agri-intelligence" class="dashboard-panel">
-      <h3>Agri Market Intelligence</h3>
+      <h3>Agriculture Market</h3>
 
       <form id="agriForm" onsubmit="return false;" style="display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 8px;">
         <div style="flex: 2; min-width: 200px;">
