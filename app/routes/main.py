@@ -713,6 +713,7 @@ def _bg_scraper(
     template_dir=None,
     pdf_folder=None,
     settings=None,
+    pdf_workers=None,
 ):
     global _scraper_state
 
@@ -763,7 +764,7 @@ def _bg_scraper(
                         pub_ids=pub_ids,
                         pdf_folder=pdf_folder,
                         settings=dict(settings or {}),
-                        pdf_workers=current_app.config.get("PDF_WORKERS", 3),
+                        pdf_workers=pdf_workers if pdf_workers is not None else 3,
                     )
             except Exception as e:
                 print(f"[SCRAPER] Auto publish PDF/email follow-up error: {e}")
@@ -2264,6 +2265,7 @@ def refresh_news():
         os.path.join(current_app.root_path, "static", "pdfs")
     )
     template_dir = os.path.join(current_app.root_path, "templates", "main")
+    pdf_workers = current_app.config.get("PDF_WORKERS", 3)
 
     threading.Thread(
         target=_bg_scraper,
@@ -2275,6 +2277,7 @@ def refresh_news():
             template_dir=template_dir,
             pdf_folder=pdf_folder,
             settings=dict(settings),
+            pdf_workers=pdf_workers,
         ),
         daemon=True,
     ).start()
