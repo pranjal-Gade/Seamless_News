@@ -1,0 +1,599 @@
+{% extends 'base.html' %}
+{% block title %}User Settings — Seamless{% endblock %}
+
+{# ══════════════════════════════════════════════════════════════
+   MACROS
+══════════════════════════════════════════════════════════════ #}
+
+{% macro _schedule_summary(sched) %}
+{%- set stype = sched.get('type', '') if sched else '' -%}
+{%- if not sched or not stype -%}Not set
+{%- elif stype == 'interval' -%}Every {{ sched.get('interval_hours','1') }} {{ sched.get('interval_unit','hours') }}
+{%- elif stype == 'daily' -%}Daily @ {{ sched.get('time_hhmm','08:00') }}
+{%- elif stype == 'weekly' -%}
+  {%- set active_days = [] -%}
+  {%- for dv in ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'] -%}
+    {%- if sched.get('weekly_day_' + dv) -%}
+      {%- set _ = active_days.append(dv[:3]|capitalize) -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if active_days -%}{{ active_days|join(', ') }}{%- else -%}Weekly{%- endif -%}
+{%- else -%}Configured
+{%- endif -%}
+{% endmacro %}
+
+{% macro _render_schedule_inline(cat_key, sched) %}
+{%- set sched  = sched if sched else {} -%}
+{%- set stype  = sched.get('type',           'interval') -%}
+{%- set ihours = sched.get('interval_hours', '1') -%}
+{%- set iunit  = sched.get('interval_unit',  'hours') -%}
+{%- set stime  = sched.get('time_hhmm',      '08:00') -%}
+
+<div class="sched-row" data-cat="{{ cat_key }}" style="margin-top:12px;">
+
+  <!-- Type pill buttons -->
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+    {% for tv, tl in [('interval','Interval'),('daily','Daily'),('weekly','Weekly')] %}
+    <button type="button"
+            class="stype-btn {{ 'stype-active' if stype == tv else '' }}"
+            data-cat="{{ cat_key }}" data-type="{{ tv }}"
+            onclick="setSchedType('{{ cat_key }}','{{ tv }}')">
+      {{ tl }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <!-- Interval -->
+  <div id="sched-interval-{{ cat_key }}"
+       style="display:{{ 'flex' if stype == 'interval' else 'none' }};align-items:center;gap:8px;flex-wrap:wrap;">
+    <span style="font-size:0.82rem;color:var(--text-muted);white-space:nowrap;">Run every</span>
+    <input type="number" name="sched_{{ cat_key }}_interval_hours"
+           min="1" max="999" value="{{ ihours }}"
+           style="width:68px;padding:7px 10px;border:1px solid #dce4f5;
+                  border-radius:8px;font-size:0.88rem;outline:none;font-weight:700;color:var(--text-dark);">
+    <select name="sched_{{ cat_key }}_interval_unit"
+            style="padding:7px 10px;border:1px solid #dce4f5;border-radius:8px;
+                   font-size:0.84rem;outline:none;background:#fff;font-weight:600;color:var(--text-dark);">
+      <option value="minutes" {{ 'selected' if iunit == 'minutes' else '' }}>Minutes</option>
+      <option value="hours"   {{ 'selected' if iunit == 'hours'   else '' }}>Hours</option>
+    </select>
+  </div>
+
+  <!-- Daily -->
+  <div id="sched-daily-{{ cat_key }}"
+       style="display:{{ 'flex' if stype == 'daily' else 'none' }};align-items:center;gap:8px;">
+    <span style="font-size:0.82rem;color:var(--text-muted);white-space:nowrap;">Every day at</span>
+    <input type="time" name="sched_{{ cat_key }}_time" value="{{ stime }}"
+           style="padding:7px 10px;border:1px solid #dce4f5;border-radius:8px;
+                  font-size:0.88rem;outline:none;font-weight:700;color:var(--text-dark);">
+  </div>
+
+  <!-- Weekly — multi-day with per-day time -->
+  <div id="sched-weekly-{{ cat_key }}"
+       style="display:{{ 'flex' if stype == 'weekly' else 'none' }};flex-direction:column;gap:6px;">
+    {% for dv, dl in [('monday','Monday'),('tuesday','Tuesday'),('wednesday','Wednesday'),
+                      ('thursday','Thursday'),('friday','Friday'),
+                      ('saturday','Saturday'),('sunday','Sunday')] %}
+    {%- set is_day_active = sched.get('weekly_day_' + dv, false) -%}
+    {%- set day_time = sched.get('weekly_time_' + dv, '08:00') -%}
+    <div class="week-day-row {{ 'day-active' if is_day_active else '' }}"
+         id="dayrow-{{ cat_key }}-{{ dv }}">
+      <input type="checkbox"
+             name="sched_{{ cat_key }}_weekly_day_{{ dv }}"
+             value="{{ dv }}"
+             {{ 'checked' if is_day_active else '' }}
+             onchange="toggleWeekDay('{{ cat_key }}','{{ dv }}',this)"
+             style="width:15px;height:15px;accent-color:var(--navy);flex-shrink:0;cursor:pointer;">
+      <label style="font-size:0.83rem;font-weight:600;color:var(--text-dark);
+                    width:90px;cursor:pointer;flex-shrink:0;"
+             onclick="this.previousElementSibling.click()">{{ dl }}</label>
+      <span class="wd-time-label"
+            style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;
+                   opacity:{{ '1' if is_day_active else '0.35' }};transition:opacity 0.15s;">at</span>
+      <input type="time"
+             name="sched_{{ cat_key }}_weekly_time_{{ dv }}"
+             value="{{ day_time }}"
+             style="padding:5px 9px;border:1px solid #dce4f5;border-radius:7px;
+                    font-size:0.84rem;font-weight:700;color:var(--text-dark);outline:none;
+                    opacity:{{ '1' if is_day_active else '0.35' }};
+                    pointer-events:{{ 'auto' if is_day_active else 'none' }};
+                    transition:opacity 0.15s;">
+    </div>
+    {% endfor %}
+    <div id="no-days-{{ cat_key }}"
+         style="display:none;font-size:0.78rem;color:#97630a;background:#fff8e8;
+                border:1px solid #f3dfab;border-radius:8px;padding:8px 12px;margin-top:2px;">
+      ⚠ Select at least one day
+    </div>
+  </div>
+
+  <input type="hidden" name="sched_{{ cat_key }}_type"
+         value="{{ stype }}" id="sched-type-hidden-{{ cat_key }}">
+</div>
+{% endmacro %}
+
+
+{% block content %}
+<div class="page-container">
+
+  <div class="page-head">
+    <div class="breadcrumb-row">
+      <a href="{{ url_for('main.home') }}">Dashboard</a>
+      <span class="sep">›</span>
+      <span>Settings</span>
+    </div>
+    <h1>User Settings</h1>
+    <p>Control scheduling, publishing preferences, and content filters.</p>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        {% for category, message in messages %}
+          {% if category == 'success' %}
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;background:#eefaf3;border:1px solid #c9ecd7;color:#17623c;font-size:0.92rem;font-weight:600;">✅ {{ message }}</div>
+          {% elif category == 'danger' %}
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;background:#fff1f1;border:1px solid #f7c9c9;color:#9f1f1f;font-size:0.92rem;font-weight:600;">❌ {{ message }}</div>
+          {% else %}
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;background:#fff8e8;border:1px solid #f3dfab;color:#97630a;font-size:0.92rem;font-weight:600;">⚠️ {{ message }}</div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST" action="{{ url_for('main.user_settings') }}">
+
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:stretch;">
+
+      <!-- ══ LEFT · Categories & Scheduling ══ -->
+      <div class="table-card" style="overflow:visible;display:flex;flex-direction:column;">
+        <div class="table-card-header">
+          <div>
+            <div class="table-card-title">📂 Categories &amp; Scheduling</div>
+            <div class="table-card-subtitle">Choose which categories to monitor and set a run schedule for each.</div>
+          </div>
+        </div>
+        <div style="padding:20px 24px 24px;flex:1;display:flex;flex-direction:column;">
+
+          <!-- Run All Together toggle -->
+          <div style="display:flex;align-items:center;justify-content:space-between;
+                      padding:12px 16px;background:#f0f4fb;border-radius:12px;
+                      border:1.5px solid var(--navy);margin-bottom:18px;">
+            <div>
+              <div style="font-size:0.88rem;font-weight:800;color:var(--text-dark);">
+                🔄 Run All Together
+              </div>
+              <div style="font-size:0.76rem;color:var(--text-muted);margin-top:1px;">
+                One global schedule triggers every active category simultaneously.
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" name="sync_all_schedules" value="1" id="syncAllToggle"
+                {{ 'checked' if settings.sync_all_schedules else '' }}
+                onchange="toggleSyncMode()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Global schedule box -->
+          <div id="globalScheduleBox"
+               style="display:{{ 'block' if settings.sync_all_schedules else 'none' }};
+                      margin-bottom:18px;">
+            <div style="padding:14px 16px;border-radius:12px;border:1px solid var(--border);background:#fff;">
+              <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);
+                          text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">
+                🌐 Global Schedule
+              </div>
+              {{ _render_schedule_inline('global', settings.get('schedule_global') or {}) }}
+            </div>
+          </div>
+
+          <!-- All 5 category rows: All News first, then 4 specific -->
+          {% set all_cat_defs = [
+            ('all',          '🌐', 'All News',           'Every article regardless of category'),
+            ('agricultural', '🌾', 'Agricultural News',  'Farming, crops, fertilizers, agri markets'),
+            ('weather',      '⛅', 'Weather News',        'Climate, monsoon, temperature updates'),
+            ('financial',    '📈', 'Financial News',      'Markets, stocks, economy, commodities'),
+            ('energy',       '⚡', 'Energy News',         'Oil, gas, power, renewables'),
+          ] %}
+
+          {% set active_cats = (settings.content_categories or 'all').split(',') %}
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            {% for cat_key, cat_icon, cat_label, cat_desc in all_cat_defs %}
+            {%- set cat_sched = settings.get('schedule_' + cat_key) or {} -%}
+            {%- set is_active = cat_key in active_cats -%}
+
+            <div id="catcard-{{ cat_key }}"
+                 style="border-radius:12px;
+                        border:1px solid {{ 'var(--navy)' if is_active else 'var(--border)' }};
+                        background:{{ '#f6f9ff' if is_active else '#fff' }};
+                        transition:all 0.18s;overflow:visible;">
+
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;"
+                   onclick="toggleCatExpand('{{ cat_key }}',this)">
+
+                <input type="checkbox" name="content_categories" value="{{ cat_key }}"
+                  {{ 'checked' if is_active else '' }}
+                  class="cat-checkbox" data-val="{{ cat_key }}"
+                  style="width:15px;height:15px;accent-color:var(--navy);flex-shrink:0;"
+                  onclick="event.stopPropagation()"
+                  onchange="handleCatChange('{{ cat_key }}')">
+
+                <span style="font-size:1rem;flex-shrink:0;">{{ cat_icon }}</span>
+
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.87rem;font-weight:700;color:var(--text-dark);">{{ cat_label }}</div>
+                  <div style="font-size:0.73rem;color:var(--text-muted);margin-top:1px;white-space:nowrap;
+                              overflow:hidden;text-overflow:ellipsis;">{{ cat_desc }}</div>
+                </div>
+
+                <span id="badge-{{ cat_key }}"
+                      style="font-size:0.7rem;padding:3px 8px;border-radius:20px;white-space:nowrap;
+                             background:{{ '#e0e9ff' if is_active else '#f0f2f7' }};
+                             color:{{ 'var(--navy)' if is_active else 'var(--text-muted)' }};
+                             font-weight:700;flex-shrink:0;">
+                  {{ _schedule_summary(cat_sched) }}
+                </span>
+
+                <span id="chevron-{{ cat_key }}"
+                      style="font-size:0.72rem;color:var(--text-muted);
+                             transition:transform 0.2s;flex-shrink:0;">▼</span>
+              </div>
+
+              <!-- Expandable schedule panel -->
+              <div id="catpanel-{{ cat_key }}"
+                   style="display:none;padding:0 16px 16px;">
+                <div style="border-top:1px solid var(--border);padding-top:12px;">
+                  {{ _render_schedule_inline(cat_key, cat_sched) }}
+                </div>
+              </div>
+
+            </div>
+
+            {# Visual separator after All News row #}
+            {% if cat_key == 'all' %}
+            <div style="height:1px;background:var(--border);margin:2px 0;"></div>
+            {% endif %}
+
+            {% endfor %}
+          </div>
+
+          <!-- How it works -->
+          <div style="margin-top:20px;padding:15px 16px;background:#f8f9fc;
+                      border-radius:11px;border:1px solid var(--border);">
+            <div style="font-size:0.73rem;font-weight:700;color:var(--text-muted);
+                        text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">
+              How it works
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <span style="font-size:0.82rem;font-weight:800;color:var(--navy);
+                             background:#e0e9ff;border-radius:50%;width:20px;height:20px;
+                             display:flex;align-items:center;justify-content:center;flex-shrink:0;
+                             margin-top:1px;">1</span>
+                <span style="font-size:0.82rem;color:var(--text-muted);line-height:1.5;">
+                  <strong style="color:var(--text-dark);">Select categories</strong> — tick one or more news types, or choose <em>All News</em> to capture everything. News is matched using built-in keyword sets per category.
+                </span>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <span style="font-size:0.82rem;font-weight:800;color:var(--navy);
+                             background:#e0e9ff;border-radius:50%;width:20px;height:20px;
+                             display:flex;align-items:center;justify-content:center;flex-shrink:0;
+                             margin-top:1px;">2</span>
+                <span style="font-size:0.82rem;color:var(--text-muted);line-height:1.5;">
+                  <strong style="color:var(--text-dark);">Set a schedule</strong> — click the <em>▼</em> arrow on any row to configure its timing. Choose Interval (e.g. every 2 hours), Daily (fixed time), or Weekly (pick days and set a time for each).
+                </span>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <span style="font-size:0.82rem;font-weight:800;color:var(--navy);
+                             background:#e0e9ff;border-radius:50%;width:20px;height:20px;
+                             display:flex;align-items:center;justify-content:center;flex-shrink:0;
+                             margin-top:1px;">3</span>
+                <span style="font-size:0.82rem;color:var(--text-muted);line-height:1.5;">
+                  <strong style="color:var(--text-dark);">Run all together</strong> — enable <em>Run All Together</em> to override per-category schedules and run every active category on one shared global schedule.
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /left card -->
+
+
+      <!-- ══ RIGHT · Publishing Mode + Email ══ -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+
+        <div class="table-card" style="overflow:visible;">
+          <div class="table-card-header">
+            <div>
+              <div class="table-card-title">📤 Publishing Mode</div>
+              <div class="table-card-subtitle">How should articles be published?</div>
+            </div>
+          </div>
+          <div style="padding:20px;">
+
+            <label style="cursor:pointer;display:block;margin-bottom:10px;">
+              <input type="radio" name="publish_mode" value="auto"
+                {{ 'checked' if (settings.publish_mode or 'manual') == 'auto' else '' }}
+                style="display:none;" class="pub-radio" onchange="updatePublishUI()">
+              <div class="pub-option {{ 'pub-selected' if (settings.publish_mode or 'manual') == 'auto' else '' }}"
+                style="padding:14px 16px;border-radius:12px;border:1px solid var(--border);
+                       background:#fff;transition:all 0.18s;cursor:pointer;"
+                onclick="selectPubMode('auto')">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;">
+                  <span style="font-size:1.1rem;">⚡</span>
+                  <span style="font-size:0.9rem;font-weight:800;color:var(--text-dark);">Automatic</span>
+                </div>
+                <div style="font-size:0.79rem;color:var(--text-muted);line-height:1.5;padding-left:28px;">
+                  Scraped articles are published instantly. Email contains a <strong>link</strong> to the PDF.
+                </div>
+              </div>
+            </label>
+
+            <label style="cursor:pointer;display:block;">
+              <input type="radio" name="publish_mode" value="manual"
+                {{ 'checked' if (settings.publish_mode or 'manual') == 'manual' else '' }}
+                style="display:none;" class="pub-radio" onchange="updatePublishUI()">
+              <div class="pub-option {{ 'pub-selected' if (settings.publish_mode or 'manual') == 'manual' else '' }}"
+                style="padding:14px 16px;border-radius:12px;border:1px solid var(--border);
+                       background:#fff;transition:all 0.18s;cursor:pointer;"
+                onclick="selectPubMode('manual')">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;">
+                  <span style="font-size:1.1rem;">👤</span>
+                  <span style="font-size:0.9rem;font-weight:800;color:var(--text-dark);">Manual</span>
+                </div>
+                <div style="font-size:0.79rem;color:var(--text-muted);line-height:1.5;padding-left:28px;">
+                  Scraped articles wait in Non-Published News for your review. PDFs are <strong>attached</strong> to emails.
+                </div>
+              </div>
+            </label>
+
+            <div id="auto-email-note"
+                 style="display:{{ 'flex' if (settings.publish_mode or 'manual') == 'auto' else 'none' }};
+                        margin-top:12px;gap:9px;padding:10px 13px;background:#eef5ff;
+                        border:1px solid #cadcff;border-radius:9px;color:#2350b8;font-size:0.79rem;">
+              <span>📧</span>
+              <span>Email will include a <strong>View PDF</strong> link instead of an attachment.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card" style="overflow:visible;">
+          <div class="table-card-header">
+            <div>
+              <div class="table-card-title">📧 Email Preferences</div>
+              <div class="table-card-subtitle">Who receives the daily digest?</div>
+            </div>
+          </div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+
+            <div>
+              <label style="font-size:0.73rem;font-weight:700;color:var(--text-muted);
+                            text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:5px;">
+                Primary Recipient
+              </label>
+              <input type="email" name="email_recipient"
+                value="{{ settings.email_recipient or 'niyati.b@seamlessautomations.com' }}"
+                style="width:100%;box-sizing:border-box;padding:10px 13px;border:1px solid #dce4f5;
+                       border-radius:9px;font-size:0.87rem;outline:none;color:var(--text-dark);">
+            </div>
+
+            <div>
+              <label style="font-size:0.73rem;font-weight:700;color:var(--text-muted);
+                            text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:5px;">
+                CC <span style="font-weight:500;opacity:0.7;">(comma-separated)</span>
+              </label>
+              <input type="text" name="email_cc" value="{{ settings.email_cc or '' }}"
+                placeholder="manager@company.com, team@company.com"
+                style="width:100%;box-sizing:border-box;padding:10px 13px;border:1px solid #dce4f5;
+                       border-radius:9px;font-size:0.87rem;outline:none;color:var(--text-dark);">
+            </div>
+
+            <div>
+              <label style="font-size:0.73rem;font-weight:700;color:var(--text-muted);
+                            text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:5px;">
+                Subject Prefix
+              </label>
+              <input type="text" name="email_subject_prefix"
+                value="{{ settings.email_subject_prefix or 'Daily News Alert' }}"
+                style="width:100%;box-sizing:border-box;padding:10px 13px;border:1px solid #dce4f5;
+                       border-radius:9px;font-size:0.87rem;outline:none;color:var(--text-dark);">
+            </div>
+
+            <div style="padding:12px 14px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:0.86rem;font-weight:700;color:var(--text-dark);">Send on Publish</div>
+                  <div style="font-size:0.73rem;color:var(--text-muted);margin-top:2px;">Auto-send when articles are published</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" name="email_on_publish" value="1"
+                    {{ 'checked' if settings.email_on_publish else 'checked' }}>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /right column -->
+    </div><!-- /grid -->
+
+    <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:12px;">
+      <a href="{{ url_for('main.home') }}" class="btn btn-ghost" style="padding:11px 24px;">Cancel</a>
+      <button type="submit" class="btn btn-primary" style="padding:11px 28px;font-size:0.95rem;">
+        💾 Save Settings
+      </button>
+    </div>
+
+  </form>
+</div>
+
+
+<style>
+.toggle-switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:#d1d5db;border-radius:999px;transition:.22s;}
+.toggle-slider::before{content:"";position:absolute;width:20px;height:20px;left:3px;bottom:3px;
+  background:#fff;border-radius:50%;transition:.22s;box-shadow:0 1px 4px rgba(0,0,0,.18);}
+.toggle-switch input:checked+.toggle-slider{background:var(--navy);}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px);}
+.pub-selected{border-color:var(--navy)!important;background:#f0f4fb!important;
+  box-shadow:0 0 0 2px rgba(26,42,108,.10);}
+
+/* Schedule type pill buttons — use class for active state, no inline style overrides */
+.stype-btn{
+  padding:5px 12px;border-radius:20px;font-size:0.76rem;font-weight:700;
+  border:1px solid var(--border);cursor:pointer;transition:all 0.15s;
+  background:#f8f9fc;color:var(--text-muted);
+}
+.stype-btn.stype-active{
+  background:var(--navy);color:#fff;border-color:var(--navy);
+}
+
+/* Weekly multi-day rows */
+.week-day-row{
+  display:flex;align-items:center;gap:10px;padding:7px 10px;
+  border:1px solid var(--border);border-radius:9px;
+  background:#fff;transition:background 0.15s, border-color 0.15s;
+}
+.week-day-row.day-active{
+  background:#f0f4fb;border-color:var(--navy);
+}
+
+.chevron-open{transform:rotate(180deg);}
+</style>
+
+<script>
+function toggleSyncMode(){
+  const on = document.getElementById('syncAllToggle').checked;
+  document.getElementById('globalScheduleBox').style.display = on ? 'block' : 'none';
+}
+
+function toggleCatExpand(catKey){
+  const panel   = document.getElementById('catpanel-' + catKey);
+  const chevron = document.getElementById('chevron-' + catKey);
+  const open    = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  chevron.classList.toggle('chevron-open', !open);
+}
+
+function handleCatChange(val){
+  const cb = document.querySelector(`.cat-checkbox[data-val="${val}"]`);
+  if(val === 'all' && cb.checked){
+    document.querySelectorAll('.cat-checkbox').forEach(c => {
+      if(c.dataset.val !== 'all'){ c.checked = false; updateCatCard(c.dataset.val, false); }
+    });
+  } else if(val !== 'all' && cb.checked){
+    const allCb = document.querySelector('.cat-checkbox[data-val="all"]');
+    if(allCb){ allCb.checked = false; updateCatCard('all', false); }
+  }
+  updateCatCard(val, cb.checked);
+}
+
+function updateCatCard(val, active){
+  const card  = document.getElementById('catcard-' + val);
+  const badge = document.getElementById('badge-'   + val);
+  if(!card) return;
+  card.style.borderColor = active ? 'var(--navy)' : 'var(--border)';
+  card.style.background  = active ? '#f6f9ff'     : '#fff';
+  if(badge){
+    badge.style.background = active ? '#e0e9ff' : '#f0f2f7';
+    badge.style.color      = active ? 'var(--navy)' : 'var(--text-muted)';
+  }
+}
+
+/* ── Fixed: uses classList.toggle so only the clicked button gets .stype-active ── */
+function setSchedType(catKey, type){
+  document.getElementById('sched-type-hidden-' + catKey).value = type;
+
+  ['interval','daily','weekly'].forEach(t => {
+    const el = document.getElementById('sched-' + t + '-' + catKey);
+    if(!el) return;
+    if(t === 'weekly'){
+      el.style.display = type === 'weekly' ? 'flex' : 'none';
+      if(type === 'weekly') el.style.flexDirection = 'column';
+    } else {
+      el.style.display = type === t ? 'flex' : 'none';
+    }
+  });
+
+  /* Clear inline styles so .stype-active CSS class takes full control */
+  document.querySelectorAll(`.stype-btn[data-cat="${catKey}"]`).forEach(btn => {
+    btn.style.background  = '';
+    btn.style.color       = '';
+    btn.style.borderColor = '';
+    btn.classList.toggle('stype-active', btn.dataset.type === type);
+  });
+
+  updateBadge(catKey);
+}
+
+/* ── Weekly multi-day toggle ── */
+function toggleWeekDay(catKey, dv, cb){
+  const row = document.getElementById('dayrow-' + catKey + '-' + dv);
+  row.classList.toggle('day-active', cb.checked);
+
+  const timeInput = row.querySelector('input[type=time]');
+  const label     = row.querySelector('.wd-time-label');
+  timeInput.style.opacity       = cb.checked ? '1'    : '0.35';
+  timeInput.style.pointerEvents = cb.checked ? 'auto' : 'none';
+  if(label) label.style.opacity = cb.checked ? '1'    : '0.35';
+
+  const anyChecked = [...document.querySelectorAll(
+    `#sched-weekly-${catKey} input[type=checkbox]`
+  )].some(c => c.checked);
+  const warn = document.getElementById('no-days-' + catKey);
+  if(warn) warn.style.display = anyChecked ? 'none' : 'block';
+
+  updateBadge(catKey);
+}
+
+function updateBadge(catKey){
+  const badge = document.getElementById('badge-' + catKey);
+  if(!badge) return;
+  const type = document.getElementById('sched-type-hidden-' + catKey)?.value || 'interval';
+  let text = '';
+  if(type === 'interval'){
+    const n = document.querySelector(`input[name="sched_${catKey}_interval_hours"]`)?.value || '1';
+    const u = document.querySelector(`select[name="sched_${catKey}_interval_unit"]`)?.value || 'hours';
+    text = `Every ${n} ${u}`;
+  } else if(type === 'daily'){
+    const t = document.querySelector(`input[name="sched_${catKey}_time"]`)?.value || '08:00';
+    text = `Daily @ ${t}`;
+  } else if(type === 'weekly'){
+    const activeDays = [];
+    ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'].forEach(dv => {
+      const cb = document.querySelector(`input[name="sched_${catKey}_weekly_day_${dv}"]`);
+      if(cb && cb.checked) activeDays.push(dv.charAt(0).toUpperCase() + dv.slice(1,3));
+    });
+    text = activeDays.length ? activeDays.join(', ') : 'Weekly';
+  }
+  badge.textContent = text;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  ['all','agricultural','weather','financial','energy','global'].forEach(cat => {
+    document.querySelectorAll(`[name^="sched_${cat}_"]`).forEach(el => {
+      el.addEventListener('change', () => updateBadge(cat));
+      el.addEventListener('input',  () => updateBadge(cat));
+    });
+  });
+});
+
+function selectPubMode(val){
+  document.querySelectorAll('.pub-radio').forEach(r => r.checked = r.value === val);
+  document.querySelectorAll('.pub-option').forEach(el => el.classList.remove('pub-selected'));
+  event.currentTarget.classList.add('pub-selected');
+  updatePublishUI();
+}
+function updatePublishUI(){
+  const r = document.querySelector('.pub-radio:checked');
+  document.getElementById('auto-email-note').style.display =
+    r && r.value === 'auto' ? 'flex' : 'none';
+}
+</script>
+{% endblock %}

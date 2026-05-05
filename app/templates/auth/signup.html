@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up | Seamless News Scraper{% endblock %}
+
+{% block content %}
+<div class="auth-main">
+    <div class="auth-container reverse-layout">
+        <div class="auth-left-panel">
+            <div class="auth-left-content">
+                <div class="auth-logo-box">
+                    <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="Seamless Logo">
+                </div>
+                <h1>Hello, Friend!</h1>
+                <p>Register your personal details and start your journey with us.</p>
+                <a href="{{ url_for('auth.login') }}" class="ghost-btn">SIGN IN</a>
+            </div>
+        </div>
+
+        <div class="auth-right-panel">
+            <div class="auth-form-box">
+
+                {# Only show messages tagged for the signup page #}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% for category, message in messages %}
+                    {% if category in ['signup-danger', 'signup-success', 'signup-info', 'signup-warning'] %}
+                      <div class="alert alert-{{ category.replace('signup-', '') }}">{{ message }}</div>
+                    {% endif %}
+                  {% endfor %}
+                {% endwith %}
+
+                <h2>Create Account</h2>
+                <p class="auth-subtext">Use your email for registration</p>
+
+                <form method="POST" class="auth-modern-form">
+                    <input type="text" name="name" placeholder="Name" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="password" name="password" placeholder="Password" minlength="6" required>
+                    <button type="submit" class="primary-auth-btn">SIGN UP</button>
+                </form>
+
+                <div class="switch-text">
+                    Already have an account?
+                    <a href="{{ url_for('auth.login') }}">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
