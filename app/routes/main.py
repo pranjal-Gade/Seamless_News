@@ -225,7 +225,7 @@ def _get_mail_cfg() -> dict:
         "MAIL_SERVER": cfg.get("MAIL_SERVER", "smtp.gmail.com"),
         "MAIL_PORT": cfg.get("MAIL_PORT", 587),
         "MAIL_USE_TLS": cfg.get("MAIL_USE_TLS", True),
-        "MAIL_USER  ME": cfg.get("MAIL_USERNAME", ""),
+        "MAIL_USERNAME": cfg.get("MAIL_USERNAME", ""),
         "MAIL_PASSWORD": cfg.get("MAIL_PASSWORD", ""),
         "MAIL_FROM": cfg.get("MAIL_FROM", cfg.get("MAIL_USERNAME", "")),
         "BASE_URL": cfg.get("BASE_URL", "http://127.0.0.1:5000"),
