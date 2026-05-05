@@ -1655,7 +1655,7 @@ def home():
         commodity_summary=commodity_summary,
         featured_cards=featured_cards,
         recent_searches=recent_searches,
-        metal_cards=metal_cards
+        metal_cards=metal_cards,
         selected_featured_agri=selected_featured_agri,
         available_featured_agri=available_featured_agri,
     )
