@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Environments
 .processor/
 processor/
@@ -46,11 +47,17 @@ MANIFEST
 .DS_Store
 Thumbs.db
 =======
+=======
+>>>>>>> e73dacd11c006fb58a3bae797fc94b52320c1ea9
 __pycache__/
 *.pyc
 .env
 .env.*
 *.egg-info/
 .DS_Store
+<<<<<<< HEAD
+process/
+>>>>>>> e73dacd11c006fb58a3bae797fc94b52320c1ea9
+=======
 process/
 >>>>>>> e73dacd11c006fb58a3bae797fc94b52320c1ea9
