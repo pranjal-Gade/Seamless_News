@@ -1,0 +1,10 @@
+# Environments
+.processor/
+processor/
+processor/
+processor/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
