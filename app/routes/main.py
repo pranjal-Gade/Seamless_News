@@ -480,8 +480,227 @@ def init_scheduler(app):
 # EMAIL HELPERS
 # ════════════════════════════════════════════════════════════════
 
+# def _render_email_template(template_dir: str, news_items: list, date_label: str) -> str:
+#     from jinja2 import Environment, FileSystemLoader
+#     env = Environment(loader=FileSystemLoader(template_dir))
+#     tmpl = env.get_template("email_template.html")
+#     return tmpl.render(news_items=news_items, date_label=date_label)
+
+
+# def _smtp_send(mail_cfg: dict, msg, recipients: list):
+#     with smtplib.SMTP(mail_cfg["MAIL_SERVER"], mail_cfg["MAIL_PORT"]) as s:
+#         s.ehlo()
+#         if mail_cfg.get("MAIL_USE_TLS", True):
+#             s.starttls()
+#         s.login(mail_cfg["MAIL_USERNAME"], mail_cfg["MAIL_PASSWORD"])
+#         s.sendmail(msg["From"], recipients, msg.as_string())
+#         print(f"[EMAIL] Sent to: {recipients}")
+
+
+# def _send_email_bg(articles, pub_ids, pdf_paths, settings, mail_cfg, template_dir):
+#     to = settings.get("email_recipient") or "niyati.b@seamlessautomations.com"
+#     cc_raw = settings.get("email_cc") or ""
+#     cc = [e.strip() for e in cc_raw.split(",") if e.strip()]
+#     pfx = settings.get("email_subject_prefix") or "Daily News Alert"
+#     mode = settings.get("publish_mode", "manual")
+#     date_label = datetime.now().strftime("%d %B %Y")
+
+#     if mode == "auto":
+#         base = mail_cfg.get("BASE_URL", "http://127.0.0.1:5000")
+#         items = [
+#             dict(a, pdf_view_url=f"{base}/download-pdf/{pid}")
+#             for a, pid in zip(articles, pub_ids)
+#         ]
+#         html_body = _render_email_template(template_dir, items, date_label)
+#     else:
+#         html_body = _render_email_template(template_dir, list(articles), date_label)
+
+#     msg = MIMEMultipart("mixed")
+#     msg["Subject"] = f"{pfx} - {date_label}"
+#     msg["From"] = mail_cfg.get("MAIL_FROM", mail_cfg.get("MAIL_USERNAME", ""))
+#     msg["To"] = to
+#     if cc:
+#         msg["Cc"] = ", ".join(cc)
+
+#     msg.attach(MIMEText(html_body, "html", "utf-8"))
+
+#     if mode != "auto":
+#         for p in pdf_paths:
+#             if p and os.path.exists(p):
+#                 with open(p, "rb") as f:
+#                     part = MIMEBase("application", "octet-stream")
+#                     part.set_payload(f.read())
+#                 encoders.encode_base64(part)
+#                 part.add_header(
+#                     "Content-Disposition",
+#                     f'attachment; filename="{os.path.basename(p)}"'
+#                 )
+#                 msg.attach(part)
+
+#     _smtp_send(mail_cfg, msg, [to] + cc)
+
+
+# # ════════════════════════════════════════════════════════════════
+# # BACKGROUND: PDF GENERATION + EMAIL
+# # ════════════════════════════════════════════════════════════════
+
+# def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder, settings, pdf_workers=3):
+#     """
+#     Generate PDF from DATABASE article content,
+#     update pdf_path in DB, then send email.
+#     """
+#     import sys
+    
+#     # IMMEDIATE logging - test if thread even starts
+#     print(f"[BG] THREAD STARTED - articles type: {type(articles)}, count: {len(articles)}", flush=True)
+#     sys.stderr.write(f"[BG] STDERR: THREAD STARTED\n")
+#     sys.stderr.flush()
+    
+#     # Ensure stdout is flushed immediately for debugging
+#     print(f"[BG] PDF+EMAIL thread started with {len(articles)} articles", flush=True)
+    
+#     # Check first article type
+#     if articles:
+#         first_art = articles[0]
+#         print(f"[BG] First article type: {type(first_art)}", flush=True)
+#         if isinstance(first_art, (tuple, list)):
+#             print(f"[BG] WARNING: articles are tuples/lists, not converting (cursor.fetchall with dictionary=True should have returned dicts)", flush=True)
+#         elif isinstance(first_art, dict):
+#             print(f"[BG] ✓ First article is dict with keys: {list(first_art.keys())[:5]}", flush=True)
+    
+#     try:
+#         from app.pdf_generator import generate_pdf_from_article
+#         print(f"[BG] Successfully imported pdf_generator", flush=True)
+#     except ImportError as e:
+#         print(f"[BG] Cannot import app.pdf_generator: {e}", flush=True)
+#         traceback.print_exc()
+#         generate_pdf_from_article = None
+
+#     pdf_paths = []
+
+#     os.makedirs(pdf_folder, exist_ok=True)
+#     print(f"[BG] PDF folder ready: {pdf_folder}", flush=True)
+
+#     def _generate_and_store_pdf(article, pub_id):
+#         safe_name = f"news_{pub_id}.pdf"
+#         out_path = os.path.join(pdf_folder, safe_name)
+
+#         print("=" * 80, flush=True)
+#         print(f"[BG] Starting PDF generation for pub_id={pub_id}", flush=True)
+        
+#         # Validate article data structure
+#         if not isinstance(article, dict):
+#             print(f"[BG ERROR] article is not a dict: {type(article)}", flush=True)
+#             return None
+        
+#         required_keys = ['news_headline', 'news_text', 'news_type', 'news_url', 'keywords']
+#         missing_keys = [k for k in required_keys if k not in article]
+#         if missing_keys:
+#             print(f"[BG WARNING] Missing keys in article: {missing_keys}", flush=True)
+#             print(f"[BG] Available keys: {list(article.keys())}", flush=True)
+        
+#         headline = article.get('news_headline', 'Untitled')
+#         print(f"[BG] Headline     : {str(headline)[:60]}", flush=True)
+#         print(f"[BG] Text length  : {len(str(article.get('news_text', '')))} chars", flush=True)
+#         print(f"[BG] Output path  : {out_path}", flush=True)
+
+#         pdf_ok = False
+
+#         if generate_pdf_from_article is None:
+#             print(f"[BG] pdf_generator import failed for pub_id={pub_id}. Skipping PDF.", flush=True)
+#         else:
+#             try:
+#                 pdf_ok = generate_pdf_from_article(article_data=article, output_path=out_path)
+#                 print(f"[BG] generate_pdf_from_article returned {pdf_ok} for pub_id={pub_id}", flush=True)
+#             except Exception as e:
+#                 print(f"[BG] PDF generation exception for pub_id={pub_id}: {type(e).__name__}: {e}", flush=True)
+#                 traceback.print_exc()
+#                 pdf_ok = False
+
+#         if pdf_ok and os.path.exists(out_path):
+#             try:
+#                 size = os.path.getsize(out_path)
+#                 print(f"[BG] PDF file exists for pub_id={pub_id}, size={size} bytes", flush=True)
+
+#                 c = _raw_conn(db_cfg)
+#                 cur = c.cursor()
+#                 cur.execute(
+#                     "UPDATE published_news SET pdf_path=%s WHERE id=%s",
+#                     (safe_name, pub_id),
+#                 )
+#                 c.commit()
+#                 cur.close()
+#                 c.close()
+
+#                 print(f"[BG] DB updated with pdf_path={safe_name} for pub_id={pub_id}", flush=True)
+#                 return out_path
+
+#             except Exception as e:
+#                 print(f"[BG] DB update failed for pub_id={pub_id}: {e}", flush=True)
+#                 traceback.print_exc()
+#                 return None
+#         else:
+#             print(f"[BG] PDF failed for pub_id={pub_id}", flush=True)
+#             return None
+
+#     try:
+#         if pdf_workers and pdf_workers > 1 and len(articles) > 1:
+#             print(f"[BG] Generating {len(articles)} PDFs with {pdf_workers} workers", flush=True)
+#             with concurrent.futures.ThreadPoolExecutor(max_workers=pdf_workers) as executor:
+#                 futures = [executor.submit(_generate_and_store_pdf, art, pid)
+#                            for art, pid in zip(articles, pub_ids)]
+#                 for future in concurrent.futures.as_completed(futures):
+#                     try:
+#                         pdf_paths.append(future.result())
+#                     except Exception as e:
+#                         print(f"[BG] PDF task failed: {e}", flush=True)
+#                         traceback.print_exc()
+#                         pdf_paths.append(None)
+#         else:
+#             print(f"[BG] Generating {len(articles)} PDFs sequentially", flush=True)
+#             for art, pid in zip(articles, pub_ids):
+#                 pdf_paths.append(_generate_and_store_pdf(art, pid))
+
+#         if not settings.get("email_on_publish", 1):
+#             print("[BG] email_on_publish=0 — skipping email.", flush=True)
+#             return
+
+#         try:
+#             _send_email_bg(
+#                 articles=articles,
+#                 pub_ids=pub_ids,
+#                 pdf_paths=pdf_paths,
+#                 settings=settings,
+#                 mail_cfg=mail_cfg,
+#                 template_dir=template_dir,
+#             )
+#         except Exception as e:
+#             print(f"[BG] Email send failed: {e}", flush=True)
+#             traceback.print_exc()
+#             return
+
+#         try:
+#             c = _raw_conn(db_cfg)
+#             cur = c.cursor()
+#             for pid in pub_ids:
+#                 cur.execute(
+#                     "UPDATE published_news SET email_sent=1, email_sent_at=NOW() WHERE id=%s",
+#                     (pid,),
+#                 )
+#             c.commit()
+#             cur.close()
+#             c.close()
+#             print(f"[BG] email_sent marked for {len(pub_ids)} articles.", flush=True)
+#         except Exception as e:
+#             print(f"[BG] Mark email_sent error: {e}", flush=True)
+#             traceback.print_exc()
+
+#     except Exception as outer_e:
+#         print(f"[BG] FATAL ERROR in PDF+EMAIL thread: {type(outer_e).__name__}: {outer_e}", flush=True)
+#         traceback.print_exc()
 def _render_email_template(template_dir: str, news_items: list, date_label: str) -> str:
     from jinja2 import Environment, FileSystemLoader
+
     env = Environment(loader=FileSystemLoader(template_dir))
     tmpl = env.get_template("email_template.html")
     return tmpl.render(news_items=news_items, date_label=date_label)
@@ -490,14 +709,22 @@ def _render_email_template(template_dir: str, news_items: list, date_label: str)
 def _smtp_send(mail_cfg: dict, msg, recipients: list):
     with smtplib.SMTP(mail_cfg["MAIL_SERVER"], mail_cfg["MAIL_PORT"]) as s:
         s.ehlo()
+
         if mail_cfg.get("MAIL_USE_TLS", True):
             s.starttls()
+            s.ehlo()
+
         s.login(mail_cfg["MAIL_USERNAME"], mail_cfg["MAIL_PASSWORD"])
-        s.sendmail(msg["From"], recipients, msg.as_string())
+
+        # FIX: encode message as UTF-8 before sending
+        s.sendmail(msg["From"], recipients, msg.as_string().encode("utf-8"))
+
         print(f"[EMAIL] Sent to: {recipients}")
 
 
 def _send_email_bg(articles, pub_ids, pdf_paths, settings, mail_cfg, template_dir):
+    from email.header import Header
+
     to = settings.get("email_recipient") or "niyati.b@seamlessautomations.com"
     cc_raw = settings.get("email_cc") or ""
     cc = [e.strip() for e in cc_raw.split(",") if e.strip()]
@@ -516,9 +743,14 @@ def _send_email_bg(articles, pub_ids, pdf_paths, settings, mail_cfg, template_di
         html_body = _render_email_template(template_dir, list(articles), date_label)
 
     msg = MIMEMultipart("mixed")
-    msg["Subject"] = f"{pfx} — {date_label}"
+
+    # FIX: replaced em dash with normal hyphen and encoded subject
+    subject = f"{pfx} - {date_label}"
+    msg["Subject"] = Header(subject, "utf-8")
+
     msg["From"] = mail_cfg.get("MAIL_FROM", mail_cfg.get("MAIL_USERNAME", ""))
     msg["To"] = to
+
     if cc:
         msg["Cc"] = ", ".join(cc)
 
@@ -530,11 +762,16 @@ def _send_email_bg(articles, pub_ids, pdf_paths, settings, mail_cfg, template_di
                 with open(p, "rb") as f:
                     part = MIMEBase("application", "octet-stream")
                     part.set_payload(f.read())
+
                 encoders.encode_base64(part)
+
+                filename = os.path.basename(p)
                 part.add_header(
                     "Content-Disposition",
-                    f'attachment; filename="{os.path.basename(p)}"'
+                    "attachment",
+                    filename=filename
                 )
+
                 msg.attach(part)
 
     _smtp_send(mail_cfg, msg, [to] + cc)
@@ -550,27 +787,29 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
     update pdf_path in DB, then send email.
     """
     import sys
-    
-    # IMMEDIATE logging - test if thread even starts
+
     print(f"[BG] THREAD STARTED - articles type: {type(articles)}, count: {len(articles)}", flush=True)
-    sys.stderr.write(f"[BG] STDERR: THREAD STARTED\n")
+    sys.stderr.write("[BG] STDERR: THREAD STARTED\n")
     sys.stderr.flush()
-    
-    # Ensure stdout is flushed immediately for debugging
+
     print(f"[BG] PDF+EMAIL thread started with {len(articles)} articles", flush=True)
-    
-    # Check first article type
+
     if articles:
         first_art = articles[0]
         print(f"[BG] First article type: {type(first_art)}", flush=True)
+
         if isinstance(first_art, (tuple, list)):
-            print(f"[BG] WARNING: articles are tuples/lists, not converting (cursor.fetchall with dictionary=True should have returned dicts)", flush=True)
+            print(
+                "[BG] WARNING: articles are tuples/lists, not converting "
+                "(cursor.fetchall with dictionary=True should have returned dicts)",
+                flush=True
+            )
         elif isinstance(first_art, dict):
             print(f"[BG] ✓ First article is dict with keys: {list(first_art.keys())[:5]}", flush=True)
-    
+
     try:
         from app.pdf_generator import generate_pdf_from_article
-        print(f"[BG] Successfully imported pdf_generator", flush=True)
+        print("[BG] Successfully imported pdf_generator", flush=True)
     except ImportError as e:
         print(f"[BG] Cannot import app.pdf_generator: {e}", flush=True)
         traceback.print_exc()
@@ -587,19 +826,27 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
 
         print("=" * 80, flush=True)
         print(f"[BG] Starting PDF generation for pub_id={pub_id}", flush=True)
-        
-        # Validate article data structure
+
         if not isinstance(article, dict):
             print(f"[BG ERROR] article is not a dict: {type(article)}", flush=True)
             return None
-        
-        required_keys = ['news_headline', 'news_text', 'news_type', 'news_url', 'keywords']
+
+        required_keys = [
+            "news_headline",
+            "news_text",
+            "news_type",
+            "news_url",
+            "keywords"
+        ]
+
         missing_keys = [k for k in required_keys if k not in article]
+
         if missing_keys:
             print(f"[BG WARNING] Missing keys in article: {missing_keys}", flush=True)
             print(f"[BG] Available keys: {list(article.keys())}", flush=True)
-        
-        headline = article.get('news_headline', 'Untitled')
+
+        headline = article.get("news_headline", "Untitled")
+
         print(f"[BG] Headline     : {str(headline)[:60]}", flush=True)
         print(f"[BG] Text length  : {len(str(article.get('news_text', '')))} chars", flush=True)
         print(f"[BG] Output path  : {out_path}", flush=True)
@@ -610,10 +857,17 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
             print(f"[BG] pdf_generator import failed for pub_id={pub_id}. Skipping PDF.", flush=True)
         else:
             try:
-                pdf_ok = generate_pdf_from_article(article_data=article, output_path=out_path)
+                pdf_ok = generate_pdf_from_article(
+                    article_data=article,
+                    output_path=out_path
+                )
                 print(f"[BG] generate_pdf_from_article returned {pdf_ok} for pub_id={pub_id}", flush=True)
             except Exception as e:
-                print(f"[BG] PDF generation exception for pub_id={pub_id}: {type(e).__name__}: {e}", flush=True)
+                print(
+                    f"[BG] PDF generation exception for pub_id={pub_id}: "
+                    f"{type(e).__name__}: {e}",
+                    flush=True
+                )
                 traceback.print_exc()
                 pdf_ok = False
 
@@ -624,10 +878,12 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
 
                 c = _raw_conn(db_cfg)
                 cur = c.cursor()
+
                 cur.execute(
                     "UPDATE published_news SET pdf_path=%s WHERE id=%s",
-                    (safe_name, pub_id),
+                    (safe_name, pub_id)
                 )
+
                 c.commit()
                 cur.close()
                 c.close()
@@ -639,16 +895,20 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
                 print(f"[BG] DB update failed for pub_id={pub_id}: {e}", flush=True)
                 traceback.print_exc()
                 return None
-        else:
-            print(f"[BG] PDF failed for pub_id={pub_id}", flush=True)
-            return None
+
+        print(f"[BG] PDF failed for pub_id={pub_id}", flush=True)
+        return None
 
     try:
         if pdf_workers and pdf_workers > 1 and len(articles) > 1:
             print(f"[BG] Generating {len(articles)} PDFs with {pdf_workers} workers", flush=True)
+
             with concurrent.futures.ThreadPoolExecutor(max_workers=pdf_workers) as executor:
-                futures = [executor.submit(_generate_and_store_pdf, art, pid)
-                           for art, pid in zip(articles, pub_ids)]
+                futures = [
+                    executor.submit(_generate_and_store_pdf, art, pid)
+                    for art, pid in zip(articles, pub_ids)
+                ]
+
                 for future in concurrent.futures.as_completed(futures):
                     try:
                         pdf_paths.append(future.result())
@@ -656,13 +916,15 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
                         print(f"[BG] PDF task failed: {e}", flush=True)
                         traceback.print_exc()
                         pdf_paths.append(None)
+
         else:
             print(f"[BG] Generating {len(articles)} PDFs sequentially", flush=True)
+
             for art, pid in zip(articles, pub_ids):
                 pdf_paths.append(_generate_and_store_pdf(art, pid))
 
         if not settings.get("email_on_publish", 1):
-            print("[BG] email_on_publish=0 — skipping email.", flush=True)
+            print("[BG] email_on_publish=0 - skipping email.", flush=True)
             return
 
         try:
@@ -672,8 +934,9 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
                 pdf_paths=pdf_paths,
                 settings=settings,
                 mail_cfg=mail_cfg,
-                template_dir=template_dir,
+                template_dir=template_dir
             )
+
         except Exception as e:
             print(f"[BG] Email send failed: {e}", flush=True)
             traceback.print_exc()
@@ -682,15 +945,19 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
         try:
             c = _raw_conn(db_cfg)
             cur = c.cursor()
+
             for pid in pub_ids:
                 cur.execute(
                     "UPDATE published_news SET email_sent=1, email_sent_at=NOW() WHERE id=%s",
-                    (pid,),
+                    (pid,)
                 )
+
             c.commit()
             cur.close()
             c.close()
+
             print(f"[BG] email_sent marked for {len(pub_ids)} articles.", flush=True)
+
         except Exception as e:
             print(f"[BG] Mark email_sent error: {e}", flush=True)
             traceback.print_exc()
@@ -698,7 +965,6 @@ def _bg_pdf_email(db_cfg, mail_cfg, template_dir, articles, pub_ids, pdf_folder,
     except Exception as outer_e:
         print(f"[BG] FATAL ERROR in PDF+EMAIL thread: {type(outer_e).__name__}: {outer_e}", flush=True)
         traceback.print_exc()
-
 
 # ════════════════════════════════════════════════════════════════
 # BACKGROUND SCRAPER
@@ -1846,16 +2112,29 @@ def view_websites():
 def chatbot():
     return render_template("main/chatbot.html")
 
-@main_bp.route('/api/chatbot', methods=['POST'])
+
+@main_bp.route("/api/chatbot", methods=["POST"])
 @login_required
 def chatbot_api():
     return handle_chatbot_request()
 
-@main_bp.route('/api/chatbot/history', methods=['GET'])
+
+@main_bp.route("/api/chatbot/history", methods=["GET"])
 @login_required
 def chatbot_history_api():
     return handle_chatbot_get_history()
 
+
+@main_bp.route("/api/chatbot/sessions", methods=["GET"])
+@login_required
+def chatbot_sessions_api():
+    return handle_chatbot_get_sessions()
+
+
+@main_bp.route("/api/chatbot/new_session", methods=["POST"])
+@login_required
+def chatbot_new_session_api():
+    return handle_chatbot_new_session()
 @main_bp.route("/view-news-type", methods=["GET", "POST"])
 @login_required
 def view_news_type():
