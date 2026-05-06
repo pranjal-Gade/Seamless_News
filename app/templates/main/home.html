@@ -233,7 +233,7 @@
     border-radius: 16px;
     padding: 14px;
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
-    min-height: 190px;
+    min-height: 100px;
     overflow: hidden;
     position: relative;
   }
@@ -416,19 +416,6 @@
   .featured-market-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
-  }
-
-  .featured-market-card::after {
-    content: "";
-    position: absolute;
-    right: -18px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 82px;
-    height: 82px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(41, 98, 255, 0.06), rgba(41, 98, 255, 0.015));
-    z-index: 0;
   }
 
   .featured-market-card.positive {
@@ -1019,7 +1006,7 @@
                     </a>
 
                     <div class="simple-news-meta">
-                      <span class="news-datetime">
+                      <span class="news-datetime" style="color: red;">
                         {% set dt = item.sort_dt or item.published_at or item.date_of_insert or item.news_date %}
                         {% if dt %}
                           {{ dt.strftime('%d %b %Y, %I:%M %p') }}
@@ -1074,19 +1061,7 @@
           {% if card.line_points and card.fill_points %}
           <div class="metal-chart">
             <svg viewBox="0 0 220 52" width="100%" height="52" preserveAspectRatio="none">
-              <polygon
-                points="{{ card.fill_points }}"
-                fill="{% if card.is_positive %}rgba(34,197,94,0.16){% else %}rgba(239,68,68,0.16){% endif %}">
-              </polygon>
-
-              <polyline
-                points="{{ card.line_points }}"
-                fill="none"
-                stroke="{% if card.is_positive %}#43a047{% else %}#ef4444{% endif %}"
-                stroke-width="2.2"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-              </polyline>
+              
             </svg>
           </div>
           {% endif %}
