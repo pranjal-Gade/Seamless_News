@@ -14,53 +14,18 @@
     --shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
     --radius-md: 18px;
     --navy-dark: #111c4e;
-    --page-max-width: 1280px;
-    --page-side-gap: 24px;
-    --main-navbar-height: 72px;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
-  .nav-align-container {
-    max-width: var(--page-max-width);
-    margin: 0 auto;
-    padding-left: var(--page-side-gap);
-    padding-right: var(--page-side-gap);
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .main-header {
-    position: sticky;
-    top: 0;
-    z-index: 1200;
-    background: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .main-navbar {
-    min-height: 72px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
+  .dashboard-shell,
+  .container,
+  #latest-news {
+    overflow: visible;
   }
 
   .dashboard-shell {
-    padding: 10px 15px 30px;
+    padding: 24px 15px 30px;
     background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.05), transparent 20%);
     min-height: 100vh;
-  }
-
-  .dashboard-shell .container {
-    max-width: var(--page-max-width);
-    margin: 0 auto;
-    padding-left: var(--page-side-gap);
-    padding-right: var(--page-side-gap);
-    width: 100%;
-    box-sizing: border-box;
   }
 
   .container {
@@ -110,82 +75,50 @@
     z-index: 200;
   }
 
-  .subnav-wrap,
+  /* =========================
+     SUB NAV / TOP NEWS
+  ========================= */
   .news-top-nav {
-    z-index: 100 !important;
-  }
-
-  /* SUB NAVBAR */
-  .subnav-wrap {
-     position: sticky;
-    top: 72px; /* same as main navbar height */
-    z-index: 100;
-    background: transparent;
-    padding: 8px 0 14px;
-  }
-
-  .news-top-nav {
-    width: 100%;
-    background: #ffffff;
-    border: 1px solid #dbe3ef;
-    border-radius: 18px;
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
-    padding: 14px 18px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 22px;
     flex-wrap: wrap;
+    padding: 14px 20px;
+    margin-bottom: 18px;
+    position: sticky;
+    top: 78px;
+    z-index: 50;
+    background: rgba(245, 247, 251, 0.98);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid #e5e7eb;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
   }
 
-  .news-top-nav-item,
-  .news-top-nav-link {
-     appearance: none;
-    background: transparent;
+  .news-top-nav-item {
+    background: none;
     border: none;
-    text-decoration: none;
-    color: #1e293b;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
-    line-height: 1;
-    padding: 11px 16px;
-    border-radius: 12px;
+    color: #1f2937;
     cursor: pointer;
-    position: relative;
-    transition: all 0.22s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    padding: 8px 0;
   }
 
-  .news-top-nav-item:hover,
+  .news-top-nav-item.active {
+    color: #dc2626;
+  }
+
+  .news-top-nav-link {
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    padding: 8px 0;
+  }
+
   .news-top-nav-link:hover {
-      background: #f4f7fb;
-      color: #2563eb;
-  }
-
-  .news-top-nav-item.active,
-  .news-top-nav-link.active {
-     color: #2563eb;
-    background: #fff5f5;
-  }
-
-  .news-top-nav-item.active::after,
-  .news-top-nav-link.active::after {
-    content: "";
-    position: absolute;
-    left: 14px;
-    right: 14px;
-    bottom: 3px;
-    height: 3px;
-    border-radius: 999px;
-    background: #2563eb;
-  }
-
-  .news-top-nav-item:focus-visible,
-  .news-top-nav-link:focus-visible {
-    outline: 2px solid #93c5fd;
-    outline-offset: 2px;
+    color: #2563eb;
   }
 
   .news-category-panel {
@@ -196,23 +129,20 @@
     display: block;
   }
 
-  /* TOP NEWS */
   .category-top-news-layout {
-    display: grid;
-    grid-template-columns: 70% 30%;
-    gap: 22px;
+    display: block;
     margin-bottom: 32px;
-    align-items: stretch;
   }
 
-  .category-top-news-main,
-  .category-top-news-side {
+  .category-top-news-main {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 18px;
-    padding: 20px;
+    padding: 20px 28px;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
     min-width: 0;
+    max-width: 1280px;
+    margin-left: 18px;
   }
 
   .category-top-news-header {
@@ -223,52 +153,17 @@
     letter-spacing: 0.2px;
   }
 
-  .category-top-news-side-title {
-    font-size: 22px;
-    font-weight: 800;
-    color: #111827;
-    margin-bottom: 14px;
-  }
-
-  .category-top-news-side-item {
-    padding: 14px 0;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .category-top-news-side-item:last-child {
-    border-bottom: none;
-  }
-
-  .category-top-news-side-item a {
-    text-decoration: none;
-    color: #334155;
-    font-size: 15px;
-    line-height: 1.55;
-    font-weight: 700;
-  }
-
-  .category-top-news-side-item a:hover {
-    color: #2563eb;
-  }
-
-
-  .category-top-news-empty {
-    color: #64748b;
-    font-size: 14px;
-    padding: 10px 0;
-  }
-
   .simple-news-list {
-     display: flex;
+    display: flex;
     flex-direction: column;
     gap: 0;
   }
 
   .simple-news-item {
-      display: flex;
+    display: flex;
     align-items: flex-start;
     gap: 10px;
-    padding: 14px 0;
+    padding: 14px 0 14px 6px;
     border-bottom: 1px solid #dfe6ee;
   }
 
@@ -277,137 +172,354 @@
   }
 
   .simple-news-bullet {
-      color: #94a3b8;
+    color: #94a3b8;
     font-size: 16px;
     line-height: 1.2;
     margin-top: 2px;
     flex-shrink: 0;
   }
 
+  .simple-news-content {
+    flex: 1;
+    min-width: 0;
+  }
+
   .simple-news-item a {
-      text-decoration: none;
+    text-decoration: none;
     color: #0f172a;
     font-size: 16px;
     line-height: 1.5;
     font-weight: 500;
+    display: block;
+    margin-bottom: 6px;
   }
 
   .simple-news-item a:hover {
     color: #2563eb;
   }
 
-  /* RECENT SEARCHES + FEATURED MARKETS */
-  .recent-search-grid,
-  .featured-cards-grid {
+  .simple-news-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .news-datetime {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .category-top-news-empty {
+    color: #64748b;
+    font-size: 14px;
+    padding: 10px 0;
+  }
+
+  /* =========================
+     FEATURED METAL CARDS
+  ========================= */
+  .metal-cards-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
+    gap: 14px;
+    margin-bottom: 12px;
   }
 
-  .recent-search-card {
+  .metal-market-card {
     background: #ffffff;
-    border: 1px solid var(--stroke);
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: var(--shadow);
+    border: 1px solid #dbe4f0;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+    min-height: 190px;
+    overflow: hidden;
+    position: relative;
   }
 
-  .recent-search-card h3 {
-    margin: 0 0 8px;
-    font-size: 24px;
-    color: var(--text);
+  .metal-market-card.positive::before,
+  .metal-market-card.negative::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
   }
 
-  .recent-search-card p {
-    margin: 0 0 10px;
-    color: var(--muted);
-    font-weight: 700;
+  .metal-market-card.positive::before {
+    background: linear-gradient(90deg, rgba(34, 197, 94, 0.24), rgba(34, 197, 94, 0.04));
   }
 
-  .recent-search-card a {
-    color: var(--accent);
+  .metal-market-card.negative::before {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.20), rgba(239, 68, 68, 0.04));
+  }
+
+  .metal-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .metal-card-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .metal-title {
     font-size: 13px;
     font-weight: 800;
-    text-decoration: none;
+    color: #111c4e;
+    margin-bottom: 6px;
   }
 
-  .featured-market-card {
-    background: #ffffff;
-    border: 1px solid var(--stroke);
-    border-radius: 12px;
-    padding: 10px 12px;
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
-    min-height: 90px;
+  .metal-price {
+    font-size: 15px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 6px;
+    line-height: 1.25;
   }
 
-  .featured-card-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 0;
-  }
-
-  .featured-title {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 3px;
-    line-height: 1.2;
-  }
-
-  .featured-price {
-     font-size: 13px;
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 3px;
-    line-height: 1.2;
-  }
-
-  .featured-price span {
-     font-size: 10px;
-    color: var(--muted);
-    font-weight: 700;
-  }
-
-  .featured-change {
+  .metal-price span {
     font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    margin-left: 4px;
+  }
+
+  .metal-change {
+    font-size: 13px;
     font-weight: 800;
-    margin-bottom: 0;
-    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
 
-  .featured-change.positive {
-    color: #1f8f4d;
+  .metal-change.positive {
+    color: #16a34a;
   }
 
-  .featured-change.negative {
-    color: #c0392b;
+  .metal-change.negative {
+    color: #dc2626;
   }
 
-  .featured-image-wrap {
-    width: 40px;
-    height: 40px;
+  .metal-image-wrap {
+    width: 95px;
+    height: 75px;
     flex-shrink: 0;
-    border-radius: 10px;
-    background: #f5f8ff;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .metal-card-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .metal-chart {
+    margin-top: 6px;
+    height: 40px;
+    border-radius: 8px;
     overflow: hidden;
   }
 
-  .featured-crop-image {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
+  .metal-chart svg {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
-  .featured-chart {
-    display: none;
+  /* =========================
+     FEATURED AGRI CARDS
+  ========================= */
+  .featured-agri-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
   }
 
-  /* AGRI */
+  .featured-agri-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .featured-agri-select {
+    min-width: 280px;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #d7dfeb;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
+  }
+
+  .featured-agri-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+  }
+
+  .featured-agri-add-btn {
+    height: 42px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .featured-agri-add-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
+  }
+
+  .featured-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+    align-items: stretch;
+    margin-bottom: 10px;
+  }
+
+  .featured-market-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #dbe4f0;
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    min-height: 110px;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .featured-market-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+  }
+
+  .featured-market-card::after {
+    content: "";
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(41, 98, 255, 0.06), rgba(41, 98, 255, 0.015));
+    z-index: 0;
+  }
+
+  .featured-market-card.positive {
+    border-top: 4px solid #b9ebc6;
+  }
+
+  .featured-market-card.negative {
+    border-top: 4px solid #f6c3c3;
+  }
+
+  .featured-card-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .featured-card-left {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .featured-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #14214d;
+    margin-bottom: 6px;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .featured-price {
+    font-size: 14px;
+    font-weight: 900;
+    color: #111827;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .featured-price span {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    margin-left: 4px;
+  }
+
+  .featured-change {
+    font-size: 13px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 0;
+  }
+
+  .featured-change.positive {
+    color: #16a34a;
+  }
+
+  .featured-change.negative {
+    color: #dc2626;
+  }
+
+  .featured-remove-btn {
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .featured-remove-btn:hover {
+    background: #e2e8f0;
+    color: #475569;
+  }
+
+  /* =========================
+     AGRI ANALYSIS
+  ========================= */
   .agri-summary-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -495,7 +607,9 @@
     background-color: #f8fafc;
   }
 
-  /* LOADER */
+  /* =========================
+     LOADER
+  ========================= */
   .loader-overlay {
     display: none;
     align-items: center;
@@ -534,7 +648,53 @@
     }
   }
 
-  /* WEATHER */
+  /* =========================
+     DEFAULT CITY WEATHER
+  ========================= */
+  .default-city-weather-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .default-city-card {
+    background: #ffffff;
+    border: 1px solid var(--stroke);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+  }
+
+  .default-city-card h4 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--navy-dark);
+  }
+
+  .default-city-temp {
+    font-size: 28px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+
+  .default-city-desc {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .default-city-meta {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* =========================
+     WEATHER DETAIL
+  ========================= */
   .weather-card-shell {
     background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
     border: 1px solid #dbe4f0;
@@ -684,60 +844,6 @@
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
   }
 
-  .default-city-weather-section {
-    margin-bottom: 20px;
-  }
-
-  .default-city-weather-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-  }
-
-  .default-city-card {
-    background: #ffffff;
-    border: 1px solid var(--stroke);
-    border-radius: 18px;
-    padding: 18px;
-    box-shadow: var(--shadow);
-    cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
-  }
-
-  .default-city-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.09);
-  }
-
-  .default-city-name {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--navy-dark);
-    margin-bottom: 8px;
-  }
-
-  .default-city-temp {
-    font-size: 30px;
-    font-weight: 900;
-    color: var(--text);
-    line-height: 1.1;
-    margin-bottom: 6px;
-  }
-
-  .default-city-desc {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--accent);
-    text-transform: capitalize;
-    margin-bottom: 8px;
-  }
-
-  .default-city-meta {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-
   .metric-label {
     font-size: 11px;
     color: var(--muted);
@@ -752,123 +858,33 @@
     font-weight: 800;
   }
 
-  /* footer CSS */
-  .site-footer {
-    margin-top: 40px;
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    box-shadow: 0 -8px 20px rgba(15, 23, 42, 0.04);
+  /* =========================
+     RESPONSIVE
+  ========================= */
+  @media (max-width: 1400px) {
+    .featured-cards-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 
-  .footer-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 28px 24px 16px;
-    box-sizing: border-box;
-  }
-
-  .footer-top {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    gap: 24px;
-    padding-bottom: 22px;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .footer-brand h3 {
-    margin: 0 0 10px;
-    font-size: 24px;
-    color: #111c4e;
-    font-weight: 800;
-  }
-
-  .footer-brand p {
-    margin: 0;
-    color: #64748b;
-    font-size: 14px;
-    line-height: 1.7;
-  }
-
-  .footer-col h4 {
-    margin: 0 0 12px;
-    font-size: 15px;
-    color: #111c4e;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-
-  .footer-links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .footer-links li {
-    margin-bottom: 10px;
-  }
-
-  .footer-links a {
-    text-decoration: none;
-    color: #334155;
-    font-size: 14px;
-    font-weight: 600;
-    transition: color 0.2s ease;
-  }
-
-  .footer-links a:hover {
-    color: #2563eb;
-  }
-
-  .footer-contact {
-    color: #334155;
-    font-size: 14px;
-    line-height: 1.8;
-    font-weight: 600;
-  }
-
-  .footer-bottom {
-    padding-top: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-
-  .footer-copy {
-    color: #64748b;
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .footer-bottom-links {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .footer-bottom-links a {
-    text-decoration: none;
-    color: #64748b;
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .footer-bottom-links a:hover {
-    color: #2563eb;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 1100px) {
-    .category-top-news-layout {
-      grid-template-columns: 1fr;
+  @media (max-width: 1200px) {
+    .metal-cards-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .recent-search-grid,
-    .featured-cards-grid,
+    .featured-cards-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .category-top-news-main {
+      margin-left: 0;
+      max-width: 100%;
+    }
+
     .default-city-weather-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
     }
 
     .agri-summary-grid {
@@ -887,55 +903,48 @@
     .weather-temp {
       font-size: 42px;
     }
+  }
 
-    .footer-top {
+  @media (max-width: 900px) {
+    .featured-cards-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-    /* ===== Responsive ===== */
-  @media (max-width: 992px) {
-    .news-top-nav {
-      justify-content: flex-start;
-      gap: 6px;
-    }
-
-    .news-top-nav-item,
-    .news-top-nav-link {
-      font-size: 14px;
-      padding: 10px 14px;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .subnav-wrap {
-      top: 64px;
-      padding: 6px 0 12px;
-    }
-
-    .nav-align-container {
-      padding-left: 14px;
-      padding-right: 14px;
-    }
-
-    .news-top-nav {
-      padding: 12px;
-      border-radius: 14px;
-    }
-
-    .news-top-nav-item,
-    .news-top-nav-link {
-      font-size: 13px;
-      padding: 9px 12px;
-    }
-  }
-
   @media (max-width: 768px) {
+    .metal-cards-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .metal-card-top {
+      flex-direction: column;
+    }
+
+    .metal-image-wrap {
+      width: 100%;
+      height: 100px;
+    }
+
+    .featured-agri-toolbar {
+      align-items: stretch;
+    }
+
+    .featured-agri-actions {
+      width: 100%;
+    }
+
+    .featured-agri-select {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .featured-cards-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .agri-summary-grid,
-    .premium-weather-grid,
-    .recent-search-grid,
-    .featured-cards-grid,
-    .default-city-weather-grid {
+    .premium-weather-grid {
       grid-template-columns: 1fr;
     }
 
@@ -951,19 +960,19 @@
   }
 
   @media (max-width: 640px) {
-    .footer-top {
+    .default-city-weather-grid {
       grid-template-columns: 1fr;
     }
 
-    .footer-bottom {
-      flex-direction: column;
-      align-items: flex-start;
+    .featured-cards-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
 
 <div class="dashboard-shell">
   <div class="container">
+
 
     <div class="subnav-wrap">
       <div class="nav-align-container">
@@ -986,20 +995,40 @@
         </div>
       </div>
     </div>
-
     <div id="latest-news">
       {% for category in news_categories %}
       <div id="panel-{{ category|lower }}" class="news-category-panel {% if loop.first %}active{% endif %}">
         <div class="category-top-news-layout">
           <div class="category-top-news-main">
-            <div class="category-top-news-header">In The {{ category }} News</div>
+            <div class="category-top-news-header">
+              {% if category == "General" %}
+                Latest News
+              {% else %}
+                In The {{ category }} News
+              {% endif %}
+            </div>
 
             {% if category_news[category] %}
               <div class="simple-news-list">
                 {% for item in category_news[category][:6] %}
                 <div class="simple-news-item">
                   <span class="simple-news-bullet">◦</span>
-                  <a href="{{ item.news_url or '#' }}" target="_blank">{{ item.news_headline }}</a>
+                  <div class="simple-news-content">
+                    <a href="{{ item.news_url or '#' }}" target="_blank">
+                      {{ item.news_headline }}
+                    </a>
+
+                    <div class="simple-news-meta">
+                      <span class="news-datetime">
+                        {% set dt = item.sort_dt or item.published_at or item.date_of_insert or item.news_date %}
+                        {% if dt %}
+                          {{ dt.strftime('%d %b %Y, %I:%M %p') }}
+                        {% else %}
+                          Date unavailable
+                        {% endif %}
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 {% endfor %}
               </div>
@@ -1007,150 +1036,115 @@
               <div class="category-top-news-empty">No {{ category }} news available.</div>
             {% endif %}
           </div>
-
-          <div class="category-top-news-side">
-            <div class="category-top-news-side-title">Top Trending News</div>
-
-            {% if category_news['General'] %}
-              {% for item in category_news['General'][:5] %}
-              <div class="category-top-news-side-item">
-                <a href="{{ item.news_url or '#' }}" target="_blank">{{ item.news_headline }}</a>
-              </div>
-              {% endfor %}
-            {% else %}
-              <div class="category-top-news-empty">No General news available.</div>
-            {% endif %}
-          </div>
         </div>
       </div>
       {% endfor %}
     </div>
 
+    {% if metal_cards %}
+    <div style="margin-bottom: 30px;">
+      <div class="section-tag">Featured Markets</div>
 
-      {% if recent_searches %}
-        <div style="margin-bottom: 26px;">
-          <div class="section-tag">Recent Searches</div>
+      <div class="metal-cards-grid">
+        {% for card in metal_cards %}
+        <div class="metal-market-card {% if card.is_positive %}positive{% else %}negative{% endif %}">
+          <div class="metal-card-top">
+            <div class="metal-card-content">
+              <div class="metal-title">{{ card.name }}</div>
 
-          <div class="recent-search-grid">
-            {% for item in recent_searches[:4] %}
-            <div class="recent-search-card">
-              <h3>{{ item.commodity_name }}</h3>
-              <p>{{ item.month }} {{ item.year }}</p>
-              <a href="#agri-intelligence">Click to open analysis</a>
+              <div class="metal-price">
+                ₹{{ card.price }}
+                <span>/{{ card.unit }}</span>
+              </div>
+
+              <div class="metal-change {% if card.is_positive %}positive{% else %}negative{% endif %}">
+                {% if card.is_positive %}▲{% else %}▼{% endif %} {{ card.change }}%
+              </div>
             </div>
+
+            <div class="metal-image-wrap">
+              <img
+                src="{{ url_for('static', filename=card.image) }}"
+                alt="{{ card.name }}"
+                class="metal-card-image"
+              >
+            </div>
+          </div>
+
+          {% if card.line_points and card.fill_points %}
+          <div class="metal-chart">
+            <svg viewBox="0 0 220 52" width="100%" height="52" preserveAspectRatio="none">
+              <polygon
+                points="{{ card.fill_points }}"
+                fill="{% if card.is_positive %}rgba(34,197,94,0.16){% else %}rgba(239,68,68,0.16){% endif %}">
+              </polygon>
+
+              <polyline
+                points="{{ card.line_points }}"
+                fill="none"
+                stroke="{% if card.is_positive %}#43a047{% else %}#ef4444{% endif %}"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+              </polyline>
+            </svg>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if featured_cards %}
+    <div style="margin-bottom: 30px;">
+      <div class="featured-agri-toolbar">
+        <div class="section-tag" style="margin-bottom:0;">Featured Agri Markets</div>
+
+        <div class="featured-agri-actions">
+          <select id="featuredAgriSelect" class="featured-agri-select">
+            <option value="">Add commodity</option>
+            {% for item in available_featured_agri %}
+              <option value="{{ item.id }}" data-name="{{ item.name }}">{{ item.name }}</option>
             {% endfor %}
+          </select>
+
+          <button type="button" class="featured-agri-add-btn" onclick="addFeaturedAgriCard()">
+            Add
+          </button>
+        </div>
+      </div>
+
+      <div class="featured-cards-grid">
+        {% for card in featured_cards %}
+        <div class="featured-market-card {% if card.is_positive %}positive{% else %}negative{% endif %}">
+          <div class="featured-card-top">
+            <div class="featured-card-left">
+              <div class="featured-title">{{ card.name }}</div>
+
+              <div class="featured-price">
+                ₹{{ card.price }}<span>/{{ card.unit }}</span>
+              </div>
+
+              <div class="featured-change {% if card.is_positive %}positive{% else %}negative{% endif %}">
+                {% if card.is_positive %}▲{% else %}▼{% endif %} {{ card.change }}%
+              </div>
+            </div>
+
+            <button type="button"
+                    class="featured-remove-btn"
+                    onclick="removeFeaturedAgriCard('{{ card.id }}')">
+              ×
+            </button>
           </div>
         </div>
-        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
 
-        {% if metal_cards %}
-        <div style="margin-bottom: 30px;">
-          <div class="section-tag">Featured Markets</div>
-
-          <div class="featured-cards-grid">
-            {% for card in metal_cards %}
-            <div class="featured-market-card">
-              <div class="featured-card-top">
-                <div>
-                  <div class="featured-title">{{ card.name }}</div>
-
-                  <div class="featured-price">
-                    ₹{{ card.price }}
-                    <span>/{{ card.unit }}</span>
-                  </div>
-
-                  <div class="featured-change {% if card.is_positive %}positive{% else %}negative{% endif %}">
-                    {% if card.is_positive %}▲{% else %}▼{% endif %} {{ card.change }}%
-                  </div>
-                </div>
-
-                <div class="featured-image-wrap">
-                  <img
-                    src="{{ url_for('static', filename=card.image) }}"
-                    alt="{{ card.name }}"
-                    class="featured-crop-image"
-                  >
-                </div>
-              </div>
-
-              {% if card.line_points and card.fill_points %}
-              <div class="featured-chart">
-                <svg viewBox="0 0 220 52" width="100%" height="52" preserveAspectRatio="none">
-                  <polygon
-                    points="{{ card.fill_points }}"
-                    fill="{% if card.is_positive %}rgba(34,197,94,0.16){% else %}rgba(239,68,68,0.16){% endif %}">
-                  </polygon>
-
-                  <polyline
-                    points="{{ card.line_points }}"
-                    fill="none"
-                    stroke="{% if card.is_positive %}#43a047{% else %}#ef4444{% endif %}"
-                    stroke-width="2.2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                  </polyline>
-                </svg>
-              </div>
-              {% endif %}
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
-
-        {% if featured_cards %}
-          <div style="margin-bottom: 30px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:12px; flex-wrap:wrap;">
-              <div class="section-tag" style="margin-bottom:0;">Featured Agri Markets</div>
-
-              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                <select id="featuredAgriSelect" style="padding:8px 10px; border:1px solid var(--stroke); border-radius:10px;">
-                  <option value="">Add commodity</option>
-                  {% for item in available_featured_agri %}
-                    <option value="{{ item.id }}" data-name="{{ item.name }}">{{ item.name }}</option>
-                  {% endfor %}
-                </select>
-
-                <button type="button"
-                        onclick="addFeaturedAgriCard()"
-                        style="padding:8px 12px; border:none; border-radius:10px; background:#2563eb; color:#fff; font-weight:700;">
-                  Add
-                </button>
-              </div>
-            </div>
-
-            <div class="featured-cards-grid">
-              {% for card in featured_cards %}
-              <div class="featured-market-card">
-                <div class="featured-card-top">
-                  <div style="width:100%;">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
-                      <div class="featured-title">{{ card.name }}</div>
-                      <button type="button"
-                              onclick="removeFeaturedAgriCard('{{ card.id }}')"
-                              style="border:none; background:transparent; color:#94a3b8; cursor:pointer; font-size:16px; line-height:1;">
-                        ×
-                      </button>
-                    </div>
-
-                    <div class="featured-price">
-                      ₹{{ card.price }}
-                      <span>/{{ card.unit }}</span>
-                    </div>
-
-                    <div class="featured-change {% if card.is_positive %}positive{% else %}negative{% endif %}">
-                      {% if card.is_positive %}▲{% else %}▼{% endif %} {{ card.change }}%
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-
-        {% endif %}
     <div id="agri-intelligence" class="dashboard-panel">
-      <h3>Agriculture Market Price</h3>
+      <h3>Agriculture Market</h3>
 
       <form id="agriForm" onsubmit="return false;" style="display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 8px;">
         <div style="flex: 2; min-width: 200px;">
@@ -1168,6 +1162,7 @@
         <div style="flex: 1; min-width: 100px;">
           <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase;">Year</label>
           <select id="year" name="year" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--stroke); background: #f8fafc; font-weight: 600;">
+            <option value="" {% if not selected_year %}selected{% endif %}>-- Choose Year --</option>
             {% for y in year_options %}
               <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>{{ y }}</option>
             {% endfor %}
@@ -1177,6 +1172,7 @@
         <div style="flex: 1; min-width: 120px;">
           <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase;">Month</label>
           <select id="month" name="month" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--stroke); background: #f8fafc; font-weight: 600;">
+            <option value="" {% if not selected_month %}selected{% endif %}>-- Choose Month --</option>
             {% set months = [('1','Jan'), ('2','Feb'), ('3','Mar'), ('4','Apr'), ('5','May'), ('6','Jun'), ('7','Jul'), ('8','Aug'), ('9','Sep'), ('10','Oct'), ('11','Nov'), ('12','Dec')] %}
             {% for val, name in months %}
               <option value="{{ val }}" {% if selected_month == val %}selected{% endif %}>{{ name }}</option>
@@ -1242,232 +1238,169 @@
 
       <div id="agriLoader" class="loader-overlay hidden">
         <div class="loader-spinner"></div>
-        <div class="loader-text">Fetching agriculture data...</div>
+        <div class="loader-text">Fetching agri market data...</div>
       </div>
     </div>
 
-    <div id="weather-search">
-      <div class="section-tag">Weather Search</div>
-      <div class="dashboard-panel">
-        <div class="default-city-weather-section">
-          <div class="section-tag">Default City Weather</div>
+    <div id="weather-search" class="section-tag">Weather Search</div>
 
-          <div class="default-city-weather-grid" id="defaultCityWeatherGrid">
-            <div class="default-city-card" data-city="Delhi">
-              <div class="default-city-name">Delhi</div>
-              <div class="default-city-temp">--°C</div>
-              <div class="default-city-desc">Loading...</div>
-              <div class="default-city-meta">Humidity --% · Wind -- m/s</div>
+    <div style="margin-bottom: 24px;">
+
+      <div class="default-city-weather-grid">
+        <div class="default-city-card" data-city="Delhi">
+          <h4>Delhi, IN</h4>
+          <div class="default-city-temp">--°C</div>
+          <div class="default-city-desc">Loading...</div>
+          <div class="default-city-meta">Humidity --% · Wind -- m/s</div>
+        </div>
+
+        <div class="default-city-card" data-city="Mumbai">
+          <h4>Mumbai, IN</h4>
+          <div class="default-city-temp">--°C</div>
+          <div class="default-city-desc">Loading...</div>
+          <div class="default-city-meta">Humidity --% · Wind -- m/s</div>
+        </div>
+
+        <div class="default-city-card" data-city="Jaipur">
+          <h4>Jaipur, IN</h4>
+          <div class="default-city-temp">--°C</div>
+          <div class="default-city-desc">Loading...</div>
+          <div class="default-city-meta">Humidity --% · Wind -- m/s</div>
+        </div>
+
+        <div class="default-city-card" data-city="Nashik">
+          <h4>Nashik, IN</h4>
+          <div class="default-city-temp">--°C</div>
+          <div class="default-city-desc">Loading...</div>
+          <div class="default-city-meta">Humidity --% · Wind -- m/s</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-panel">
+      <form id="weatherForm" onsubmit="return false;" style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin-bottom: 20px;">
+        <div style="flex: 1; min-width: 260px;">
+          <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase;">
+            Search City
+          </label>
+          <input
+            type="text"
+            id="city_search"
+            name="city_search"
+            placeholder="Enter city name..."
+            value="{{ search_query }}"
+            style="width: 100%; border: 1px solid var(--stroke); border-radius: 12px; font-size: 14px; padding: 13px 14px; outline: none; background: #f8fafc; box-sizing: border-box;"
+          >
+        </div>
+
+        <button id="weatherBtn" type="button" onclick="loadWeather()" style="background: var(--accent); color: white; border: none; border-radius: 12px; padding: 12px 20px; font-size: 13px; cursor: pointer; font-weight: 800; height: 46px;">
+          SEARCH
+        </button>
+      </form>
+
+      <div id="weatherLoader" class="loader-overlay hidden" style="margin-bottom:18px;">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Fetching weather data...</div>
+      </div>
+
+      <div class="weather-card-shell">
+        <div class="weather-hero">
+          <div class="weather-hero-left">
+            <div class="weather-top-row">
+              <div>
+                <strong id="weatherLocation" class="weather-location">{{ weather_card.location }}</strong>
+                <div id="weatherDesc" class="weather-description">{{ weather_card.desc }}</div>
+              </div>
+              <div id="weatherBadge" class="weather-badge">Live Weather</div>
             </div>
 
-            <div class="default-city-card" data-city="Mumbai">
-              <div class="default-city-name">Mumbai</div>
-              <div class="default-city-temp">--°C</div>
-              <div class="default-city-desc">Loading...</div>
-              <div class="default-city-meta">Humidity --% · Wind -- m/s</div>
+            <div class="weather-temp-row">
+              <div id="weatherTemp" class="weather-temp">{{ weather_card.temp }}°C</div>
+              <div class="weather-icon-wrap">
+                <img id="weatherIcon" src="" alt="Weather icon" class="weather-icon">
+              </div>
             </div>
 
-            <div class="default-city-card" data-city="Kolkata">
-              <div class="default-city-name">Kolkata</div>
-              <div class="default-city-temp">--°C</div>
-              <div class="default-city-desc">Loading...</div>
-              <div class="default-city-meta">Humidity --% · Wind -- m/s</div>
+            <div id="feelsLikeText" class="weather-feelslike">
+              {% if weather_card.feels_like and weather_card.feels_like != "--" %}
+              Feels like {{ weather_card.feels_like }}°C
+              {% else %}
+              Feels like --
+              {% endif %}
             </div>
+          </div>
 
-            <div class="default-city-card" data-city="Bengaluru">
-              <div class="default-city-name">Bengaluru</div>
-              <div class="default-city-temp">--°C</div>
-              <div class="default-city-desc">Loading...</div>
-              <div class="default-city-meta">Humidity --% · Wind -- m/s</div>
+          <div class="weather-hero-right">
+            <div class="weather-mini-stat">
+              <div class="weather-mini-label">Humidity</div>
+              <div class="weather-mini-value" id="mHumidity">{{ weather_card.humidity }}%</div>
+            </div>
+            <div class="weather-mini-stat">
+              <div class="weather-mini-label">Wind Speed</div>
+              <div class="weather-mini-value" id="mWind">{{ weather_card.wind }} m/s</div>
+            </div>
+            <div class="weather-mini-stat">
+              <div class="weather-mini-label">Visibility</div>
+              <div class="weather-mini-value" id="mVisibility">{{ weather_card.visibility }} km</div>
             </div>
           </div>
         </div>
 
-        <form id="weatherForm" onsubmit="return false;" style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin-bottom: 20px;">
-          <div style="flex: 1; min-width: 260px;">
-            <label style="display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase;">
-              Search City
-            </label>
-            <input
-              type="text"
-              id="city_search"
-              name="city_search"
-              placeholder="Enter city name..."
-              value="{{ search_query }}"
-              style="width: 100%; border: 1px solid var(--stroke); border-radius: 12px; font-size: 14px; padding: 13px 14px; outline: none; background: #f8fafc; box-sizing: border-box;"
-            >
-          </div>
-          
-          <button id="weatherBtn" type="button" onclick="loadWeather()" style="background: var(--accent); color: white; border: none; border-radius: 12px; padding: 12px 20px; font-size: 13px; cursor: pointer; font-weight: 800; height: 46px;">
-            SEARCH
-          </button>
-        </form>
-
-        <div id="weatherLoader" class="loader-overlay hidden" style="margin-bottom:18px;">
-          <div class="loader-spinner"></div>
-          <div class="loader-text">Fetching weather data...</div>
-        </div>
-
-        <div class="weather-card-shell">
-          <div class="weather-hero">
-            <div class="weather-hero-left">
-              <div class="weather-top-row">
-                <div>
-                  <strong id="weatherLocation" class="weather-location">{{ weather_card.location }}</strong>
-                  <div id="weatherDesc" class="weather-description">{{ weather_card.desc }}</div>
-                </div>
-                <div id="weatherBadge" class="weather-badge">Live Weather</div>
-              </div>
-
-              <div class="weather-temp-row">
-                <div id="weatherTemp" class="weather-temp">{{ weather_card.temp }}°C</div>
-                <div class="weather-icon-wrap">
-                  <img id="weatherIcon" src="" alt="Weather icon" class="weather-icon">
-                </div>
-              </div>
-
-              <div id="feelsLikeText" class="weather-feelslike">
-                {% if weather_card.feels_like and weather_card.feels_like != "--" %}
-                Feels like {{ weather_card.feels_like }}°C
-                {% else %}
-                Feels like --
-                {% endif %}
-              </div>
-            </div>
-
-            <div class="weather-hero-right">
-              <div class="weather-mini-stat">
-                <div class="weather-mini-label">Humidity</div>
-                <div class="weather-mini-value" id="mHumidity">{{ weather_card.humidity }}%</div>
-              </div>
-              <div class="weather-mini-stat">
-                <div class="weather-mini-label">Wind Speed</div>
-                <div class="weather-mini-value" id="mWind">{{ weather_card.wind }} m/s</div>
-              </div>
-              <div class="weather-mini-stat">
-                <div class="weather-mini-label">Visibility</div>
-                <div class="weather-mini-value" id="mVisibility">{{ weather_card.visibility }} km</div>
-              </div>
-            </div>
+        <div class="weather-metrics-grid premium-weather-grid">
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Feels Like</div>
+            <div class="metric-value" id="mFeelsLike">{{ weather_card.feels_like }}°C</div>
           </div>
 
-          <div class="weather-metrics-grid premium-weather-grid">
-            <div class="metric-card premium-metric-card">
-              <div class="metric-label">Feels Like</div>
-              <div class="metric-value" id="mFeelsLike">{{ weather_card.feels_like }}°C</div>
-            </div>
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Pressure</div>
+            <div class="metric-value" id="mPressure">{{ weather_card.pressure }} hPa</div>
+          </div>
 
-            <div class="metric-card premium-metric-card">
-              <div class="metric-label">Pressure</div>
-              <div class="metric-value" id="mPressure">{{ weather_card.pressure }} hPa</div>
-            </div>
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Cloud Cover</div>
+            <div class="metric-value" id="mClouds">{{ weather_card.clouds }}%</div>
+          </div>
 
-            <div class="metric-card premium-metric-card">
-              <div class="metric-label">Cloud Cover</div>
-              <div class="metric-value" id="mClouds">{{ weather_card.clouds }}%</div>
-            </div>
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Min Temp</div>
+            <div class="metric-value" id="mMinTemp">{{ weather_card.temp_min }}°C</div>
+          </div>
 
-            <div class="metric-card premium-metric-card">
-              <div class="metric-label">Min Temp</div>
-              <div class="metric-value" id="mMinTemp">{{ weather_card.temp_min }}°C</div>
-            </div>
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Max Temp</div>
+            <div class="metric-value" id="mMaxTemp">{{ weather_card.temp_max }}°C</div>
+          </div>
 
-            <div class="metric-card premium-metric-card">
-              <div class="metric-label">Max Temp</div>
-              <div class="metric-value" id="mMaxTemp">{{ weather_card.temp_max }}°C</div>
-            </div>
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Sunrise</div>
+            <div class="metric-value" id="mSunrise">{{ weather_card.sunrise }}</div>
+          </div>
 
-            <div class="metric-card premium-metric-card">
-              <div class="metric-label">Sunrise</div>
-              <div class="metric-value" id="mSunrise">{{ weather_card.sunrise }}</div>
-            </div>
-
-            <div class="metric-card premium-metric-card">
-              <div class="metric-label">Sunset</div>
-              <div class="metric-value" id="mSunset">{{ weather_card.sunset }}</div>
-            </div>
-            
+          <div class="metric-card premium-metric-card">
+            <div class="metric-label">Sunset</div>
+            <div class="metric-value" id="mSunset">{{ weather_card.sunset }}</div>
           </div>
         </div>
       </div>
+    </div>
 
   </div>
 </div>
 
 <script>
-  function clearAllNavActive() {
-    document.querySelectorAll('.news-top-nav-item, .news-top-nav-link').forEach(el => {
-      el.classList.remove('active');
-    });
-  }
-
-   function setActiveNewsTabFromVisiblePanel() {
-    const activePanel = document.querySelector('.news-category-panel.active');
-    if (!activePanel) return;
-
-    const category = activePanel.id.replace('panel-', '').toLowerCase();
-
-    document.querySelectorAll('.news-top-nav-item').forEach(btn => {
-      if (btn.textContent.trim().toLowerCase() === category) {
-        btn.classList.add('active');
-      }
-    });
-  }
-
-   function showNewsCategory(category, btn) {
+  function showNewsCategory(category, btn) {
     document.querySelectorAll('.news-category-panel').forEach(panel => {
       panel.classList.remove('active');
     });
 
-    const targetPanel = document.getElementById('panel-' + category);
-    if (targetPanel) {
-      targetPanel.classList.add('active');
-    }
-
-    clearAllNavActive();
-    btn.classList.add('active');
-
-    const latestNews = document.getElementById('latest-news');
-    if (latestNews) {
-      const y = latestNews.getBoundingClientRect().top + window.pageYOffset - 140;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  }
-
-   function updateSectionNavHighlight() {
-    const agriSection = document.getElementById('agri-intelligence');
-    const weatherSection = document.getElementById('weather-search');
-
-    const agriLink = document.querySelector('.news-top-nav-link[data-section-link="agri-intelligence"]');
-    const weatherLink = document.querySelector('.news-top-nav-link[data-section-link="weather-search"]');
-
-    const scrollMarker = window.scrollY + 140;
-
-    const agriTop = agriSection ? agriSection.offsetTop : Infinity;
-    const weatherTop = weatherSection ? weatherSection.offsetTop : Infinity;
-
-    clearAllNavActive();
-
-    if (scrollMarker >= weatherTop) {
-      if (weatherLink) weatherLink.classList.add('active');
-    } else if (scrollMarker >= agriTop) {
-      if (agriLink) agriLink.classList.add('active');
-    } else {
-      setActiveNewsTabFromVisiblePanel();
-    }
-  }
-
-
-  document.querySelectorAll('.news-top-nav-link[data-section-link]').forEach(link => {
-    link.addEventListener('click', function () {
-      clearAllNavActive();
-      this.classList.add('active');
+    document.querySelectorAll('.news-top-nav-item').forEach(tab => {
+      tab.classList.remove('active');
     });
-  });
-  window.addEventListener('scroll', updateSectionNavHighlight);
-  document.addEventListener('DOMContentLoaded', function () {
-    updateSectionNavHighlight();
-  });
+
+    document.getElementById('panel-' + category).classList.add('active');
+    btn.classList.add('active');
+  }
 
   function formatNumber(value) {
     if (value === null || value === undefined || value === "" || value === "N/A") return "N/A";
@@ -1481,6 +1414,59 @@
     const num = Number(String(value).replace(/,/g, "").replace("₹", "").trim());
     return Number.isNaN(num) ? null : num;
   }
+
+  async function addFeaturedAgriCard() {
+    const select = document.getElementById("featuredAgriSelect");
+    const commodityId = select.value;
+
+    if (!commodityId) {
+      alert("Please select a commodity.");
+      return;
+    }
+
+    const selectedOption = select.options[select.selectedIndex];
+    const commodityName = selectedOption.getAttribute("data-name");
+
+    const formData = new FormData();
+    formData.append("action", "add");
+    formData.append("commodity_id", commodityId);
+    formData.append("commodity_name", commodityName);
+
+    const res = await fetch("/api/featured-agri-selection", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      alert(result.message || "Unable to add commodity.");
+      return;
+    }
+
+    window.location.reload();
+  }
+
+  async function removeFeaturedAgriCard(commodityId) {
+    const formData = new FormData();
+    formData.append("action", "remove");
+    formData.append("commodity_id", commodityId);
+
+    const res = await fetch("/api/featured-agri-selection", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      alert(result.message || "Unable to remove commodity.");
+      return;
+    }
+
+    window.location.reload();
+  }
+
 
   async function loadWeather() {
     const cityInput = document.getElementById("city_search");
@@ -1558,9 +1544,59 @@
     }
   }
 
-   async function loadDefaultCityWeather() {
-    console.log("Default city weather loader started");
+  async function addFeaturedAgriCard() {
+    const select = document.getElementById("featuredAgriSelect");
+    const commodityId = select.value;
 
+    if (!commodityId) {
+      alert("Please select a commodity.");
+      return;
+    }
+
+    const selectedOption = select.options[select.selectedIndex];
+    const commodityName = selectedOption.getAttribute("data-name");
+
+    const formData = new FormData();
+    formData.append("action", "add");
+    formData.append("commodity_id", commodityId);
+    formData.append("commodity_name", commodityName);
+
+    const res = await fetch("/api/featured-agri-selection", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      alert(result.message || "Unable to add commodity.");
+      return;
+    }
+
+    window.location.reload();
+  }
+
+  async function removeFeaturedAgriCard(commodityId) {
+    const formData = new FormData();
+    formData.append("action", "remove");
+    formData.append("commodity_id", commodityId);
+
+    const res = await fetch("/api/featured-agri-selection", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      alert(result.message || "Unable to remove commodity.");
+      return;
+    }
+
+    window.location.reload();
+  }
+
+  async function loadDefaultCityWeather() {
     const cards = document.querySelectorAll(".default-city-card");
 
     for (const card of cards) {
@@ -1568,43 +1604,24 @@
 
       try {
         const res = await fetch(`/api/weather-data?city=${encodeURIComponent(city)}`);
-        console.log("City:", city, "Status:", res.status);
-
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-
         const result = await res.json();
-        console.log("Weather result for", city, result);
 
-        if (!result.success || !result.data) {
-          card.querySelector(".default-city-temp").textContent = "--°C";
-          card.querySelector(".default-city-desc").textContent = "Unavailable";
-          card.querySelector(".default-city-meta").textContent = "Weather data not available";
-          continue;
-        }
+        if (!result.success) continue;
 
         const data = result.data;
-
-        card.querySelector(".default-city-name").textContent =
-          data.country && data.country !== "--"
-            ? `${data.location}, ${data.country}`
-            : data.location;
-
         card.querySelector(".default-city-temp").textContent = `${data.temp}°C`;
         card.querySelector(".default-city-desc").textContent = data.desc || "--";
         card.querySelector(".default-city-meta").textContent =
           `Humidity ${data.humidity}% · Wind ${data.wind} m/s`;
-
       } catch (err) {
-        console.error(`Default city weather failed for ${city}:`, err);
-        card.querySelector(".default-city-temp").textContent = "--°C";
-        card.querySelector(".default-city-desc").textContent = "Unavailable";
-        card.querySelector(".default-city-meta").textContent = "Weather data not available";
+        console.error("Default city weather error:", city, err);
       }
     }
   }
 
+  document.addEventListener("DOMContentLoaded", function () {
+    loadDefaultCityWeather();
+  });
 
   async function loadAgriData() {
     const cmdtSelect = document.getElementById("cmdt_id");
@@ -1736,9 +1753,9 @@
       emptyState.classList.add("hidden");
       summarySection.style.display = "block";
 
-      cmdtSelect.selectedIndex = 0;
-      yearSelect.selectedIndex = 0;
-      monthSelect.selectedIndex = 0;
+      cmdtSelect.selectedIndex = "";
+      yearSelect.selectedIndex = "";
+      monthSelect.selectedIndex = "";
 
     } catch (err) {
       console.error(err);
@@ -1749,73 +1766,5 @@
       loader.classList.add("hidden");
     }
   }
-
-  function bindDefaultCityCardClicks() {
-    document.querySelectorAll(".default-city-card").forEach(card => {
-      card.addEventListener("click", () => {
-        const city = card.getAttribute("data-city");
-        document.getElementById("city_search").value = city;
-        loadWeather();
-      });
-    });
-  }
-
-  async function addFeaturedAgriCard() {
-  const select = document.getElementById("featuredAgriSelect");
-  const commodityId = select.value;
-
-  if (!commodityId) {
-    alert("Please select a commodity.");
-    return;
-  }
-
-  const selectedOption = select.options[select.selectedIndex];
-  const commodityName = selectedOption.getAttribute("data-name");
-
-  const formData = new FormData();
-  formData.append("action", "add");
-  formData.append("commodity_id", commodityId);
-  formData.append("commodity_name", commodityName);
-
-  const res = await fetch("/api/featured-agri-selection", {
-    method: "POST",
-    body: formData
-  });
-
-  const result = await res.json();
-
-  if (!result.success) {
-    alert(result.message || "Unable to add commodity.");
-    return;
-  }
-
-  window.location.reload();
-}
-
-  async function removeFeaturedAgriCard(commodityId) {
-    const formData = new FormData();
-    formData.append("action", "remove");
-    formData.append("commodity_id", commodityId);
-
-    const res = await fetch("/api/featured-agri-selection", {
-      method: "POST",
-      body: formData
-    });
-
-    const result = await res.json();
-
-    if (!result.success) {
-      alert(result.message || "Unable to remove commodity.");
-      return;
-    }
-
-    window.location.reload();
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    updateSectionNavHighlight();
-    loadDefaultCityWeather();
-    bindDefaultCityCardClicks();
-  });
 </script>
 {% endblock %}
