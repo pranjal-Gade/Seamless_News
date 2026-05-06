@@ -34,7 +34,7 @@ except ImportError:
 import requests
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-GROQ_API_KEY    = os.environ.get("GROQ_API_KEY", "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")
+GROQ_API_KEY    = os.environ.get("GROQ_API_KEY", "")
 OPENWEATHER_KEY = "2baab2dc7ad18ffef8b81c014e893e1c"
 AGMARK_BASE     = "https://api.agmarknet.gov.in/v1"
 GROQ_MODEL      = "llama-3.3-70b-versatile"
