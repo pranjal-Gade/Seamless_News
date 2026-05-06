@@ -14,7 +14,12 @@ from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from app.chatbot import handle_chatbot_request, handle_chatbot_get_history
+from app.chatbot import (
+    handle_chatbot_request,
+    handle_chatbot_get_history,
+    handle_chatbot_get_sessions,
+    handle_chatbot_new_session,
+)
 import mysql.connector
 from flask import (
     Blueprint,

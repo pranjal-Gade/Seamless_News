@@ -133,7 +133,7 @@
       </div>
       <div class="ca-input-row">
         <div class="ca-input-wrap">
-          <textarea id="caInput" class="ca-input" placeholder='Ask anything — "Chandivali temperature" · "Aloo ka bhav" · "Weather in Pune"…' rows="1"></textarea>
+          <textarea id="caInput" class="ca-input" placeholder='Ask anything…' rows="1"></textarea>
         </div>
         <button id="caSendBtn" class="ca-send-btn" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -171,12 +171,32 @@
   --welcome-bg:linear-gradient(135deg,rgba(37,99,235,.05),rgba(5,150,105,.04));
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden}
 
-.ca-root{display:flex;height:calc(100vh - 64px);background:var(--bg);font-family:'Inter',sans-serif;overflow:hidden;transition:background .25s}
+.ca-root{
+  display:flex;
+  height:calc(100vh - 90px);
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+  overflow:hidden;
+  transition:background .25s;
+}
 
 /* ── Sidebar ── */
-.ca-sidebar{width:268px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--b);display:flex;flex-direction:column;padding-bottom:12px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent;transition:background .25s,border-color .25s;z-index:50}
+.ca-sidebar{
+  width:268px;
+  flex-shrink:0;
+  background:var(--panel);
+  border-right:1px solid var(--b);
+  display:flex;
+  flex-direction:column;
+  padding-bottom:0;
+  overflow:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:var(--b2) transparent;
+  transition:background .25s,border-color .25s;
+  z-index:50;
+}
 .ca-brand{display:flex;align-items:center;gap:10px;padding:16px 14px 14px;border-bottom:1px solid var(--b);flex-shrink:0}
 .ca-brand-orb{width:32px;height:32px;flex-shrink:0}
 .ca-brand-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;color:var(--tx)}
@@ -203,13 +223,27 @@ html,body{height:100%}
 .ca-nav-arr{font-size:14px;opacity:.28;color:var(--tx)}
 
 /* Sessions list */
-.ca-sessions-section{flex:1;min-height:0}
-.ca-sessions-list{display:flex;flex-direction:column;gap:2px;max-height:260px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
-.ca-session-item{padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+.ca-sessions-section{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.ca-sessions-list{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--b2) transparent;
+}
+.ca-session-item{padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .15s;border:1px solid transparent;flex-shrink:0}
 .ca-session-item:hover{background:var(--panel3);border-color:var(--b)}
 .ca-session-item.active-session{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.22)}
-.ca-sess-title{font-size:12px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ca-sess-meta{font-size:9.5px;color:var(--mu);margin-top:2px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace}
+.ca-sess-title{font-size:12px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ca-sess-meta{font-size:9.5px;color:var(--mu);margin-top:2px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ca-sess-dot{width:4px;height:4px;border-radius:50%;background:var(--mu);opacity:.4}
 .ca-list-loading,.ca-list-empty{font-size:11px;color:var(--mu);padding:6px 4px;font-style:italic}
 
@@ -541,7 +575,7 @@ async function loadPastSession(sid, title){
           renderHistoryPair(entry);
         }
       });
-      msgCount = data.history.length;
+      msgCount = data.history.filter(e=>!e.user_message.startsWith('action:')).length * 2;
       upCount();
     } else {
       const empty=document.createElement('div');
@@ -568,6 +602,14 @@ async function loadPastSession(sid, title){
 
 /* Render a user+bot pair from DB history */
 function renderHistoryPair(entry){
+  // Restore frontend memory/context also, so follow-up questions keep context.
+  if(entry.user_message && !entry.user_message.startsWith('action:')){
+    history.push({role:'user', content:entry.user_message});
+  }
+  if(entry.bot_reply){
+    history.push({role:'assistant', content:entry.bot_reply});
+  }
+
   // User row
   const uRow=document.createElement('div');
   uRow.className='ca-msg-row ca-user-row';
@@ -576,6 +618,7 @@ function renderHistoryPair(entry){
     <div class="ca-bubble-time">${esc(entry.timestamp)}</div>
   </div>`;
   msgsEl.appendChild(uRow);
+
   // Bot row
   const bRow=document.createElement('div');
   bRow.className='ca-msg-row ca-bot-row';
@@ -607,17 +650,22 @@ async function loadSessions(){
       const item=document.createElement('div');
       item.className='ca-session-item'+(s.session_id===currentSid?' active-session':'');
       item.dataset.sid=s.session_id;
-      const count=s.msg_count?`${s.msg_count} msg`:'';
+
+      // Backend sends message_count and last_at.
+      const count=s.message_count?`${s.message_count} msg`:'';
+      const lastTime=s.last_at||'';
+
       item.innerHTML=`
         <div class="ca-sess-title" title="${esc(s.title)}">${esc(s.title)}</div>
         <div class="ca-sess-meta">
-          <span>${esc(s.last_active)}</span>
+          <span>${esc(lastTime)}</span>
           ${count?`<span class="ca-sess-dot"></span><span>${esc(count)}</span>`:''}
         </div>`;
       item.addEventListener('click', ()=> loadPastSession(s.session_id, s.title));
       sessionsList.appendChild(item);
     });
   } catch(e){
+    console.error('Session load error:', e);
     sessionsList.innerHTML='<div class="ca-list-empty">Sessions unavailable</div>';
   }
 }
@@ -855,6 +903,11 @@ async function callAPI(payload){
   try{
     const res  = await fetch('/api/chatbot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const data = await res.json();
+    if(data.session_id){
+      currentSid = data.session_id;
+      sessionBadge.textContent = currentSid.slice(0,8)+'…';
+    }
+
     if(data.type==='concern_prompt'){
       concernMode=true; concernBanner.classList.remove('hidden');
       setStatus('⚠️ Concern mode','var(--amber)');
@@ -913,7 +966,7 @@ async function init(){
         msgsEl.appendChild(div);
         // Render all pairs
         msgs.forEach(entry=> renderHistoryPair(entry));
-        msgCount=msgs.length; upCount();
+        msgCount=msgs.length * 2; upCount();
         scrollBot(100);
 
         // Mark active in sidebar
