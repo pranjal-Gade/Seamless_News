@@ -1487,7 +1487,7 @@ table.seamless-table tbody tr:last-child td {
   }
 
   .navbar.navbar-menu-style {
-    padding: 0 16px;
+    padding: 0 0x;
   }
 
   .auth-main .auth-container {
