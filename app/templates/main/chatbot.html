@@ -6,7 +6,7 @@
 
 <div class="ca-root" id="caRoot">
 
-  <!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+  <!-- ══ SIDEBAR ══════════════════════════════════════════════════════════════ -->
   <aside class="ca-sidebar" id="caSidebar">
 
     <div class="ca-brand">
@@ -16,80 +16,72 @@
           <path d="M10 18c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8" stroke="url(#sg2)" stroke-width="2" stroke-linecap="round"/>
           <circle cx="18" cy="18" r="3" fill="url(#sg)"/>
           <defs>
-            <linearGradient id="sg"  x1="1" y1="1" x2="35" y2="35" gradientUnits="userSpaceOnUse"><stop stop-color="#6ee7b7"/><stop offset="1" stop-color="#3b82f6"/></linearGradient>
+            <linearGradient id="sg"  x1="1" y1="1"   x2="35" y2="35" gradientUnits="userSpaceOnUse"><stop stop-color="#6ee7b7"/><stop offset="1" stop-color="#3b82f6"/></linearGradient>
             <linearGradient id="sg2" x1="10" y1="10" x2="26" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#a78bfa"/><stop offset="1" stop-color="#6ee7b7"/></linearGradient>
           </defs>
         </svg>
       </div>
-      <div>
+      <div style="flex:1;min-width:0">
         <div class="ca-brand-name">Seamless</div>
         <div class="ca-brand-sub">AI Assistant</div>
       </div>
-      <button class="ca-theme-btn" id="themeToggleBtn" title="Toggle theme">
+      <button class="ca-icon-btn" id="themeToggleBtn" title="Toggle theme">
         <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+
+    <!-- New Chat button -->
+    <div style="padding:10px 10px 0">
+      <button class="ca-new-chat-btn" id="newChatBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Chat
       </button>
     </div>
 
     <!-- Quick Actions -->
     <div class="ca-sidebar-section">
       <div class="ca-sidebar-label">Quick Actions</div>
-      <button class="ca-nav-btn active" data-action="top_news">
+      <button class="ca-nav-btn" data-action="top_news">
         <span class="ca-nav-icon">📰</span>
         <div class="ca-nav-text"><span class="ca-nav-title">Top News</span><span class="ca-nav-desc">Published & pending</span></div>
-        <span class="ca-nav-arrow">›</span>
+        <span class="ca-nav-arr">›</span>
       </button>
       <button class="ca-nav-btn" data-action="commodities">
         <span class="ca-nav-icon">📊</span>
         <div class="ca-nav-text"><span class="ca-nav-title">Commodities</span><span class="ca-nav-desc">Live market prices</span></div>
-        <span class="ca-nav-arrow">›</span>
+        <span class="ca-nav-arr">›</span>
       </button>
       <button class="ca-nav-btn" data-action="weather">
         <span class="ca-nav-icon">🌤</span>
         <div class="ca-nav-text"><span class="ca-nav-title">Weather</span><span class="ca-nav-desc">Real-time conditions</span></div>
-        <span class="ca-nav-arrow">›</span>
+        <span class="ca-nav-arr">›</span>
       </button>
     </div>
 
-    <!-- Session -->
-    <div class="ca-sidebar-section">
-      <div class="ca-sidebar-label">Session</div>
-      <div class="ca-session-info">
-        <span class="ca-session-count" id="msgCount">0</span>
-        <span class="ca-session-label">messages this session</span>
-      </div>
-      <button class="ca-clear-btn" id="clearChatBtn">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-        Clear conversation
-      </button>
-    </div>
-
-    <!-- Recent History -->
-    <div class="ca-sidebar-section ca-history-section">
+    <!-- Past Sessions -->
+    <div class="ca-sidebar-section ca-sessions-section">
       <div class="ca-sidebar-label-row">
-        <span class="ca-sidebar-label">Recent History</span>
-        <button class="ca-hist-restore-btn" id="restoreHistBtn" title="Restore history in chat">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
-          Restore
-        </button>
+        <span class="ca-sidebar-label">Past Chats</span>
+        <span class="ca-sessions-count" id="sessionsCount"></span>
       </div>
-      <div id="historyList" class="ca-history-list">
-        <div class="ca-history-loading">Loading…</div>
+      <div id="sessionsList" class="ca-sessions-list">
+        <div class="ca-list-loading">Loading…</div>
       </div>
     </div>
 
-    <!-- Help & Concerns -->
+    <!-- Help / Concern -->
     <div class="ca-sidebar-section">
-      <div class="ca-sidebar-label">Help & Concerns</div>
+      <div class="ca-sidebar-label">Support</div>
       <button class="ca-nav-btn" data-action="help">
         <span class="ca-nav-icon">📘</span>
         <div class="ca-nav-text"><span class="ca-nav-title">Help</span><span class="ca-nav-desc">Instructions & guide</span></div>
-        <span class="ca-nav-arrow">›</span>
+        <span class="ca-nav-arr">›</span>
       </button>
       <button class="ca-nav-btn" data-action="raise_concern">
         <span class="ca-nav-icon">⚠️</span>
         <div class="ca-nav-text"><span class="ca-nav-title">Raise Concern</span><span class="ca-nav-desc">Submit an issue</span></div>
-        <span class="ca-nav-arrow">›</span>
+        <span class="ca-nav-arr">›</span>
       </button>
     </div>
 
@@ -99,7 +91,7 @@
     </div>
   </aside>
 
-  <!-- ══ MAIN ═════════════════════════════════════════════ -->
+  <!-- ══ MAIN ══════════════════════════════════════════════════════════════════ -->
   <main class="ca-main">
 
     <header class="ca-topbar">
@@ -114,51 +106,17 @@
         </div>
       </div>
       <div class="ca-topbar-right">
+        <div class="ca-session-badge" id="sessionBadge" title="Current session"></div>
         <div class="ca-model-badge">LLaMA3 · Groq</div>
-        <button class="ca-theme-btn-top" id="themeToggleBtnTop" title="Toggle theme">
+        <button class="ca-icon-btn" id="themeToggleBtnTop" title="Toggle theme">
           <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
           <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
       </div>
     </header>
 
-    <div class="ca-messages" id="caMessages">
-      <!-- Welcome card -->
-      <div class="ca-msg-row ca-bot-row ca-reveal">
-        <div class="ca-bot-orb">AI</div>
-        <div class="ca-bubble ca-bot-bubble ca-welcome-bubble">
-          <div class="ca-welcome-hdr">
-            <div class="ca-welcome-icon">✦</div>
-            <div>
-              <div class="ca-welcome-title">Seamless Assistant</div>
-              <div class="ca-welcome-meta">Powered by Groq · LLaMA3-70B</div>
-            </div>
-          </div>
-          <div class="ca-welcome-body">
-            Hello! I'm your <em>intelligent project companion</em> — delivering real-time insights across news, markets, and weather. Ask me naturally in English or Hindi.
-          </div>
-          <div class="ca-cap-grid">
-            <div class="ca-cap"><span class="ca-cap-ico">📰</span><div><div class="ca-cap-t">Live News</div><div class="ca-cap-d">Published & Pending · By category</div></div></div>
-            <div class="ca-cap"><span class="ca-cap-ico">📊</span><div><div class="ca-cap-t">Commodity Prices</div><div class="ca-cap-d">Wheat, Rice, Onion & more</div></div></div>
-            <div class="ca-cap"><span class="ca-cap-ico">🌤</span><div><div class="ca-cap-t">Real-time Weather</div><div class="ca-cap-d">Any city — temperature, rain, humidity</div></div></div>
-            <div class="ca-cap"><span class="ca-cap-ico">💬</span><div><div class="ca-cap-t">AI Conversations</div><div class="ca-cap-d">Ask anything in plain English or Hindi</div></div></div>
-          </div>
-          <div class="ca-welcome-hint">Try natural queries like:</div>
-          <div class="ca-example-queries">
-            <span class="ca-eq">Chandivali's temperature</span>
-            <span class="ca-eq">Aloo ka bhav</span>
-            <span class="ca-eq">Rainfall in Nagpur</span>
-            <span class="ca-eq">Gehu price today</span>
-          </div>
-          <div class="ca-chip-row">
-            <button class="ca-chip" data-action="top_news">📰 Top News</button>
-            <button class="ca-chip" data-action="commodities">📊 Commodities</button>
-            <button class="ca-chip" data-action="weather">🌤 Weather</button>
-          </div>
-          <div class="ca-bubble-time" id="firstMsgTime"></div>
-        </div>
-      </div>
-    </div>
+    <!-- Chat messages -->
+    <div class="ca-messages" id="caMessages"></div>
 
     <!-- Typing indicator -->
     <div class="ca-typing-wrap hidden" id="typingWrap">
@@ -181,19 +139,16 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
-      <div class="ca-input-hint">Enter to send · Shift+Enter for new line</div>
+      <div class="ca-input-hint">Enter to send · Shift+Enter for new line · <span id="msgCountHint">0 messages this session</span></div>
     </footer>
   </main>
 </div>
 
-<!-- Mobile sidebar overlay -->
 <div class="ca-mob-overlay hidden" id="mobOverlay"></div>
 
 <!-- ══ STYLES ════════════════════════════════════════════════════════════════ -->
 <style>
-/* ── Theme variables ── */
 :root {
-  /* Dark theme (default) */
   --bg:#080d17; --panel:#0d1526; --panel2:#111c2e; --panel3:#162035;
   --b:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12);
   --tx:#dce6f5; --tx2:#b0bdd4; --mu:#5a6a88;
@@ -201,198 +156,97 @@
   --green:#22c55e; --amber:#f59e0b; --red:#f87171;
   --shadow:rgba(0,0,0,.5);
   --input-bg:#111c2e; --topbar-bg:rgba(13,21,38,.95);
-  --welcome-bg:linear-gradient(135deg,rgba(59,130,246,.06),rgba(110,231,183,.04));
   --chip-bg:rgba(255,255,255,.04); --chip-hover:rgba(59,130,246,.15);
+  --welcome-bg:linear-gradient(135deg,rgba(59,130,246,.06),rgba(110,231,183,.04));
 }
 [data-theme="light"] {
-  --bg:#f0f4fb; --panel:#ffffff; --panel2:#f7f9fc; --panel3:#eef2f8;
+  --bg:#f0f4fb; --panel:#fff; --panel2:#f7f9fc; --panel3:#eef2f8;
   --b:rgba(0,0,0,.09); --b2:rgba(0,0,0,.14);
   --tx:#1a2540; --tx2:#374866; --mu:#8494ae;
   --ac:#2563eb; --ac2:#059669; --ac3:#7c3aed;
   --green:#16a34a; --amber:#d97706; --red:#dc2626;
   --shadow:rgba(0,0,0,.12);
-  --input-bg:#ffffff; --topbar-bg:rgba(255,255,255,.97);
-  --welcome-bg:linear-gradient(135deg,rgba(37,99,235,.05),rgba(5,150,105,.04));
+  --input-bg:#fff; --topbar-bg:rgba(255,255,255,.97);
   --chip-bg:rgba(37,99,235,.06); --chip-hover:rgba(37,99,235,.12);
+  --welcome-bg:linear-gradient(135deg,rgba(37,99,235,.05),rgba(5,150,105,.04));
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 
-.ca-root{
-  display:flex;
-  height:calc(100vh - 64px);
-  background:var(--bg);
-  font-family:'Inter',sans-serif;
-  overflow:hidden;
-  transition:background .25s;
-}
+.ca-root{display:flex;height:calc(100vh - 64px);background:var(--bg);font-family:'Inter',sans-serif;overflow:hidden;transition:background .25s}
 
 /* ── Sidebar ── */
-.ca-sidebar{
-  width:268px;flex-shrink:0;
-  background:var(--panel);
-  border-right:1px solid var(--b);
-  display:flex;flex-direction:column;
-  padding-bottom:12px;
-  overflow-y:auto;
-  scrollbar-width:thin;
-  scrollbar-color:var(--b2) transparent;
-  transition:background .25s,border-color .25s;
-  z-index:50;
-}
-.ca-brand{
-  display:flex;align-items:center;gap:10px;
-  padding:16px 14px 15px;
-  border-bottom:1px solid var(--b);
-  flex-shrink:0;
-}
+.ca-sidebar{width:268px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--b);display:flex;flex-direction:column;padding-bottom:12px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent;transition:background .25s,border-color .25s;z-index:50}
+.ca-brand{display:flex;align-items:center;gap:10px;padding:16px 14px 14px;border-bottom:1px solid var(--b);flex-shrink:0}
 .ca-brand-orb{width:32px;height:32px;flex-shrink:0}
-.ca-brand-orb svg{width:100%;height:100%}
 .ca-brand-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;color:var(--tx)}
 .ca-brand-sub{font-size:9.5px;color:var(--mu);margin-top:1px;letter-spacing:.08em;text-transform:uppercase}
-.ca-theme-btn{
-  margin-left:auto;width:30px;height:30px;border-radius:8px;
-  border:1px solid var(--b2);background:transparent;
-  color:var(--mu);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;transition:all .15s;
-}
-.ca-theme-btn:hover{background:var(--panel3);color:var(--tx)}
-.ca-sidebar-section{padding:12px 10px 4px}
-.ca-sidebar-label{
-  font-size:9.5px;font-weight:700;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--mu);
-  margin-bottom:7px;padding-left:4px;
-}
-.ca-sidebar-label-row{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:7px;padding-left:4px;
-}
-.ca-sidebar-label-row .ca-sidebar-label{margin-bottom:0}
-.ca-hist-restore-btn{
-  display:flex;align-items:center;gap:4px;
-  font-size:10px;color:var(--ac);background:transparent;
-  border:1px solid rgba(59,130,246,.25);border-radius:6px;
-  padding:2px 7px;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;
-}
-.ca-hist-restore-btn:hover{background:rgba(59,130,246,.1)}
+.ca-icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--b2);background:transparent;color:var(--mu);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.ca-icon-btn:hover{background:var(--panel3);color:var(--tx)}
 
-.ca-nav-btn{
-  display:flex;align-items:center;gap:9px;width:100%;
-  padding:9px 10px;border:1px solid transparent;
-  border-radius:10px;background:transparent;
-  color:var(--mu);cursor:pointer;transition:all .15s;
-  margin-bottom:3px;text-align:left;
-}
-.ca-nav-btn:hover,.ca-nav-btn.active{
-  background:rgba(59,130,246,.09);
-  border-color:rgba(59,130,246,.2);color:var(--tx);
-}
+/* New Chat */
+.ca-new-chat-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 14px;border-radius:10px;border:1.5px dashed var(--b2);background:transparent;color:var(--ac);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.ca-new-chat-btn:hover{background:rgba(59,130,246,.09);border-color:rgba(59,130,246,.4);border-style:solid}
+
+.ca-sidebar-section{padding:12px 10px 4px}
+.ca-sidebar-label{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:7px;padding-left:4px}
+.ca-sidebar-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;padding-left:4px}
+.ca-sidebar-label-row .ca-sidebar-label{margin-bottom:0}
+.ca-sessions-count{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--mu);background:var(--panel3);padding:1px 7px;border-radius:999px;border:1px solid var(--b)}
+
+.ca-nav-btn{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--mu);cursor:pointer;transition:all .15s;margin-bottom:3px;text-align:left}
+.ca-nav-btn:hover,.ca-nav-btn.active{background:rgba(59,130,246,.09);border-color:rgba(59,130,246,.2);color:var(--tx)}
 .ca-nav-icon{font-size:15px;flex-shrink:0}
 .ca-nav-text{flex:1;min-width:0}
 .ca-nav-title{display:block;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ca-nav-desc{display:block;font-size:10px;color:var(--mu);margin-top:1px}
-.ca-nav-arrow{font-size:14px;opacity:.28;color:var(--tx)}
+.ca-nav-arr{font-size:14px;opacity:.28;color:var(--tx)}
 
-.ca-session-info{padding:4px 4px 8px}
-.ca-session-count{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;color:var(--ac2);display:block}
-.ca-session-label{font-size:10px;color:var(--mu)}
-.ca-clear-btn{
-  display:flex;align-items:center;gap:6px;
-  padding:7px 11px;border:1px solid var(--b2);
-  border-radius:8px;background:transparent;
-  color:var(--mu);font-size:11.5px;cursor:pointer;
-  width:100%;transition:all .15s;font-family:'Inter',sans-serif;
-}
-.ca-clear-btn:hover{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.3);color:var(--red)}
+/* Sessions list */
+.ca-sessions-section{flex:1;min-height:0}
+.ca-sessions-list{display:flex;flex-direction:column;gap:2px;max-height:260px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+.ca-session-item{padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+.ca-session-item:hover{background:var(--panel3);border-color:var(--b)}
+.ca-session-item.active-session{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.22)}
+.ca-sess-title{font-size:12px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ca-sess-meta{font-size:9.5px;color:var(--mu);margin-top:2px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace}
+.ca-sess-dot{width:4px;height:4px;border-radius:50%;background:var(--mu);opacity:.4}
+.ca-list-loading,.ca-list-empty{font-size:11px;color:var(--mu);padding:6px 4px;font-style:italic}
 
-/* History panel */
-.ca-history-section{flex:1}
-.ca-history-list{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow-y:auto;scrollbar-width:thin}
-.ca-history-item{
-  padding:7px 9px;border-radius:9px;cursor:pointer;
-  transition:background .15s;border:1px solid transparent;
-}
-.ca-history-item:hover{background:var(--panel3);border-color:var(--b)}
-.ca-history-q{font-size:11.5px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ca-history-ts{font-size:9.5px;color:var(--mu);margin-top:1px;font-family:'JetBrains Mono',monospace}
-.ca-history-loading,.ca-history-empty{font-size:11px;color:var(--mu);padding:6px 4px;font-style:italic}
-.ca-sidebar-footer{
-  padding:12px 14px 0;display:flex;align-items:center;gap:7px;
-  font-size:10px;color:var(--mu);border-top:1px solid var(--b);margin-top:auto;
-}
+.ca-sidebar-footer{padding:12px 14px 0;display:flex;align-items:center;gap:7px;font-size:10px;color:var(--mu);border-top:1px solid var(--b);margin-top:auto;flex-shrink:0}
 .ca-status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pg 2.5s infinite;flex-shrink:0}
 @keyframes pg{0%,100%{box-shadow:0 0 5px var(--green)}50%{box-shadow:0 0 14px var(--green)}}
 
-/* ── Main area ── */
+/* ── Main ── */
 .ca-main{flex:1;display:flex;flex-direction:column;background:var(--bg);min-width:0;transition:background .25s}
-.ca-topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 20px;border-bottom:1px solid var(--b);
-  background:var(--topbar-bg);backdrop-filter:blur(16px);
-  flex-shrink:0;transition:background .25s,border-color .25s;
-}
+.ca-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--b);background:var(--topbar-bg);backdrop-filter:blur(16px);flex-shrink:0;transition:background .25s,border-color .25s}
 .ca-topbar-left{display:flex;align-items:center;gap:12px}
 .ca-topbar-right{display:flex;align-items:center;gap:10px}
-.ca-mob-menu-btn{
-  display:none;width:34px;height:34px;border-radius:9px;
-  border:1px solid var(--b2);background:transparent;
-  color:var(--tx);cursor:pointer;
-  align-items:center;justify-content:center;flex-shrink:0;
-}
+.ca-mob-menu-btn{display:none;width:34px;height:34px;border-radius:9px;border:1px solid var(--b2);background:transparent;color:var(--tx);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
 .ca-avatar-glow{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#6ee7b7);padding:2px;flex-shrink:0}
-.ca-avatar-inner{
-  width:100%;height:100%;border-radius:50%;
-  background:var(--panel2);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:var(--ac);
-}
+.ca-avatar-inner{width:100%;height:100%;border-radius:50%;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:var(--ac)}
 .ca-topbar-name{font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:700;color:var(--tx)}
 .ca-topbar-status{font-size:11px;color:var(--green);display:flex;align-items:center;gap:5px;margin-top:2px}
 .ca-pulse{width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;animation:pg 2.5s infinite}
-.ca-model-badge{
-  font-family:'JetBrains Mono',monospace;font-size:10px;
-  padding:4px 9px;border:1px solid var(--b2);border-radius:7px;
-  color:var(--mu);background:var(--panel2);
-}
-.ca-theme-btn-top{
-  width:34px;height:34px;border-radius:9px;border:1px solid var(--b2);
-  background:transparent;color:var(--mu);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .15s;flex-shrink:0;
-}
-.ca-theme-btn-top:hover{background:var(--panel3);color:var(--tx)}
+.ca-session-badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 8px;border:1px solid var(--b2);border-radius:6px;color:var(--mu);background:var(--panel2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ca-model-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 9px;border:1px solid var(--b2);border-radius:7px;color:var(--mu);background:var(--panel2)}
 
-/* ── Theme icon visibility ── */
-[data-theme="light"] .icon-moon { display:none }
-[data-theme="light"] .icon-sun  { display:block }
-[data-theme="dark"]  .icon-sun  { display:none }
-[data-theme="dark"]  .icon-moon { display:block }
-.icon-sun { display:none }
-.icon-moon { display:block }
+/* Theme icon toggle */
+[data-theme="light"] .icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:block}
+[data-theme="dark"]  .icon-sun{display:none}
+[data-theme="dark"]  .icon-moon{display:block}
+.icon-sun{display:none}.icon-moon{display:block}
 
 /* ── Messages ── */
-.ca-messages{
-  flex:1;overflow-y:auto;padding:20px 22px 8px;
-  display:flex;flex-direction:column;gap:18px;
-  scroll-behavior:smooth;
-}
+.ca-messages{flex:1;overflow-y:auto;padding:20px 22px 8px;display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth}
 .ca-messages::-webkit-scrollbar{width:4px}
 .ca-messages::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
 .ca-msg-row{display:flex;align-items:flex-start;gap:10px;max-width:100%}
 .ca-bot-row{justify-content:flex-start}
 .ca-user-row{justify-content:flex-end}
 .ca-user-row .ca-bubble{max-width:min(65%,640px)}
-.ca-bot-orb{
-  width:32px;height:32px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(110,231,183,.18));
-  border:1px solid rgba(59,130,246,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:9px;font-weight:700;color:var(--ac2);
-  flex-shrink:0;margin-top:2px;
-  font-family:'Outfit',sans-serif;
-}
+.ca-bot-orb{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(110,231,183,.18));border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--ac2);flex-shrink:0;margin-top:2px;font-family:'Outfit',sans-serif}
 .ca-bubble{max-width:min(88%,860px);border-radius:18px;overflow:hidden;box-shadow:0 4px 24px var(--shadow)}
 .ca-bot-bubble{background:var(--panel);border:1px solid var(--b2);border-top-left-radius:5px;transition:background .25s,border-color .25s}
 .ca-user-bubble{background:linear-gradient(135deg,#2563eb,#1d4ed8);border-bottom-right-radius:5px}
@@ -404,91 +258,53 @@ html,body{height:100%}
 .ca-bubble-body em{font-style:normal;color:var(--ac2);font-weight:500}
 .ca-bubble-time{padding:0 15px 9px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--mu);text-align:right;opacity:.65}
 
-/* ── History restored message label ── */
-.ca-hist-label{
-  text-align:center;font-size:11px;color:var(--mu);
-  padding:4px 12px 8px;
-  display:flex;align-items:center;gap:8px;
-}
-.ca-hist-label::before,.ca-hist-label::after{
-  content:'';flex:1;height:1px;background:var(--b);
-}
+/* ── History dividers ── */
+.ca-hist-divider{text-align:center;font-size:11px;color:var(--mu);padding:6px 12px 2px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ca-hist-divider::before,.ca-hist-divider::after{content:'';flex:1;height:1px;background:var(--b)}
 
 /* ── Welcome ── */
 .ca-welcome-bubble{max-width:min(92%,840px)}
 .ca-welcome-hdr{display:flex;align-items:center;gap:12px;padding:15px 15px 0}
-.ca-welcome-icon{
-  width:36px;height:36px;border-radius:10px;
-  background:var(--welcome-bg);
-  border:1px solid rgba(110,231,183,.22);
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;flex-shrink:0;
-}
+.ca-welcome-icon{width:36px;height:36px;border-radius:10px;background:var(--welcome-bg);border:1px solid rgba(110,231,183,.22);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .ca-welcome-title{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--tx)}
 .ca-welcome-meta{font-size:10px;color:var(--mu);font-family:'JetBrains Mono',monospace;margin-top:1px}
 .ca-welcome-body{padding:10px 15px 6px;font-size:13.5px;line-height:1.7;color:var(--tx2)}
 .ca-welcome-body em{font-style:normal;color:var(--ac2);font-weight:500}
 .ca-cap-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px 13px}
-.ca-cap{
-  display:flex;align-items:flex-start;gap:8px;
-  background:var(--chip-bg);border:1px solid var(--b);
-  border-radius:10px;padding:9px 10px;
-}
+.ca-cap{display:flex;align-items:flex-start;gap:8px;background:var(--chip-bg);border:1px solid var(--b);border-radius:10px;padding:9px 10px}
 .ca-cap-ico{font-size:15px;flex-shrink:0;margin-top:1px}
 .ca-cap-t{font-size:11.5px;font-weight:600;color:var(--tx)}
 .ca-cap-d{font-size:10px;color:var(--mu);margin-top:1px;line-height:1.4}
 .ca-welcome-hint{padding:8px 15px 4px;font-size:11px;color:var(--mu);font-style:italic}
 .ca-example-queries{display:flex;flex-wrap:wrap;gap:5px;padding:2px 13px 6px}
-.ca-eq{
-  font-size:10.5px;padding:3px 9px;border-radius:999px;
-  background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.2);
-  color:var(--ac2);font-family:'JetBrains Mono',monospace;
-}
+.ca-eq{font-size:10.5px;padding:3px 9px;border-radius:999px;background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.2);color:var(--ac2);font-family:'JetBrains Mono',monospace}
 .ca-chip-row{display:flex;flex-wrap:wrap;gap:6px;padding:2px 13px 14px}
-.ca-chip{
-  padding:6px 12px;border:1px solid var(--b2);border-radius:999px;
-  background:var(--chip-bg);color:var(--tx);font-size:12px;
-  font-weight:500;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;
-}
+.ca-chip{padding:6px 12px;border:1px solid var(--b2);border-radius:999px;background:var(--chip-bg);color:var(--tx);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
 .ca-chip:hover{background:var(--chip-hover);border-color:rgba(59,130,246,.4);color:var(--ac);transform:translateY(-1px)}
 
 /* ── Badges ── */
 .ca-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:999px;margin-bottom:4px}
-.ca-badge-news    {color:#93c5fd;background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.22)}
-.ca-badge-agri    {color:#86efac;background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.22)}
-.ca-badge-finance {color:#fcd34d;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22)}
-.ca-badge-energy  {color:#c4b5fd;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.22)}
-.ca-badge-weather {color:#7dd3fc;background:rgba(125,211,252,.08);border:1px solid rgba(125,211,252,.22)}
-.ca-badge-comm    {color:#6ee7b7;background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.22)}
-.ca-badge-pub     {color:#86efac;background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.22)}
-.ca-badge-npub    {color:#fcd34d;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22)}
-.ca-badge-general {color:#94a3b8;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.2)}
+.ca-badge-news   {color:#93c5fd;background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.22)}
+.ca-badge-pub    {color:#86efac;background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.22)}
+.ca-badge-npub   {color:#fcd34d;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22)}
+.ca-badge-comm   {color:#6ee7b7;background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.22)}
+.ca-badge-weather{color:#7dd3fc;background:rgba(125,211,252,.08);border:1px solid rgba(125,211,252,.22)}
+.ca-badge-general{color:#94a3b8;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.2)}
 
 /* ── News sections ── */
 .ca-news-sections{display:flex;flex-direction:column;gap:10px;padding:2px 14px 14px}
-.ca-news-group{border:1px solid var(--b);border-radius:12px;overflow:hidden;transition:border-color .25s}
-.ca-news-group-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 14px;background:var(--panel3);
-  border-bottom:1px solid var(--b);cursor:pointer;user-select:none;
-  transition:background .15s;
-}
+.ca-news-group{border:1px solid var(--b);border-radius:12px;overflow:hidden}
+.ca-news-group-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--panel3);border-bottom:1px solid var(--b);cursor:pointer;user-select:none;transition:background .15s}
 .ca-news-group-hdr:hover{background:var(--panel2)}
 .ca-news-group-title{font-size:12px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:7px}
-.ca-news-group-count{
-  font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--mu);
-  background:var(--panel2);padding:1px 7px;border-radius:999px;border:1px solid var(--b);
-}
+.ca-news-group-count{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--mu);background:var(--panel2);padding:1px 7px;border-radius:999px;border:1px solid var(--b)}
 .ca-news-group-toggle{font-size:14px;color:var(--mu);transition:transform .2s}
 .ca-news-group-toggle.open{transform:rotate(90deg)}
 .ca-news-group-body{display:none;flex-direction:column}
 .ca-news-group-body.open{display:flex}
 .ca-cat-section{border-bottom:1px solid var(--b)}
 .ca-cat-section:last-child{border-bottom:none}
-.ca-cat-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 13px;background:transparent;cursor:pointer;user-select:none;transition:background .15s;
-}
+.ca-cat-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;cursor:pointer;user-select:none;transition:background .15s}
 .ca-cat-hdr:hover{background:var(--panel3)}
 .ca-cat-label{font-size:11px;font-weight:600;color:var(--mu)}
 .ca-cat-count{font-size:9.5px;font-family:'JetBrains Mono',monospace;color:var(--mu);opacity:.65}
@@ -507,18 +323,14 @@ html,body{height:100%}
 
 /* ── Commodity tiles ── */
 .ca-comm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:7px;padding:2px 14px 14px}
-.ca-comm-tile{
-  background:var(--panel3);border:1px solid var(--b);
-  border-radius:11px;padding:10px 12px;
-  transition:border-color .15s,transform .15s,box-shadow .15s;cursor:pointer;
-}
+.ca-comm-tile{background:var(--panel3);border:1px solid var(--b);border-radius:11px;padding:10px 12px;transition:border-color .15s,transform .15s,box-shadow .15s;cursor:pointer}
 .ca-comm-tile:hover{border-color:rgba(110,231,183,.35);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow)}
 .ca-comm-name{font-size:11px;font-weight:600;color:var(--tx);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ca-comm-price{font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;color:var(--ac2);white-space:nowrap}
 .ca-comm-sub{font-size:10px;color:var(--mu);margin-top:2px}
 .ca-up{color:#4ade80!important}.ca-dn{color:#f87171!important}
 
-/* ── Commodity detail table ── */
+/* ── Commodity table ── */
 .ca-item-list{display:flex;flex-direction:column;gap:6px;padding:2px 14px 14px}
 .ca-item-card{background:var(--panel3);border:1px solid var(--b);border-radius:11px;padding:11px 13px}
 .ca-comm-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:7px}
@@ -529,12 +341,9 @@ html,body{height:100%}
 .ca-comm-table td:not(:first-child){text-align:right}
 .ca-comm-table tr:last-child td{border-bottom:none}
 
-/* ── Weather card ── */
+/* ── Weather ── */
 .ca-weather-wrap{padding:2px 14px 14px}
-.ca-weather-card{
-  background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(14,165,233,.05));
-  border:1px solid rgba(59,130,246,.22);border-radius:12px;padding:14px;
-}
+.ca-weather-card{background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(14,165,233,.05));border:1px solid rgba(59,130,246,.22);border-radius:12px;padding:14px}
 [data-theme="light"] .ca-weather-card{background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(14,165,233,.04))}
 .ca-weather-main{display:flex;align-items:center;gap:14px;margin-bottom:12px}
 .ca-weather-temp{font-family:'Outfit',sans-serif;font-size:38px;font-weight:800;color:var(--tx);line-height:1}
@@ -544,16 +353,10 @@ html,body{height:100%}
 .ca-ws{background:var(--panel2);border-radius:9px;padding:7px 9px;text-align:center;border:1px solid var(--b)}
 .ca-ws-val{font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:var(--tx)}
 .ca-ws-lbl{font-size:9.5px;color:var(--mu);margin-top:2px}
-.ca-weather-adv{
-  margin-top:10px;padding:8px 11px;
-  background:rgba(59,130,246,.07);
-  border-left:3px solid rgba(59,130,246,.4);
-  border-radius:0 8px 8px 0;
-  font-size:12px;color:#93c5fd;line-height:1.55;
-}
+.ca-weather-adv{margin-top:10px;padding:8px 11px;background:rgba(59,130,246,.07);border-left:3px solid rgba(59,130,246,.4);border-radius:0 8px 8px 0;font-size:12px;color:#93c5fd;line-height:1.55}
 [data-theme="light"] .ca-weather-adv{color:#1d4ed8;background:rgba(37,99,235,.07);border-left-color:rgba(37,99,235,.4)}
 
-/* ── Typing indicator ── */
+/* ── Typing ── */
 .ca-typing-wrap{padding:0 22px 4px}
 .ca-typing-bubble{display:flex!important;align-items:center;gap:5px;padding:13px 16px!important;width:fit-content}
 .ca-typing-bubble span{width:6px;height:6px;border-radius:50%;background:var(--mu);animation:db 1.4s infinite ease-in-out}
@@ -564,60 +367,25 @@ html,body{height:100%}
 @keyframes si{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── Input bar ── */
-.ca-input-bar{
-  border-top:1px solid var(--b);
-  background:var(--topbar-bg);backdrop-filter:blur(16px);
-  padding:12px 22px 15px;flex-shrink:0;
-  transition:background .25s,border-color .25s;
-}
-.ca-concern-banner{
-  display:flex;align-items:center;gap:7px;
-  margin-bottom:9px;padding:7px 12px;
-  border-radius:9px;background:rgba(245,158,11,.07);
-  border:1px solid rgba(245,158,11,.22);
-  color:var(--amber);font-size:11.5px;font-weight:500;
-}
+.ca-input-bar{border-top:1px solid var(--b);background:var(--topbar-bg);backdrop-filter:blur(16px);padding:12px 22px 15px;flex-shrink:0;transition:background .25s,border-color .25s}
+.ca-concern-banner{display:flex;align-items:center;gap:7px;margin-bottom:9px;padding:7px 12px;border-radius:9px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.22);color:var(--amber);font-size:11.5px;font-weight:500}
 .ca-input-row{display:flex;align-items:flex-end;gap:9px}
 .ca-input-wrap{flex:1}
-.ca-input{
-  width:100%;min-height:50px;max-height:124px;resize:none;
-  background:var(--input-bg);border:1.5px solid var(--b2);
-  border-radius:14px;padding:14px 16px;
-  font-size:13.5px;font-family:'Inter',sans-serif;
-  color:var(--tx);outline:none;line-height:1.55;display:block;
-  transition:border-color .15s,box-shadow .15s,background .25s,color .25s;
-}
+.ca-input{width:100%;min-height:50px;max-height:124px;resize:none;background:var(--input-bg);border:1.5px solid var(--b2);border-radius:14px;padding:14px 16px;font-size:13.5px;font-family:'Inter',sans-serif;color:var(--tx);outline:none;line-height:1.55;display:block;transition:border-color .15s,box-shadow .15s,background .25s,color .25s}
 .ca-input::placeholder{color:var(--mu)}
 .ca-input:focus{border-color:rgba(59,130,246,.5);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
-.ca-send-btn{
-  width:50px;height:50px;border-radius:13px;
-  background:linear-gradient(135deg,#2563eb,#1d4ed8);
-  border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;transition:all .15s;
-  box-shadow:0 4px 14px rgba(37,99,235,.38);
-}
+.ca-send-btn{width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;box-shadow:0 4px 14px rgba(37,99,235,.38)}
 .ca-send-btn svg{width:17px;height:17px;stroke:#fff}
 .ca-send-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 20px rgba(37,99,235,.5)}
 .ca-send-btn:disabled{opacity:.25;cursor:not-allowed;transform:none;box-shadow:none}
 .ca-input-hint{font-size:10px;color:var(--mu);margin-top:7px;text-align:center;opacity:.5}
 
 .hidden{display:none!important}
+.ca-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;backdrop-filter:blur(4px)}
 
-/* ── Mobile overlay ── */
-.ca-mob-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.55);
-  z-index:40;backdrop-filter:blur(4px);
-}
-
-/* ── Responsive ── */
 @media(max-width:900px){
   .ca-mob-menu-btn{display:flex}
-  .ca-theme-btn{display:none}
-  .ca-sidebar{
-    position:fixed;top:0;left:-300px;height:100vh;
-    transition:left .25s;z-index:50;
-  }
+  .ca-sidebar{position:fixed;top:0;left:-300px;height:100vh;transition:left .25s;z-index:50}
   .ca-sidebar.open{left:0}
 }
 @media(max-width:600px){
@@ -625,453 +393,545 @@ html,body{height:100%}
   .ca-cap-grid{grid-template-columns:1fr}
   .ca-topbar{padding:10px 14px}
   .ca-input-bar{padding:10px 14px 13px}
-  .ca-model-badge{display:none}
+  .ca-model-badge,.ca-session-badge{display:none}
 }
 </style>
 
 <!-- ══ SCRIPT ════════════════════════════════════════════════════════════════ -->
 <script>
 (function(){
-  'use strict';
+'use strict';
 
-  /* ── DOM refs ── */
-  const root         = document.getElementById('caRoot');
-  const msgsEl       = document.getElementById('caMessages');
-  const inputEl      = document.getElementById('caInput');
-  const sendBtn      = document.getElementById('caSendBtn');
-  const typingWrap   = document.getElementById('typingWrap');
-  const statusText   = document.getElementById('statusText');
-  const msgCountEl   = document.getElementById('msgCount');
-  const clearBtn     = document.getElementById('clearChatBtn');
-  const concernBanner= document.getElementById('concernBanner');
-  const historyList  = document.getElementById('historyList');
-  const sidebar      = document.getElementById('caSidebar');
-  const mobMenuBtn   = document.getElementById('mobMenuBtn');
-  const mobOverlay   = document.getElementById('mobOverlay');
-  const restoreHistBtn = document.getElementById('restoreHistBtn');
-  document.getElementById('firstMsgTime').textContent = ts();
+/* ── DOM ── */
+const root          = document.getElementById('caRoot');
+const msgsEl        = document.getElementById('caMessages');
+const inputEl       = document.getElementById('caInput');
+const sendBtn       = document.getElementById('caSendBtn');
+const typingWrap    = document.getElementById('typingWrap');
+const statusText    = document.getElementById('statusText');
+const msgCountHint  = document.getElementById('msgCountHint');
+const concernBanner = document.getElementById('concernBanner');
+const sessionsList  = document.getElementById('sessionsList');
+const sessionsCount = document.getElementById('sessionsCount');
+const sessionBadge  = document.getElementById('sessionBadge');
+const mobMenuBtn    = document.getElementById('mobMenuBtn');
+const mobOverlay    = document.getElementById('mobOverlay');
+const newChatBtn    = document.getElementById('newChatBtn');
+const sidebar       = document.getElementById('caSidebar');
 
-  let concernMode = false, msgCount = 0, history = [];
-  let dbHistory = []; // stores loaded DB history for restore
+/* ── State ── */
+let concernMode  = false;
+let msgCount     = 0;
+let history      = [];          // in-memory conversation context for Groq
+let currentSid   = null;        // active session_id
 
-  /* ── Theme ── */
-  const savedTheme = localStorage.getItem('ca-theme') || 'dark';
-  setTheme(savedTheme, false);
+/* ── Theme ── */
+const savedTheme = localStorage.getItem('ca-theme') || 'dark';
+applyTheme(savedTheme, false);
+function applyTheme(t, save=true){
+  root.setAttribute('data-theme', t);
+  document.documentElement.setAttribute('data-theme', t);
+  if(save) localStorage.setItem('ca-theme', t);
+}
+function toggleTheme(){
+  applyTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+}
+document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+document.getElementById('themeToggleBtnTop').addEventListener('click', toggleTheme);
 
-  function setTheme(theme, save=true){
-    root.setAttribute('data-theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
-    if(save) localStorage.setItem('ca-theme', theme);
+/* ── Mobile sidebar ── */
+mobMenuBtn.addEventListener('click', ()=>{ sidebar.classList.add('open'); mobOverlay.classList.remove('hidden'); });
+mobOverlay.addEventListener('click', closeSidebar);
+function closeSidebar(){ sidebar.classList.remove('open'); mobOverlay.classList.add('hidden'); }
+
+/* ── Helpers ── */
+function ts(){ return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+function esc(t){ const d=document.createElement('div'); d.innerText=String(t||''); return d.innerHTML; }
+function md(text){
+  return esc(text)
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/_(.*?)_/g,'<em>$1</em>')
+    .replace(/\n/g,'<br>');
+}
+function fmt(n){ return Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function scrollBot(d=0){ setTimeout(()=>{ msgsEl.scrollTop=msgsEl.scrollHeight; }, d); }
+function upCount(){ msgCountHint.textContent=`${msgCount} message${msgCount!==1?'s':''} this session`; }
+
+/* ── Input resize ── */
+inputEl.addEventListener('input', function(){
+  this.style.height='auto';
+  this.style.height=Math.min(this.scrollHeight,124)+'px';
+  sendBtn.disabled=!this.value.trim();
+});
+inputEl.addEventListener('keydown', function(e){
+  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); submit(); }
+});
+sendBtn.addEventListener('click', submit);
+
+/* ── Nav buttons ── */
+document.querySelectorAll('.ca-nav-btn').forEach(btn=>{
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.ca-nav-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    const t=this.querySelector('.ca-nav-title');
+    sendAction(this.dataset.action, t?t.textContent:this.dataset.action);
+    closeSidebar();
+  });
+});
+
+/* ── Chips (inside welcome card) ── */
+msgsEl.addEventListener('click', function(e){
+  const chip=e.target.closest('.ca-chip');
+  if(chip) sendAction(chip.dataset.action, chip.textContent.trim());
+});
+
+/* ══════════════════════════════════════════════════════════
+   SESSION MANAGEMENT
+══════════════════════════════════════════════════════════ */
+
+/* Start a brand-new session */
+newChatBtn.addEventListener('click', ()=>{ startNewSession(true); closeSidebar(); });
+
+async function startNewSession(clearUI=true){
+  try{
+    const res  = await fetch('/api/chatbot/new_session',{method:'POST',headers:{'Content-Type':'application/json'}});
+    const data = await res.json();
+    currentSid = data.session_id || null;
+  } catch(e){
+    // Fallback: generate a client-side UUID so history still associates
+    currentSid = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36);
   }
-  function toggleTheme(){
-    const cur = root.getAttribute('data-theme') || 'dark';
-    setTheme(cur === 'dark' ? 'light' : 'dark');
+  sessionBadge.textContent = currentSid ? currentSid.slice(0,8)+'…' : 'session';
+  history   = [];
+  msgCount  = 0;
+  upCount();
+  concernMode = false;
+  concernBanner.classList.add('hidden');
+
+  if(clearUI){
+    msgsEl.innerHTML='';
+    renderWelcomeCard();
   }
-  document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
-  document.getElementById('themeToggleBtnTop').addEventListener('click', toggleTheme);
+  loadSessions();
+}
 
-  /* ── Mobile sidebar ── */
-  mobMenuBtn.addEventListener('click', () => {
-    sidebar.classList.add('open');
-    mobOverlay.classList.remove('hidden');
-  });
-  mobOverlay.addEventListener('click', closeSidebar);
-  function closeSidebar(){
-    sidebar.classList.remove('open');
-    mobOverlay.classList.add('hidden');
+/* Load a past session by session_id */
+async function loadPastSession(sid, title){
+  currentSid = sid;
+  sessionBadge.textContent = sid.slice(0,8)+'…';
+  history    = [];
+  msgCount   = 0;
+  upCount();
+  concernMode = false;
+  concernBanner.classList.add('hidden');
+  msgsEl.innerHTML='';
+
+  // Divider
+  const div=document.createElement('div');
+  div.className='ca-hist-divider';
+  div.textContent=`Session: ${title||sid}`;
+  msgsEl.appendChild(div);
+
+  try{
+    const res  = await fetch(`/api/chatbot/history?session_id=${encodeURIComponent(sid)}`);
+    const data = await res.json();
+    if(data.history && data.history.length){
+      data.history.forEach(entry=>{
+        if(!entry.user_message.startsWith('action:')){
+          renderHistoryPair(entry);
+        }
+      });
+      msgCount = data.history.length;
+      upCount();
+    } else {
+      const empty=document.createElement('div');
+      empty.className='ca-hist-divider';
+      empty.textContent='No messages in this session';
+      msgsEl.appendChild(empty);
+    }
+  } catch(e){
+    const err=document.createElement('div');
+    err.className='ca-hist-divider';
+    err.textContent='Could not load session history';
+    msgsEl.appendChild(err);
   }
 
-  /* ── Helpers ── */
-  function ts(){ return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
-  function esc(t){ const d=document.createElement('div'); d.innerText=String(t||''); return d.innerHTML; }
-  function md(text){
-    return esc(text)
-      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-      .replace(/_(.*?)_/g,'<em>$1</em>')
-      .replace(/\n/g,'<br>');
-  }
-  function fmt(n){ return Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-  function scrollBot(delay=0){
-    setTimeout(()=>{ msgsEl.scrollTop=msgsEl.scrollHeight; }, delay);
-  }
-  function upCount(){ msgCountEl.textContent=msgCount; }
-
-  /* ── Input auto-resize ── */
-  inputEl.addEventListener('input',function(){
-    this.style.height='auto';
-    this.style.height=Math.min(this.scrollHeight,124)+'px';
-    sendBtn.disabled=!this.value.trim();
-  });
-  inputEl.addEventListener('keydown',function(e){
-    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submit();}
-  });
-  sendBtn.addEventListener('click',submit);
-
-  /* ── Nav buttons ── */
-  document.querySelectorAll('.ca-nav-btn').forEach(btn=>{
-    btn.addEventListener('click',function(){
-      document.querySelectorAll('.ca-nav-btn').forEach(b=>b.classList.remove('active'));
-      this.classList.add('active');
-      const t=this.querySelector('.ca-nav-title');
-      sendAction(this.dataset.action, t?t.textContent:this.dataset.action);
-      closeSidebar();
-    });
+  // Mark active session in sidebar
+  document.querySelectorAll('.ca-session-item').forEach(el=>{
+    el.classList.toggle('active-session', el.dataset.sid===sid);
   });
 
-  /* ── Chips ── */
-  msgsEl.addEventListener('click',function(e){
-    const chip=e.target.closest('.ca-chip');
-    if(chip) sendAction(chip.dataset.action, chip.textContent.trim());
-  });
+  scrollBot(80);
+  loadSessions();
+  closeSidebar();
+}
 
-  /* ── Clear ── */
-  clearBtn.addEventListener('click',function(){
-    [...msgsEl.querySelectorAll('.ca-msg-row')].forEach((r,i)=>{ if(i>0) r.remove(); });
-    [...msgsEl.querySelectorAll('.ca-hist-label')].forEach(el=>el.remove());
-    history=[]; msgCount=0; upCount(); concernMode=false;
-    concernBanner.classList.add('hidden');
-  });
+/* Render a user+bot pair from DB history */
+function renderHistoryPair(entry){
+  // User row
+  const uRow=document.createElement('div');
+  uRow.className='ca-msg-row ca-user-row';
+  uRow.innerHTML=`<div class="ca-bubble ca-user-bubble">
+    <div class="ca-bubble-body">${md(entry.user_message)}</div>
+    <div class="ca-bubble-time">${esc(entry.timestamp)}</div>
+  </div>`;
+  msgsEl.appendChild(uRow);
+  // Bot row
+  const bRow=document.createElement('div');
+  bRow.className='ca-msg-row ca-bot-row';
+  bRow.innerHTML=`<div class="ca-bot-orb">AI</div>
+    <div class="ca-bubble ca-bot-bubble">
+      <div class="ca-bubble-header">Seamless Assistant</div>
+      <div class="ca-bubble-body">${md(entry.bot_reply)}</div>
+      <div class="ca-bubble-time">${esc(entry.timestamp)}</div>
+    </div>`;
+  msgsEl.appendChild(bRow);
+}
 
-  /* ── Restore history into chat ── */
-  restoreHistBtn.addEventListener('click', restoreHistoryInChat);
+/* Load sessions list into sidebar */
+async function loadSessions(){
+  try{
+    const res  = await fetch('/api/chatbot/sessions');
+    const data = await res.json();
+    const sessions = data.sessions || [];
 
-  function restoreHistoryInChat(){
-    if(!dbHistory.length){
-      loadHistory(true);
+    sessionsCount.textContent = sessions.length || '';
+
+    if(!sessions.length){
+      sessionsList.innerHTML='<div class="ca-list-empty">No past chats yet</div>';
       return;
     }
-    // Remove any existing history rows first (avoid duplicates)
-    [...msgsEl.querySelectorAll('.ca-hist-label,.ca-hist-restored')].forEach(el=>el.remove());
 
-    // Insert divider
-    const divider = document.createElement('div');
-    divider.className='ca-hist-label';
-    divider.textContent='Previous conversation history';
-    msgsEl.insertBefore(divider, msgsEl.querySelector('.ca-msg-row:nth-child(2)') || null);
-
-    // Insert each pair in chronological order
-    dbHistory.forEach(entry => {
-      // User message
-      const userRow = document.createElement('div');
-      userRow.className='ca-msg-row ca-user-row ca-hist-restored';
-      userRow.innerHTML=`<div class="ca-bubble ca-user-bubble">
-        <div class="ca-bubble-body">${md(entry.user_message)}</div>
-        <div class="ca-bubble-time">${esc(entry.timestamp)}</div>
-      </div>`;
-      msgsEl.insertBefore(userRow, divider.nextSibling);
-
-      // Bot reply
-      const botRow = document.createElement('div');
-      botRow.className='ca-msg-row ca-bot-row ca-hist-restored';
-      botRow.innerHTML=`
-        <div class="ca-bot-orb">AI</div>
-        <div class="ca-bubble ca-bot-bubble">
-          <div class="ca-bubble-header">Seamless Assistant</div>
-          <div class="ca-bubble-body">${md(entry.bot_reply)}</div>
-          <div class="ca-bubble-time">${esc(entry.timestamp)}</div>
+    sessionsList.innerHTML='';
+    sessions.forEach(s=>{
+      const item=document.createElement('div');
+      item.className='ca-session-item'+(s.session_id===currentSid?' active-session':'');
+      item.dataset.sid=s.session_id;
+      const count=s.msg_count?`${s.msg_count} msg`:'';
+      item.innerHTML=`
+        <div class="ca-sess-title" title="${esc(s.title)}">${esc(s.title)}</div>
+        <div class="ca-sess-meta">
+          <span>${esc(s.last_active)}</span>
+          ${count?`<span class="ca-sess-dot"></span><span>${esc(count)}</span>`:''}
         </div>`;
-      // Insert after the user row we just added
-      userRow.after(botRow);
+      item.addEventListener('click', ()=> loadPastSession(s.session_id, s.title));
+      sessionsList.appendChild(item);
     });
-
-    scrollBot(80);
+  } catch(e){
+    sessionsList.innerHTML='<div class="ca-list-empty">Sessions unavailable</div>';
   }
+}
 
-  /* ── Submit ── */
-  function submit(){
-    const msg=inputEl.value.trim(); if(!msg) return;
-    appendUser(msg);
-    callAPI({message:concernMode?'Concern: '+msg:msg, history});
-    inputEl.value=''; inputEl.style.height='auto'; sendBtn.disabled=true;
-  }
-  function sendAction(action,label){
-    appendUser(label);
-    if(action!=='raise_concern') concernMode=false;
-    callAPI({action});
-  }
-
-  /* ── Append user ── */
-  function appendUser(text){
-    msgCount++; upCount(); history.push({role:'user',content:text});
-    const row=document.createElement('div');
-    row.className='ca-msg-row ca-user-row ca-reveal';
-    row.innerHTML=`<div class="ca-bubble ca-user-bubble">
-      <div class="ca-bubble-body">${md(text)}</div>
+/* ══════════════════════════════════════════════════════════
+   WELCOME CARD
+══════════════════════════════════════════════════════════ */
+function renderWelcomeCard(){
+  const row=document.createElement('div');
+  row.className='ca-msg-row ca-bot-row ca-reveal';
+  row.innerHTML=`<div class="ca-bot-orb">AI</div>
+    <div class="ca-bubble ca-bot-bubble ca-welcome-bubble">
+      <div class="ca-welcome-hdr">
+        <div class="ca-welcome-icon">✦</div>
+        <div>
+          <div class="ca-welcome-title">Seamless Assistant</div>
+          <div class="ca-welcome-meta">Powered by Groq · LLaMA3-70B</div>
+        </div>
+      </div>
+      <div class="ca-welcome-body">
+        Hello! I'm your <em>intelligent project companion</em> — delivering real-time insights
+        across news, markets, and weather. Ask me naturally in English or Hindi —
+        I understand typos and alternate spellings too.
+      </div>
+      <div class="ca-cap-grid">
+        <div class="ca-cap"><span class="ca-cap-ico">📰</span><div><div class="ca-cap-t">Live News</div><div class="ca-cap-d">Published & Pending · By category</div></div></div>
+        <div class="ca-cap"><span class="ca-cap-ico">📊</span><div><div class="ca-cap-t">Commodity Prices</div><div class="ca-cap-d">Wheat, Rice, Onion & more</div></div></div>
+        <div class="ca-cap"><span class="ca-cap-ico">🌤</span><div><div class="ca-cap-t">Real-time Weather</div><div class="ca-cap-d">Any city — temp, rain, humidity</div></div></div>
+        <div class="ca-cap"><span class="ca-cap-ico">💬</span><div><div class="ca-cap-t">AI Conversations</div><div class="ca-cap-d">English or Hindi, typos OK</div></div></div>
+      </div>
+      <div class="ca-welcome-hint">Try natural queries like:</div>
+      <div class="ca-example-queries">
+        <span class="ca-eq">Chandivali's temperature</span>
+        <span class="ca-eq">Pyaaz ka bhav</span>
+        <span class="ca-eq">Rainfall in Nagpur</span>
+        <span class="ca-eq">Alu ka daam</span>
+        <span class="ca-eq">Gehu price today</span>
+      </div>
+      <div class="ca-chip-row">
+        <button class="ca-chip" data-action="top_news">📰 Top News</button>
+        <button class="ca-chip" data-action="commodities">📊 Commodities</button>
+        <button class="ca-chip" data-action="weather">🌤 Weather</button>
+      </div>
       <div class="ca-bubble-time">${ts()}</div>
     </div>`;
-    msgsEl.appendChild(row); scrollBot(); setLoading(true);
-  }
+  msgsEl.appendChild(row);
+}
 
-  /* ── Append bot ── */
-  function appendBot(reply, items, type, sections){
-    msgCount++; upCount(); history.push({role:'assistant',content:reply});
-    const row=document.createElement('div');
-    row.className='ca-msg-row ca-bot-row ca-reveal';
-    row.innerHTML=`
-      <div class="ca-bot-orb">AI</div>
-      <div class="ca-bubble ca-bot-bubble">
-        <div class="ca-bubble-header">Seamless Assistant</div>
-        <div class="ca-bubble-body">${md(reply)}</div>
-        ${buildCards(items||[], type||'', sections||null)}
-        <div class="ca-bubble-time">${ts()}</div>
+/* ══════════════════════════════════════════════════════════
+   SEND / APPEND
+══════════════════════════════════════════════════════════ */
+function submit(){
+  const msg=inputEl.value.trim(); if(!msg) return;
+  appendUser(msg);
+  callAPI({message: concernMode ? 'Concern: '+msg : msg, history, session_id: currentSid});
+  inputEl.value=''; inputEl.style.height='auto'; sendBtn.disabled=true;
+}
+
+function sendAction(action, label){
+  appendUser(label);
+  if(action!=='raise_concern') concernMode=false;
+  callAPI({action, session_id: currentSid});
+}
+
+function appendUser(text){
+  msgCount++; upCount();
+  history.push({role:'user',content:text});
+  const row=document.createElement('div');
+  row.className='ca-msg-row ca-user-row ca-reveal';
+  row.innerHTML=`<div class="ca-bubble ca-user-bubble">
+    <div class="ca-bubble-body">${md(text)}</div>
+    <div class="ca-bubble-time">${ts()}</div>
+  </div>`;
+  msgsEl.appendChild(row); scrollBot(); setLoading(true);
+}
+
+function appendBot(reply, items, type, sections){
+  msgCount++; upCount();
+  history.push({role:'assistant',content:reply});
+  const row=document.createElement('div');
+  row.className='ca-msg-row ca-bot-row ca-reveal';
+  row.innerHTML=`<div class="ca-bot-orb">AI</div>
+    <div class="ca-bubble ca-bot-bubble">
+      <div class="ca-bubble-header">Seamless Assistant</div>
+      <div class="ca-bubble-body">${md(reply)}</div>
+      ${buildCards(items||[], type||'', sections||null)}
+      <div class="ca-bubble-time">${ts()}</div>
+    </div>`;
+  msgsEl.appendChild(row);
+
+  // Wire collapsibles
+  row.querySelectorAll('.ca-news-group-hdr').forEach(hdr=>{
+    hdr.addEventListener('click',function(){
+      this.nextElementSibling.classList.toggle('open');
+      this.querySelector('.ca-news-group-toggle').classList.toggle('open');
+    });
+  });
+  row.querySelectorAll('.ca-cat-hdr').forEach(hdr=>{
+    hdr.addEventListener('click',function(){
+      this.nextElementSibling.classList.toggle('open');
+      this.querySelector('.ca-cat-toggle').classList.toggle('open');
+    });
+  });
+  // Commodity tile click
+  row.querySelectorAll('.ca-comm-tile').forEach(tile=>{
+    tile.addEventListener('click',function(){
+      const name=this.dataset.name;
+      if(name){ appendUser(`Price of ${name}`); callAPI({message:`Price of ${name}`,history,session_id:currentSid}); }
+    });
+  });
+
+  scrollBot(60);
+  loadSessions(); // keep sessions list fresh
+}
+
+/* ══════════════════════════════════════════════════════════
+   CARD BUILDER
+══════════════════════════════════════════════════════════ */
+function buildCards(items, type, sections){
+  if(type==='top_news' && sections) return buildNewsSections(sections);
+
+  if(type==='commodities_overview'){
+    if(!items||!items.length) return '';
+    let h='<div class="ca-comm-grid">';
+    items.forEach(item=>{
+      const chg=parseFloat(item.change)||0;
+      const cls=chg>0?'ca-up':chg<0?'ca-dn':'';
+      const arrow=chg>0?'▲':chg<0?'▼':'—';
+      h+=`<div class="ca-comm-tile" data-name="${esc(item.name)}">
+        <div class="ca-comm-name" title="${esc(item.name)}">${esc(item.name)}</div>
+        <div class="ca-comm-price">${item.avg_price?`₹${fmt(item.avg_price)}`:'—'}</div>
+        <div class="ca-comm-sub ${cls}">${arrow} ${Math.abs(chg).toFixed(1)}% · ${item.state_count||''} states</div>
       </div>`;
-    msgsEl.appendChild(row);
-
-    // Wire up collapsible toggles
-    row.querySelectorAll('.ca-news-group-hdr').forEach(hdr=>{
-      hdr.addEventListener('click',function(){
-        const body=this.nextElementSibling;
-        const toggle=this.querySelector('.ca-news-group-toggle');
-        body.classList.toggle('open');
-        toggle.classList.toggle('open');
-      });
     });
-    row.querySelectorAll('.ca-cat-hdr').forEach(hdr=>{
-      hdr.addEventListener('click',function(){
-        const body=this.nextElementSibling;
-        const toggle=this.querySelector('.ca-cat-toggle');
-        body.classList.toggle('open');
-        toggle.classList.toggle('open');
-      });
-    });
-    // Commodity tile → ask for details
-    row.querySelectorAll('.ca-comm-tile').forEach(tile=>{
-      tile.addEventListener('click',function(){
-        const name=this.dataset.name;
-        if(name){ appendUser(`Price of ${name}`); callAPI({message:`Price of ${name}`,history}); }
-      });
-    });
-
-    scrollBot(60);
-    loadHistory(); // refresh sidebar history after each response
+    return h+'</div>';
   }
 
-  /* ═══════════════════════════════════════════════════════
-     CARD BUILDER
-  ═══════════════════════════════════════════════════════ */
-  function buildCards(items, type, sections){
+  if(type==='commodity_price'){
+    if(!items||!items.length) return '';
+    let h=`<div class="ca-item-list"><div class="ca-item-card">
+      <span class="ca-badge ca-badge-comm">Agmarknet · ₹/qtl</span>
+      <table class="ca-comm-table"><thead><tr><th>State</th><th>Current</th><th>Previous</th><th>Change</th></tr></thead><tbody>`;
+    items.forEach(row=>{
+      const chg=parseFloat(row.change)||0;
+      const cls=chg>0?'ca-up':chg<0?'ca-dn':'';
+      const arrow=chg>0?'▲':chg<0?'▼':'—';
+      h+=`<tr>
+        <td>${esc(row.state||'—')}</td>
+        <td style="font-weight:600">${row.current_price!=null?`₹${fmt(row.current_price)}`:'—'}</td>
+        <td style="opacity:.7">${row.previous_price!=null?`₹${fmt(row.previous_price)}`:'—'}</td>
+        <td class="${cls}">${chg!==0?`${arrow} ${Math.abs(chg).toFixed(1)}`:'—'}</td>
+      </tr>`;
+    });
+    return h+'</tbody></table></div></div>';
+  }
 
-    /* ── Top News ── */
-    if(type==='top_news' && sections){
-      return buildNewsSections(sections);
-    }
+  if(type==='weather' && items && items.length){
+    const w=items[0];
+    return `<div class="ca-weather-wrap"><div class="ca-weather-card">
+      <span class="ca-badge ca-badge-weather">Live Weather</span>
+      <div class="ca-weather-main">
+        <img src="https://openweathermap.org/img/wn/${w.icon||'01d'}@2x.png" style="width:52px;height:52px" alt="${esc(w.desc)}">
+        <div>
+          <div class="ca-weather-temp">${w.temp}°C</div>
+          <div class="ca-weather-city">📍 ${esc(w.location)}</div>
+          <div class="ca-weather-sky">${esc(w.desc)}</div>
+        </div>
+      </div>
+      <div class="ca-weather-stats">
+        <div class="ca-ws"><div class="ca-ws-val">${w.humidity}%</div><div class="ca-ws-lbl">Humidity</div></div>
+        <div class="ca-ws"><div class="ca-ws-val">${w.wind} m/s</div><div class="ca-ws-lbl">Wind</div></div>
+        <div class="ca-ws"><div class="ca-ws-val">${w.feels_like}°C</div><div class="ca-ws-lbl">Feels like</div></div>
+      </div>
+      ${w.overview?`<div class="ca-weather-adv">${esc(w.overview)}</div>`:''}
+    </div></div>`;
+  }
+  return '';
+}
 
-    /* ── Commodities overview tiles ── */
-    if(type==='commodities_overview'){
-      if(!items||!items.length) return '';
-      let html='<div class="ca-comm-grid">';
-      items.forEach(item=>{
-        const chg=parseFloat(item.change)||0;
-        const cls=chg>0?'ca-up':chg<0?'ca-dn':'';
-        const arrow=chg>0?'▲':chg<0?'▼':'—';
-        const price=item.avg_price?`₹${fmt(item.avg_price)}`:'—';
-        const states=item.state_count?`${item.state_count} states`:'';
-        html+=`<div class="ca-comm-tile" data-name="${esc(item.name)}">
-          <div class="ca-comm-name" title="${esc(item.name)}">${esc(item.name)}</div>
-          <div class="ca-comm-price">${price}</div>
-          <div class="ca-comm-sub ${cls}">${arrow} ${Math.abs(chg).toFixed(1)}% · ${states}</div>
+function buildNewsSections(sections){
+  if(!sections) return '';
+  let h='<div class="ca-news-sections">';
+
+  function renderGroup(label, badgeCls, secs, open){
+    if(!secs||!secs.length) return '';
+    const total=secs.reduce((s,x)=>s+x.articles.length,0);
+    if(!total) return '';
+    let body='';
+    secs.forEach(sec=>{
+      if(!sec.articles||!sec.articles.length) return;
+      body+=`<div class="ca-cat-section">
+        <div class="ca-cat-hdr">
+          <span class="ca-cat-label">${sec.emoji} ${esc(sec.label)}</span>
+          <span style="display:flex;align-items:center;gap:6px">
+            <span class="ca-cat-count">${sec.articles.length}</span>
+            <span class="ca-cat-toggle${open?' open':''}">›</span>
+          </span>
+        </div>
+        <div class="ca-cat-articles${open?' open':''}">`;
+      sec.articles.forEach(art=>{
+        const kws=(art.keywords||'').split(',').map(k=>k.trim()).filter(Boolean).slice(0,4);
+        body+=`<div class="ca-article">
+          <div class="ca-article-head">${esc(art.headline)}</div>
+          ${art.summary?`<div class="ca-article-summary">${esc(art.summary)}</div>`:''}
+          <div class="ca-article-meta">
+            <span class="ca-badge ${badgeCls}" style="margin-bottom:0">${esc(art.type||'News')}</span>
+            <span class="ca-article-date">${esc(art.date)}</span>
+            ${kws.map(k=>`<span class="ca-kw">${esc(k)}</span>`).join('')}
+          </div>
         </div>`;
       });
-      html+='</div>';
-      return html;
-    }
-
-    /* ── Commodity detail table ── */
-    if(type==='commodity_price'){
-      if(!items||!items.length) return '';
-      let html=`<div class="ca-item-list"><div class="ca-item-card">
-        <span class="ca-badge ca-badge-comm">Agmarknet · ₹/qtl</span>
-        <table class="ca-comm-table">
-          <thead><tr><th>State</th><th>Current</th><th>Previous</th><th>Change</th></tr></thead>
-          <tbody>`;
-      items.forEach(row=>{
-        const chg=parseFloat(row.change)||0;
-        const cls=chg>0?'ca-up':chg<0?'ca-dn':'';
-        const arrow=chg>0?'▲':chg<0?'▼':'—';
-        const curr=row.current_price!=null?`₹${fmt(row.current_price)}`:'—';
-        const prev=row.previous_price!=null?`₹${fmt(row.previous_price)}`:'—';
-        const chgStr=chg!==0?`${arrow} ${Math.abs(chg).toFixed(1)}`:'—';
-        html+=`<tr>
-          <td>${esc(row.state||'—')}</td>
-          <td style="font-weight:600">${curr}</td>
-          <td style="opacity:.7">${prev}</td>
-          <td class="${cls}">${chgStr}</td>
-        </tr>`;
-      });
-      html+=`</tbody></table></div></div>`;
-      return html;
-    }
-
-    /* ── Weather ── */
-    if(type==='weather'&&items&&items.length){
-      const w=items[0];
-      const iconUrl=`https://openweathermap.org/img/wn/${w.icon||'01d'}@2x.png`;
-      return `<div class="ca-weather-wrap"><div class="ca-weather-card">
-        <span class="ca-badge ca-badge-weather">Live Weather</span>
-        <div class="ca-weather-main">
-          <img src="${iconUrl}" alt="${esc(w.desc)}" style="width:52px;height:52px">
-          <div>
-            <div class="ca-weather-temp">${w.temp}°C</div>
-            <div class="ca-weather-city">📍 ${esc(w.location)}</div>
-            <div class="ca-weather-sky">${esc(w.desc)}</div>
-          </div>
-        </div>
-        <div class="ca-weather-stats">
-          <div class="ca-ws"><div class="ca-ws-val">${w.humidity}%</div><div class="ca-ws-lbl">Humidity</div></div>
-          <div class="ca-ws"><div class="ca-ws-val">${w.wind} m/s</div><div class="ca-ws-lbl">Wind</div></div>
-          <div class="ca-ws"><div class="ca-ws-val">${w.feels_like}°C</div><div class="ca-ws-lbl">Feels like</div></div>
-        </div>
-        ${w.overview?`<div class="ca-weather-adv">${esc(w.overview)}</div>`:''}
-      </div></div>`;
-    }
-
-    return '';
+      body+=`</div></div>`;
+    });
+    return `<div class="ca-news-group">
+      <div class="ca-news-group-hdr">
+        <span class="ca-news-group-title">
+          <span class="ca-badge ${badgeCls}" style="margin-bottom:0">${label}</span>
+          <span class="ca-news-group-count">${total} articles</span>
+        </span>
+        <span class="ca-news-group-toggle${open?' open':''}">›</span>
+      </div>
+      <div class="ca-news-group-body${open?' open':''}">${body}</div>
+    </div>`;
   }
 
-  /* ── Build sectioned news ── */
-  function buildNewsSections(sections){
-    if(!sections) return '';
-    let html='<div class="ca-news-sections">';
+  h+=renderGroup("✅ Today's Published", 'ca-badge-pub',  sections.published,     true);
+  h+=renderGroup("⏳ Pending / Non-Published", 'ca-badge-npub', sections.non_published, false);
+  return h+'</div>';
+}
 
-    function renderGroup(groupLabel, groupBadgeClass, groupSections, startOpen){
-      if(!groupSections||!groupSections.length) return '';
-      const totalArts=groupSections.reduce((s,sec)=>s+sec.articles.length,0);
-      if(!totalArts) return '';
+/* ══════════════════════════════════════════════════════════
+   API CALL
+══════════════════════════════════════════════════════════ */
+async function callAPI(payload){
+  try{
+    const res  = await fetch('/api/chatbot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data = await res.json();
+    if(data.type==='concern_prompt'){
+      concernMode=true; concernBanner.classList.remove('hidden');
+      setStatus('⚠️ Concern mode','var(--amber)');
+    } else if(data.type==='concern_saved'){
+      concernMode=false; concernBanner.classList.add('hidden');
+      setStatus('<span class="ca-pulse"></span> Online · Ready to help','var(--green)');
+    }
+    appendBot(data.reply||'Empty response.', data.items||[], data.type||'', data.sections||null);
+  } catch(err){
+    appendBot('⚡ Connection error. Check your network and try again.',[],'',[]);
+  } finally{
+    setLoading(false);
+  }
+}
 
-      let body='';
-      groupSections.forEach(sec=>{
-        if(!sec.articles||!sec.articles.length) return;
-        body+=`<div class="ca-cat-section">
-          <div class="ca-cat-hdr">
-            <span class="ca-cat-label">${sec.emoji} ${esc(sec.label)}</span>
-            <span style="display:flex;align-items:center;gap:6px">
-              <span class="ca-cat-count">${sec.articles.length}</span>
-              <span class="ca-cat-toggle${startOpen?' open':''}">›</span>
-            </span>
-          </div>
-          <div class="ca-cat-articles${startOpen?' open':''}">`;
-        sec.articles.forEach(art=>{
-          const kws=(art.keywords||'').split(',').map(k=>k.trim()).filter(k=>k).slice(0,4);
-          body+=`<div class="ca-article">
-            <div class="ca-article-head">${esc(art.headline)}</div>
-            ${art.summary?`<div class="ca-article-summary">${esc(art.summary)}</div>`:''}
-            <div class="ca-article-meta">
-              <span class="ca-badge ${groupBadgeClass}" style="margin-bottom:0">${esc(art.type||'News')}</span>
-              <span class="ca-article-date">${esc(art.date)}</span>
-              ${kws.map(k=>`<span class="ca-kw">${esc(k)}</span>`).join('')}
-            </div>
-          </div>`;
+/* ── Loading state ── */
+function setLoading(on){
+  typingWrap.classList.toggle('hidden',!on);
+  inputEl.disabled=sendBtn.disabled=on;
+  if(!on){ sendBtn.disabled=!inputEl.value.trim(); inputEl.focus(); }
+  if(on) setStatus('Processing…','var(--mu)');
+  else if(!concernMode) setStatus('<span class="ca-pulse"></span> Online · Ready to help','var(--green)');
+  scrollBot();
+}
+function setStatus(html,color){ statusText.innerHTML=html; statusText.style.color=color||''; }
+
+/* ══════════════════════════════════════════════════════════
+   INIT — auto-load last session on page refresh
+══════════════════════════════════════════════════════════ */
+async function init(){
+  // 1. Load sessions list
+  await loadSessions();
+
+  // 2. Try to restore the most recent session automatically
+  try{
+    const res  = await fetch('/api/chatbot/sessions');
+    const data = await res.json();
+    const sessions = data.sessions || [];
+
+    if(sessions.length){
+      // Auto-restore the most recent session (first in list = newest)
+      const latest = sessions[0];
+      currentSid   = latest.session_id;
+      sessionBadge.textContent = currentSid.slice(0,8)+'…';
+
+      // Fetch its messages
+      const hres  = await fetch(`/api/chatbot/history?session_id=${encodeURIComponent(currentSid)}`);
+      const hdata = await hres.json();
+      const msgs  = (hdata.history||[]).filter(e=>!e.user_message.startsWith('action:'));
+
+      if(msgs.length){
+        // Divider
+        const div=document.createElement('div');
+        div.className='ca-hist-divider';
+        div.textContent=`Restored: ${latest.title||latest.session_id}`;
+        msgsEl.appendChild(div);
+        // Render all pairs
+        msgs.forEach(entry=> renderHistoryPair(entry));
+        msgCount=msgs.length; upCount();
+        scrollBot(100);
+
+        // Mark active in sidebar
+        document.querySelectorAll('.ca-session-item').forEach(el=>{
+          el.classList.toggle('active-session', el.dataset.sid===currentSid);
         });
-        body+=`</div></div>`;
-      });
-
-      return `<div class="ca-news-group">
-        <div class="ca-news-group-hdr">
-          <span class="ca-news-group-title">
-            <span class="ca-badge ${groupBadgeClass}" style="margin-bottom:0">${groupLabel}</span>
-            <span class="ca-news-group-count">${totalArts} articles</span>
-          </span>
-          <span class="ca-news-group-toggle${startOpen?' open':''}">›</span>
-        </div>
-        <div class="ca-news-group-body${startOpen?' open':''}">${body}</div>
-      </div>`;
-    }
-
-    html += renderGroup('✅ Today\'s Published','ca-badge-pub', sections.published, true);
-    html += renderGroup('⏳ Pending / Non-Published','ca-badge-npub', sections.non_published, false);
-    html += '</div>';
-    return html;
-  }
-
-  /* ── API ── */
-  async function callAPI(payload){
-    try{
-      const res=await fetch('/api/chatbot',{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      });
-      const data=await res.json();
-
-      if(data.type==='concern_prompt'){
-        concernMode=true; concernBanner.classList.remove('hidden');
-        setStatus('⚠️ Concern mode','var(--amber)');
-      } else if(data.type==='concern_saved'){
-        concernMode=false; concernBanner.classList.add('hidden');
-        setStatus('<span class="ca-pulse"></span> Online · Ready to help','var(--green)');
+        return; // done — skip welcome card
       }
-
-      appendBot(data.reply||'Empty response.', data.items||[], data.type||'', data.sections||null);
-    } catch(err){
-      appendBot('⚡ Connection error. Check your network and try again.',[],'',[]);
-    } finally{
-      setLoading(false);
     }
-  }
+  } catch(e){ /* fall through to welcome */ }
 
-  /* ── Loading ── */
-  function setLoading(on){
-    if(on){
-      typingWrap.classList.remove('hidden');
-      inputEl.disabled=sendBtn.disabled=true;
-      setStatus('Processing…','var(--mu)');
-    } else {
-      typingWrap.classList.add('hidden');
-      inputEl.disabled=false;
-      sendBtn.disabled=!inputEl.value.trim();
-      inputEl.focus();
-      if(!concernMode) setStatus('<span class="ca-pulse"></span> Online · Ready to help','var(--green)');
-    }
-    scrollBot();
-  }
-  function setStatus(html,color){ statusText.innerHTML=html; statusText.style.color=color||''; }
+  // 3. No history or failed — show welcome card + create new session silently
+  await startNewSession(false);
+  renderWelcomeCard();
+  scrollBot(50);
+}
 
-  /* ── Chat History (sidebar) ── */
-  async function loadHistory(andRestore=false){
-    try{
-      const res=await fetch('/api/chatbot/history');
-      const data=await res.json();
-
-      if(!data.history||!data.history.length){
-        historyList.innerHTML='<div class="ca-history-empty">No history yet</div>';
-        dbHistory=[];
-        return;
-      }
-
-      // Store full history for restore feature
-      dbHistory=[...data.history];
-
-      historyList.innerHTML='';
-      // Show last 10 entries in sidebar (most recent first)
-      const entries=[...data.history].slice(-10).reverse();
-      entries.forEach(entry=>{
-        const item=document.createElement('div');
-        item.className='ca-history-item';
-        const rawQ=entry.user_message.replace(/^action:/,'').trim();
-        const preview=rawQ.slice(0,42);
-        item.innerHTML=`
-          <div class="ca-history-q">${esc(preview)}${rawQ.length>42?'…':''}</div>
-          <div class="ca-history-ts">${esc(entry.timestamp)}</div>`;
-        // Click to pre-fill input
-        item.addEventListener('click',()=>{
-          if(!entry.user_message.startsWith('action:')){
-            inputEl.value=entry.user_message;
-            sendBtn.disabled=false;
-            inputEl.focus();
-            closeSidebar();
-          }
-        });
-        historyList.appendChild(item);
-      });
-
-      if(andRestore) restoreHistoryInChat();
-    } catch(e){
-      historyList.innerHTML='<div class="ca-history-empty">History unavailable</div>';
-      dbHistory=[];
-    }
-  }
-
-  // Load history on page open
-  loadHistory();
+init();
 })();
 </script>
 {% endblock %}
