@@ -225,7 +225,7 @@ def _get_mail_cfg() -> dict:
         "MAIL_SERVER": cfg.get("MAIL_SERVER", "smtp.gmail.com"),
         "MAIL_PORT": cfg.get("MAIL_PORT", 587),
         "MAIL_USE_TLS": cfg.get("MAIL_USE_TLS", True),
-        "MAIL_USER  ME": cfg.get("MAIL_USERNAME", ""),
+        "MAIL_USERNAME": cfg.get("MAIL_USERNAME", ""),
         "MAIL_PASSWORD": cfg.get("MAIL_PASSWORD", ""),
         "MAIL_FROM": cfg.get("MAIL_FROM", cfg.get("MAIL_USERNAME", "")),
         "BASE_URL": cfg.get("BASE_URL", "http://127.0.0.1:5000"),
@@ -1466,18 +1466,19 @@ def home():
     current_month = datetime.now().month
 
     selected_id = request.args.get("cmdt_id", "").strip()
-    selected_year = request.args.get("year", str(current_year)).strip()
-    selected_month = request.args.get("month", str(current_month)).strip()
+    selected_year = request.args.get("year", "").strip()
+    selected_month = request.args.get("month", "").strip()
 
     year_options = [str(current_year - 2), str(current_year - 1), str(current_year)]
 
-    # ---------------------------------------------------
-    # DATABASE: NEWS ONLY
+        # ---------------------------------------------------
+    # DATABASE: NEWS ONLY (COMBINED PUBLISHED + NON-PUBLISHED)
     # ---------------------------------------------------
     try:
         db = get_db()
         cursor = db.cursor(dictionary=True)
 
+        # Pending count should remain only for non-published
         cursor.execute("""
             SELECT COUNT(*) AS count
             FROM non_published_news
@@ -1485,42 +1486,94 @@ def home():
         """)
         pending_count = cursor.fetchone()["count"]
 
-        cursor.execute("""
-            SELECT id, news_headline, news_type, news_url
+        combined_news_sql = """
+            SELECT
+                id,
+                news_date,
+                news_type,
+                news_headline,
+                news_text,
+                news_url,
+                keywords,
+                date_of_insert,
+                NULL AS published_at,
+                'non_published' AS source_table,
+                COALESCE(news_date, date_of_insert) AS sort_dt
             FROM non_published_news
             WHERE published = 0
-            ORDER BY COALESCE(news_date, DATE(date_of_insert)) DESC, id DESC
+
+            UNION ALL
+
+            SELECT
+                id,
+                news_date,
+                news_type,
+                news_headline,
+                news_text,
+                news_url,
+                keywords,
+                date_of_insert,
+                published_at,
+                'published' AS source_table,
+                COALESCE(published_at, news_date, date_of_insert) AS sort_dt
+            FROM published_news
+        """
+
+        # Latest headlines
+        cursor.execute(f"""
+            SELECT id, news_headline, news_type, news_url, sort_dt, source_table
+            FROM ({combined_news_sql}) AS combined_news
+            ORDER BY sort_dt DESC, id DESC
             LIMIT 6
         """)
         latest_headlines = cursor.fetchall()
 
-        cursor.execute("""
-            SELECT id, news_date, news_type, news_headline, news_text, news_url, date_of_insert
-            FROM non_published_news
-            WHERE published = 0
-            ORDER BY COALESCE(news_date, DATE(date_of_insert)) DESC, id DESC
+        # Hero news
+        cursor.execute(f"""
+            SELECT id, news_date, news_type, news_headline, news_text, news_url,
+                keywords, date_of_insert, published_at, source_table, sort_dt
+            FROM ({combined_news_sql}) AS combined_news
+            ORDER BY sort_dt DESC, id DESC
             LIMIT 1
         """)
         hero_news = cursor.fetchone()
 
-        for category in news_categories:
-            cursor.execute("""
-                SELECT id, news_date, news_type, news_headline, news_text, news_url, date_of_insert
-                FROM non_published_news
-                WHERE published = 0 AND LOWER(news_type) = LOWER(%s)
-                ORDER BY COALESCE(news_date, DATE(date_of_insert)) DESC, id DESC
-                LIMIT 10
-            """, (category,))
-            category_news[category] = cursor.fetchall()
-
-        cursor.execute("""
-            SELECT id, news_date, news_type, news_headline, news_url, date_of_insert
-            FROM non_published_news
-            WHERE published = 0
-            ORDER BY COALESCE(news_date, DATE(date_of_insert)) DESC, id DESC
-            LIMIT 5
+        # Recent news (latest mixed list)
+        cursor.execute(f"""
+            SELECT id, news_date, news_type, news_headline, news_url,
+                keywords, date_of_insert, published_at, source_table, sort_dt
+            FROM ({combined_news_sql}) AS combined_news
+            ORDER BY sort_dt DESC, id DESC
+            LIMIT 10
         """)
         recent_news = cursor.fetchall()
+
+        category_map = {
+            "General": ["general", "global", "agri", "agricultural", "finance", "financial", "commodity", "energy"],
+            "Agri": ["agri", "agricultural"],
+            "Finance": ["finance", "financial"],
+            "Commodity": ["commodity", "energy"],
+        }
+
+        for category in news_categories:
+            types = category_map.get(category, [category.lower()])
+            placeholders = ",".join(["%s"] * len(types))
+
+            cursor.execute(f"""
+                SELECT id, news_date, news_type, news_headline, news_text, news_url,
+                    keywords, date_of_insert, published_at, source_table, sort_dt
+                FROM ({combined_news_sql}) AS combined_news
+                WHERE LOWER(news_type) IN ({placeholders})
+                ORDER BY sort_dt DESC, id DESC
+                LIMIT 10
+            """, tuple(types))
+
+            rows = cursor.fetchall()
+
+            if category == "General":
+                category_news[category] = rows if rows else recent_news[:6]
+            else:
+                category_news[category] = rows
 
     except Exception as e:
         print(f"DB ERROR: {e}")
