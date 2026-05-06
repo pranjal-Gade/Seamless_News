@@ -162,15 +162,15 @@
     }
 
     .navbar-menu-style {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 24px;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 0 48px;
       box-sizing: border-box;
       display: grid;
       grid-template-columns: auto 1fr auto;
-      align-items: center:
+      align-items: center;
       column-gap: 24px;
-      width: 100%;
     }
 
     .nav-brand {
@@ -272,7 +272,7 @@
     </a>
 
     <a href="{{ url_for('main.chatbot') }}"
-       class="nav-main-btn nav-direct-link {{ 'active' if request.endpoint == 'main.chatbot' else '' }}"
+       class="nav-main-btn nav-direct-link {{ 'active' if request.endpoint == 'm  ain.chatbot' else '' }}"
        style="text-decoration:none;">
       Chat
     </a>
