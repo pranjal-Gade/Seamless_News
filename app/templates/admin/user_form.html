@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Add User' if mode == 'add' else 'Edit User' }} — Seamless{% endblock %}
+{% block content %}
+<style>
+.admin-wrap{max-width:850px;margin:0 auto;padding:22px}.admin-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.admin-kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:800}.admin-title{margin:4px 0 8px;font-size:2rem;color:#0f172a}.admin-sub{color:#64748b;margin:0}.admin-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:10px 14px;border:1px solid #dbe4f0;background:#fff;color:#1e3a8a;text-decoration:none;font-weight:800;cursor:pointer}.admin-btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a}.form-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 14px 30px rgba(15,23,42,.06);padding:22px}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.form-field{display:grid;gap:7px}.form-field.full{grid-column:1/-1}.form-field label{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:#475569;font-weight:900}.form-field input,.form-field select{border:1px solid #dbe4f0;border-radius:12px;padding:12px 13px;font-size:.95rem}.check-row{display:flex;gap:10px;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:12px 14px}.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.flash-stack{display:grid;gap:10px;margin-bottom:18px}.flash{padding:12px 14px;border-radius:14px;font-weight:700}.flash.success{background:#eefaf3;color:#17623c}.flash.danger{background:#fff1f1;color:#9f1f1f}.flash.warning{background:#fff8e8;color:#97630a}.flash.info{background:#eef6ff;color:#1e3a8a}@media(max-width:720px){.form-grid{grid-template-columns:1fr}.admin-head{flex-direction:column}}
+</style>
+<div class="admin-wrap">
+  <div class="admin-head"><div><div class="admin-kicker">User Management</div><h1 class="admin-title">{{ 'Add User' if mode == 'add' else 'Edit User' }}</h1><p class="admin-sub">{{ 'Create a new system user and assign a role.' if mode == 'add' else 'Update user profile, role, status, or reset password.' }}</p></div><a class="admin-btn" href="{{ url_for('admin.users') }}">Back to Users</a></div>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+  <form class="form-card" method="POST">
+    <div class="form-grid">
+      <div class="form-field"><label>Name</label><input name="name" value="{{ user.name if user else '' }}" required></div>
+      <div class="form-field"><label>Email</label><input type="email" name="email" value="{{ user.email if user else '' }}" required></div>
+      <div class="form-field"><label>Role</label><select name="role">{% for role in roles %}<option value="{{ role }}" {% if user and user.role == role %}selected{% endif %}>{{ role|title if role != 'user' else 'Basic User' }}</option>{% endfor %}</select></div>
+      <div class="form-field"><label>{{ 'Password' if mode == 'add' else 'New Password (optional)' }}</label><input type="password" name="password" {% if mode == 'add' %}required{% endif %} placeholder="Minimum 6 characters"></div>
+      <div class="form-field full"><label>Status</label><label class="check-row"><input type="checkbox" name="is_active" value="1" {% if not user or user.is_active %}checked{% endif %}> Active user can log in</label></div>
+    </div>
+    <div class="form-actions"><a class="admin-btn" href="{{ url_for('admin.users') }}">Cancel</a><button class="admin-btn primary" type="submit">{{ 'Create User' if mode == 'add' else 'Save Changes' }}</button></div>
+  </form>
+</div>
+{% endblock %}

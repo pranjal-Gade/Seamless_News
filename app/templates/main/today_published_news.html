@@ -149,7 +149,7 @@
           <input id="searchInput" type="text" placeholder="Search this page…">
         </div>
 
-        {% if total > 0 %}
+        {% if total > 0 and can_access('news_processing', 'create') %}
         <a href="{{ url_for('main.send_email_today') }}"
            class="btn btn-primary" style="padding:8px 18px;font-size:.85rem;">
           📧 Send Email

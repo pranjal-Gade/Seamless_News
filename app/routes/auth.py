@@ -10,6 +10,7 @@ from flask_mail import Message
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.db import get_db
+from app.permissions import get_role_label, log_activity, normalize_role
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -141,10 +142,14 @@ def signup():
             flash('An account with this email already exists.', 'signup-danger')
             return render_template('auth/signup.html')
 
+        cursor.execute("SELECT COUNT(*) AS cnt FROM users")
+        is_first_user = cursor.fetchone()["cnt"] == 0
+        role = "admin" if is_first_user else "user"
+
         hashed = generate_password_hash(password)
         cursor.execute(
-            "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
-            (name, email, hashed)
+            "INSERT INTO users (name, email, password, role, is_active) VALUES (%s, %s, %s, %s, 1)",
+            (name, email, hashed, role)
         )
         db.commit()
         cursor.close()
@@ -186,6 +191,10 @@ def login():
             flash('Invalid email or password.', 'login-danger')
             return render_template('auth/login.html')
 
+        if not int(user.get('is_active', 1)):
+            flash('Your account is inactive. Please contact the administrator.', 'login-danger')
+            return render_template('auth/login.html')
+
         otp    = generate_otp()
         expiry = (datetime.utcnow() + timedelta(minutes=10)).isoformat()
 
@@ -193,6 +202,7 @@ def login():
             'user_id': user['id'],
             'name':    user['name'],
             'email':   user['email'],
+            'role':    normalize_role(user.get('role')),
             'otp':     otp,
             'expiry':  expiry,
         }
@@ -238,12 +248,24 @@ def verify_login_otp():
         user_id    = otp_data['user_id']
         user_name  = otp_data['name']
         user_email = otp_data['email']
+        user_role  = normalize_role(otp_data.get('role'))
 
         session.clear()
         session['user_id']    = user_id
         session['user_name']  = user_name
         session['user_email'] = user_email
+        session['user_role']  = user_role
         session.permanent     = True
+
+        try:
+            db = get_db()
+            cursor = db.cursor()
+            cursor.execute("UPDATE users SET last_login=NOW() WHERE id=%s", (user_id,))
+            db.commit()
+            cursor.close()
+            log_activity('login', 'Authentication', f'{user_email} logged in as {get_role_label(user_role)}.', user_id=user_id)
+        except Exception as e:
+            print(f"[LOGIN META ERROR] {e}")
 
         flash(f"Welcome back, {user_name}!", 'success')
         return redirect(url_for('main.home'))
@@ -407,6 +429,10 @@ def resend_otp(purpose):
 @auth_bp.route('/logout')
 @login_required
 def logout():
+    try:
+        log_activity('logout', 'Authentication', f"{session.get('user_email', 'User')} logged out.")
+    except Exception as e:
+        print(f"[LOGOUT LOG ERROR] {e}")
     session.clear()
     flash('You have been logged out successfully.', 'info')
     return redirect(url_for('main.index'))

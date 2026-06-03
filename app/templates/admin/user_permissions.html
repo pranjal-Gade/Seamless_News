@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}User Permissions — Seamless{% endblock %}
+{% block content %}
+<style>
+.admin-wrap{max-width:1120px;margin:0 auto;padding:22px}.admin-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.admin-kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:800}.admin-title{margin:4px 0 8px;font-size:2rem;color:#0f172a}.admin-sub{color:#64748b;margin:0}.admin-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:10px 14px;border:1px solid #dbe4f0;background:#fff;color:#1e3a8a;text-decoration:none;font-weight:800;cursor:pointer}.admin-btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a}.admin-panel{background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 14px 30px rgba(15,23,42,.06);overflow:hidden}.admin-table{width:100%;border-collapse:collapse}.admin-table th,.admin-table td{padding:13px 16px;border-bottom:1px solid #eef2f7;text-align:left;font-size:.9rem}.admin-table th{background:#f8fafc;color:#475569;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}.perm-box{text-align:center}.perm-box input{width:18px;height:18px}.badge{display:inline-flex;border-radius:999px;padding:4px 10px;font-size:.75rem;font-weight:900;background:#e0ecff;color:#1e3a8a}.muted{color:#64748b}.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:18px 20px;background:#f8fafc}.flash-stack{display:grid;gap:10px;margin-bottom:18px}.flash{padding:12px 14px;border-radius:14px;font-weight:700}.flash.success{background:#eefaf3;color:#17623c}.flash.danger{background:#fff1f1;color:#9f1f1f}.flash.warning{background:#fff8e8;color:#97630a}.flash.info{background:#eef6ff;color:#1e3a8a}@media(max-width:760px){.admin-table{display:block;overflow:auto}.admin-head{flex-direction:column}}
+</style>
+<div class="admin-wrap">
+  <div class="admin-head"><div><div class="admin-kicker">Permission Management</div><h1 class="admin-title">Tab Access for {{ user.name }}</h1><p class="admin-sub">Role: <strong>{{ user.role|title if user.role != 'user' else 'Basic User' }}</strong> · Email: {{ user.email }}</p></div><a class="admin-btn" href="{{ url_for('admin.users') }}">Back to Users</a></div>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+  <form class="admin-panel" method="POST">
+    <table class="admin-table">
+      <thead><tr><th>Tab / Module</th><th>Category</th><th class="perm-box">View</th><th class="perm-box">Add</th><th class="perm-box">Edit</th><th class="perm-box">Delete</th><th>Role Default</th></tr></thead>
+      <tbody>
+        {% for tab in tabs %}
+        {% set p = permissions[tab.tab_key] %}
+        {% set d = defaults[tab.tab_key] %}
+        <tr>
+          <td><strong>{{ tab.tab_name }}</strong><br><span class="muted">{{ tab.route_url }}</span></td>
+          <td><span class="badge">{{ tab.category }}</span></td>
+          <td class="perm-box"><input type="checkbox" name="{{ tab.tab_key }}_view" {% if p.can_view %}checked{% endif %}></td>
+          <td class="perm-box"><input type="checkbox" name="{{ tab.tab_key }}_create" {% if p.can_create %}checked{% endif %}></td>
+          <td class="perm-box"><input type="checkbox" name="{{ tab.tab_key }}_edit" {% if p.can_edit %}checked{% endif %}></td>
+          <td class="perm-box"><input type="checkbox" name="{{ tab.tab_key }}_delete" {% if p.can_delete %}checked{% endif %}></td>
+          <td class="muted">V:{{ d.can_view }} A:{{ d.can_create }} E:{{ d.can_edit }} D:{{ d.can_delete }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="form-actions"><a class="admin-btn" href="{{ url_for('admin.users') }}">Cancel</a><button class="admin-btn primary" type="submit">Save Permissions</button></div>
+  </form>
+</div>
+{% endblock %}

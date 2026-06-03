@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — Seamless{% endblock %}
+{% block content %}
+<style>
+.admin-wrap{max-width:1180px;margin:0 auto;padding:22px}.admin-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.admin-kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:800}.admin-title{margin:4px 0 8px;font-size:2rem;color:#0f172a}.admin-sub{color:#64748b;margin:0}.admin-actions{display:flex;gap:10px;flex-wrap:wrap}.admin-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:10px 14px;border:1px solid #dbe4f0;background:#fff;color:#1e3a8a;text-decoration:none;font-weight:800}.admin-btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a}.stat-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:22px}.stat-card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:18px;box-shadow:0 14px 30px rgba(15,23,42,.06)}.stat-card small{display:block;color:#64748b;font-weight:800;text-transform:uppercase;font-size:.68rem;letter-spacing:.06em}.stat-card strong{display:block;margin-top:8px;color:#0f172a;font-size:1.8rem}.admin-panel{background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 14px 30px rgba(15,23,42,.06);overflow:hidden}.admin-panel-head{padding:18px 20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}.admin-panel-title{font-size:1.1rem;font-weight:900;color:#0f172a}.admin-table{width:100%;border-collapse:collapse}.admin-table th,.admin-table td{padding:13px 16px;border-bottom:1px solid #eef2f7;text-align:left;font-size:.9rem}.admin-table th{background:#f8fafc;color:#475569;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}.badge{display:inline-flex;border-radius:999px;padding:4px 10px;font-size:.75rem;font-weight:900;background:#e0ecff;color:#1e3a8a}.muted{color:#64748b}.flash-stack{display:grid;gap:10px;margin-bottom:18px}.flash{padding:12px 14px;border-radius:14px;font-weight:700}.flash.success{background:#eefaf3;color:#17623c}.flash.danger{background:#fff1f1;color:#9f1f1f}.flash.warning{background:#fff8e8;color:#97630a}.flash.info{background:#eef6ff;color:#1e3a8a}@media(max-width:980px){.stat-grid{grid-template-columns:repeat(2,1fr)}.admin-head{flex-direction:column}}@media(max-width:560px){.stat-grid{grid-template-columns:1fr}.admin-wrap{padding:14px}.admin-table{font-size:.8rem}}
+</style>
+<div class="admin-wrap">
+  <div class="admin-head">
+    <div>
+      <div class="admin-kicker">Admin Portal</div>
+      <h1 class="admin-title">Operations Control Dashboard</h1>
+      <p class="admin-sub">Manage users, permissions, and monitor key system activity.</p>
+    </div>
+    <div class="admin-actions">
+      <a class="admin-btn" href="{{ url_for('admin.users') }}">Manage Users</a>
+      <a class="admin-btn" href="{{ url_for('admin.analytics') }}">Analytics</a>
+      <a class="admin-btn primary" href="{{ url_for('admin.activity_logs') }}">Activity Logs</a>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+
+  <div class="stat-grid">
+    <div class="stat-card"><small>Total Users</small><strong>{{ stats.total_users }}</strong></div>
+    <div class="stat-card"><small>Admins</small><strong>{{ stats.admins }}</strong></div>
+    <div class="stat-card"><small>Editors</small><strong>{{ stats.editors }}</strong></div>
+    <div class="stat-card"><small>Basic Users</small><strong>{{ stats.basic_users }}</strong></div>
+    <div class="stat-card"><small>Active Users</small><strong>{{ stats.active_users }}</strong></div>
+    <div class="stat-card"><small>Inactive Users</small><strong>{{ stats.inactive_users }}</strong></div>
+    <div class="stat-card"><small>Published News</small><strong>{{ stats.published_news }}</strong></div>
+    <div class="stat-card"><small>Pending News</small><strong>{{ stats.pending_news }}</strong></div>
+    <div class="stat-card"><small>Sources</small><strong>{{ stats.sources }}</strong></div>
+    <div class="stat-card"><small>Today Operations</small><strong>{{ stats.today_operations }}</strong></div>
+  </div>
+
+  <div class="admin-panel">
+    <div class="admin-panel-head">
+      <div class="admin-panel-title">Recent Activity</div>
+      <a class="admin-btn" href="{{ url_for('admin.activity_logs') }}">View All</a>
+    </div>
+    <table class="admin-table">
+      <thead><tr><th>Time</th><th>User</th><th>Module</th><th>Action</th><th>Description</th></tr></thead>
+      <tbody>
+        {% for log in recent_logs %}
+        <tr>
+          <td>{{ log.created_at }}</td>
+          <td>{{ log.user_name or 'System' }}<br><span class="muted">{{ log.user_email or '' }}</span></td>
+          <td><span class="badge">{{ log.module_name }}</span></td>
+          <td>{{ log.action }}</td>
+          <td>{{ log.description }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="muted">No activity recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

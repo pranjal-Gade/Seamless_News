@@ -213,12 +213,15 @@
 
   <div class="nav-center-links" id="navCenterLinks">
 
+    {% if can_access('dashboard') %}
     <a href="{{ url_for('main.home') }}"
        class="nav-main-btn nav-direct-link {{ 'active' if request.endpoint == 'main.home' else '' }}"
        style="text-decoration:none;">
       Dashboard
-    </a>  
+    </a>
+    {% endif %}
 
+    {% if can_access('view_master') %}
     <div class="nav-item-dropdown">
       <button class="nav-main-btn {{ 'active' if request.endpoint in ['main.view_keywords','main.view_websites','main.view_news_type','main.view_commodity'] else '' }}" type="button">
         View Master
@@ -227,25 +230,15 @@
         </svg>
       </button>
       <div class="nav-submenu">
-        <a href="{{ url_for('main.view_keywords') }}"
-           class="nav-submenu-item {{ 'active' if request.endpoint == 'main.view_keywords' else '' }}">
-          View Keywords
-        </a>
-        <a href="{{ url_for('main.view_websites') }}"
-           class="nav-submenu-item {{ 'active' if request.endpoint == 'main.view_websites' else '' }}">
-          View Websites
-        </a>
-        <a href="{{ url_for('main.view_news_type') }}"
-           class="nav-submenu-item {{ 'active' if request.endpoint == 'main.view_news_type' else '' }}">
-          View News Type
-        </a>
-        <a href="{{ url_for('main.view_commodity') }}"
-           class="nav-submenu-item {{ 'active' if request.endpoint == 'main.view_commodity' else '' }}">
-          View Commodity
-        </a>
+        <a href="{{ url_for('main.view_keywords') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'main.view_keywords' else '' }}">View Keywords</a>
+        <a href="{{ url_for('main.view_websites') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'main.view_websites' else '' }}">View Websites</a>
+        <a href="{{ url_for('main.view_news_type') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'main.view_news_type' else '' }}">View News Type</a>
+        <a href="{{ url_for('main.view_commodity') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'main.view_commodity' else '' }}">View Commodity</a>
       </div>
     </div>
+    {% endif %}
 
+    {% if can_access('news_processing') %}
     <div class="nav-item-dropdown">
       <button class="nav-main-btn {{ 'active' if request.endpoint in ['main.today_published_news','main.all_non_published_news'] else '' }}" type="button">
         News Processing
@@ -254,28 +247,44 @@
         </svg>
       </button>
       <div class="nav-submenu">
-        <a href="{{ url_for('main.today_published_news') }}"
-           class="nav-submenu-item {{ 'active' if request.endpoint == 'main.today_published_news' else '' }}">
-          Today's Published News
-        </a>
-        <a href="{{ url_for('main.all_non_published_news') }}"
-           class="nav-submenu-item {{ 'active' if request.endpoint == 'main.all_non_published_news' else '' }}">
-          All Non-Published News
-        </a>
+        <a href="{{ url_for('main.today_published_news') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'main.today_published_news' else '' }}">Today's Published News</a>
+        <a href="{{ url_for('main.all_non_published_news') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'main.all_non_published_news' else '' }}">All Non-Published News</a>
       </div>
     </div>
+    {% endif %}
 
+    {% if can_access('settings') %}
     <a href="{{ url_for('main.user_settings') }}"
        class="nav-main-btn nav-direct-link {{ 'active' if request.endpoint == 'main.user_settings' else '' }}"
        style="text-decoration:none;">
       Settings
     </a>
+    {% endif %}
 
+    {% if can_access('chatbot') %}
     <a href="{{ url_for('main.chatbot') }}"
-       class="nav-main-btn nav-direct-link {{ 'active' if request.endpoint == 'm  ain.chatbot' else '' }}"
+       class="nav-main-btn nav-direct-link {{ 'active' if request.endpoint == 'main.chatbot' else '' }}"
        style="text-decoration:none;">
       Chat
     </a>
+    {% endif %}
+
+    {% if session.get('user_role') == 'admin' %}
+    <div class="nav-item-dropdown">
+      <button class="nav-main-btn {{ 'active' if request.endpoint and request.endpoint.startswith('admin.') else '' }}" type="button">
+        Admin Portal
+        <svg class="nav-chevron" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="nav-submenu">
+        <a href="{{ url_for('admin.dashboard') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'admin.dashboard' else '' }}">Admin Dashboard</a>
+        <a href="{{ url_for('admin.users') }}" class="nav-submenu-item {{ 'active' if request.endpoint in ['admin.users','admin.add_user','admin.edit_user','admin.user_permissions'] else '' }}">User Management</a>
+        <a href="{{ url_for('admin.analytics') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'admin.analytics' else '' }}">Analytics</a>
+        <a href="{{ url_for('admin.activity_logs') }}" class="nav-submenu-item {{ 'active' if request.endpoint == 'admin.activity_logs' else '' }}">Activity Logs</a>
+      </div>
+    </div>
+    {% endif %}
 
   </div>
 
@@ -308,7 +317,7 @@
 
           <div class="nav-profile-detail">
             <small>Role</small>
-            <div>Dashboard User</div>
+            <div>{{ current_role_label() }}</div>
           </div>
 
           <div class="nav-profile-detail">
