@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Access Denied — Seamless{% endblock %}
+{% block content %}
+<style>
+.denied-wrap{max-width:680px;margin:60px auto;padding:30px;text-align:center;background:#fff;border:1px solid #fecaca;border-radius:24px;box-shadow:0 18px 40px rgba(15,23,42,.08)}.denied-icon{width:70px;height:70px;margin:0 auto 16px;border-radius:50%;background:#fff1f1;color:#991b1b;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900}.denied-wrap h1{margin:0 0 10px;color:#0f172a}.denied-wrap p{color:#64748b;line-height:1.7}.denied-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:22px}.denied-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:11px 15px;border:1px solid #dbe4f0;background:#fff;color:#1e3a8a;text-decoration:none;font-weight:800}.denied-btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
+</style>
+<div class="denied-wrap"><div class="denied-icon">!</div><h1>Access Denied</h1><p>You do not have permission to access this page or perform this action. Please contact the Admin if you need this tab access.</p><div class="denied-actions"><a class="denied-btn primary" href="{{ url_for('main.home') }}">Go to Dashboard</a>{% if session.get('user_role') == 'admin' %}<a class="denied-btn" href="{{ url_for('admin.dashboard') }}">Admin Portal</a>{% endif %}</div></div>
+{% endblock %}

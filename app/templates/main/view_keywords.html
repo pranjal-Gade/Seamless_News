@@ -94,9 +94,9 @@
             />
           </div>
 
-          <button type="button" class="btn btn-primary" onclick="showAddRow()">Add Keywords</button>
-          <button type="button" class="btn btn-primary" onclick="submitEdit()">Edit</button>
-          <button type="button" class="btn btn-primary" onclick="submitBulkDelete()">Delete</button>
+          {% if can_access('view_master', 'create') %}<button type="button" class="btn btn-primary" onclick="showAddRow()">Add Keywords</button>{% endif %}
+          {% if can_access('view_master', 'edit') %}<button type="button" class="btn btn-primary" onclick="submitEdit()">Edit</button>{% endif %}
+          {% if can_access('view_master', 'delete') %}<button type="button" class="btn btn-primary" onclick="submitBulkDelete()">Delete</button>{% endif %}
         </div>
       </div>
 

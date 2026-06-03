@@ -160,6 +160,7 @@
       </div>
       <div class="table-controls">
         <!-- Refresh form -->
+        {% if can_access('news_processing', 'create') %}
         <form method="POST" action="{{ url_for('main.refresh_news') }}">
           <button type="submit" id="refreshBtn" class="btn btn-primary"
                   style="padding:7px 18px;font-size:.85rem;"
@@ -167,6 +168,7 @@
             {% if scrape_running %}⏳ Running…{% else %}🔄 Refresh News{% endif %}
           </button>
         </form>
+        {% endif %}
         <!-- Search (client-side, current page only) -->
         <div class="tbl-search">
           <span>🔍</span>
@@ -182,14 +184,18 @@
           <input type="checkbox" id="selectAll" class="theme-checkbox">
           <span class="selection-text">Select All</span>
         </label>
+        {% if can_access('news_processing', 'edit') %}
         <button type="submit" name="action" value="publish"
                 class="btn btn-primary" style="padding:7px 18px;font-size:.85rem;">
           ✅ Publish Selected
         </button>
+        {% endif %}
+        {% if can_access('news_processing', 'delete') %}
         <button type="submit" name="action" value="delete"
                 class="btn btn-danger" style="padding:7px 18px;font-size:.85rem;">
           🗑 Delete Selected
         </button>
+        {% endif %}
         <span id="selCount" class="selected-count">0 selected</span>
       </div>
 

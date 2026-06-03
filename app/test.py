@@ -10,4 +10,3 @@ paras = soup.find_all('p')
 print('Paragraphs found:', len(paras))
 for i, p in enumerate(paras[:10]):
     print(f'  P{i}:', p.get_text(strip=True)[:100])
-"

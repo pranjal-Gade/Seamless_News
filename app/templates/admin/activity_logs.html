@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Activity Logs — Seamless{% endblock %}
+{% block content %}
+<style>
+.admin-wrap{max-width:1180px;margin:0 auto;padding:22px}.admin-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.admin-kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:800}.admin-title{margin:4px 0 8px;font-size:2rem;color:#0f172a}.admin-sub{color:#64748b;margin:0}.admin-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:10px 14px;border:1px solid #dbe4f0;background:#fff;color:#1e3a8a;text-decoration:none;font-weight:800;cursor:pointer}.admin-btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a}.admin-panel{background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 14px 30px rgba(15,23,42,.06);overflow:hidden}.filter-bar{display:flex;gap:10px;flex-wrap:wrap;padding:18px 20px;border-bottom:1px solid #e2e8f0;background:#f8fafc}.filter-bar input,.filter-bar select{border:1px solid #dbe4f0;border-radius:12px;padding:10px 12px;min-width:170px}.admin-table{width:100%;border-collapse:collapse}.admin-table th,.admin-table td{padding:13px 16px;border-bottom:1px solid #eef2f7;text-align:left;font-size:.9rem;vertical-align:top}.admin-table th{background:#fff;color:#475569;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}.badge{display:inline-flex;border-radius:999px;padding:4px 10px;font-size:.75rem;font-weight:900;background:#e0ecff;color:#1e3a8a}.muted{color:#64748b}@media(max-width:760px){.admin-table{display:block;overflow:auto}.admin-head{flex-direction:column}}
+</style>
+<div class="admin-wrap">
+  <div class="admin-head"><div><div class="admin-kicker">Admin Portal</div><h1 class="admin-title">Activity Logs</h1><p class="admin-sub">Track important user, permission, news, and system actions.</p></div><a class="admin-btn" href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a></div>
+  <div class="admin-panel">
+    <form class="filter-bar" method="GET">
+      <select name="module"><option value="">All modules</option>{% for module in modules %}<option value="{{ module }}" {% if selected_module == module %}selected{% endif %}>{{ module }}</option>{% endfor %}</select>
+      <select name="user_id"><option value="">All users</option>{% for user in users %}<option value="{{ user.id }}" {% if selected_user_id == user.id|string %}selected{% endif %}>{{ user.name }} - {{ user.email }}</option>{% endfor %}</select>
+      <input type="number" min="1" max="90" name="days" value="{{ selected_days }}" placeholder="Days">
+      <button class="admin-btn primary" type="submit">Apply Filter</button>
+      <a class="admin-btn" href="{{ url_for('admin.activity_logs') }}">Reset</a>
+    </form>
+    <table class="admin-table">
+      <thead><tr><th>Date/Time</th><th>User</th><th>Module</th><th>Action</th><th>Description</th><th>IP</th></tr></thead>
+      <tbody>{% for log in logs %}<tr><td>{{ log.created_at }}</td><td>{{ log.user_name or 'System' }}<br><span class="muted">{{ log.user_email or '' }}</span></td><td><span class="badge">{{ log.module_name }}</span></td><td>{{ log.action }}</td><td>{{ log.description }}</td><td class="muted">{{ log.ip_address or '-' }}</td></tr>{% else %}<tr><td colspan="6" class="muted">No activity logs found.</td></tr>{% endfor %}</tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

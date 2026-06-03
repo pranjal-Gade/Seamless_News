@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}User Management — Seamless{% endblock %}
+{% block content %}
+<style>
+.admin-wrap{max-width:1180px;margin:0 auto;padding:22px}.admin-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.admin-kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:800}.admin-title{margin:4px 0 8px;font-size:2rem;color:#0f172a}.admin-sub{color:#64748b;margin:0}.admin-actions{display:flex;gap:10px;flex-wrap:wrap}.admin-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:9px 13px;border:1px solid #dbe4f0;background:#fff;color:#1e3a8a;text-decoration:none;font-weight:800;cursor:pointer}.admin-btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a}.admin-btn.danger{background:#fff1f1;color:#991b1b;border-color:#fecaca}.admin-panel{background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 14px 30px rgba(15,23,42,.06);overflow:hidden}.filter-bar{display:flex;gap:10px;flex-wrap:wrap;padding:18px 20px;border-bottom:1px solid #e2e8f0;background:#f8fafc}.filter-bar input,.filter-bar select{border:1px solid #dbe4f0;border-radius:12px;padding:10px 12px;min-width:180px}.admin-table{width:100%;border-collapse:collapse}.admin-table th,.admin-table td{padding:13px 16px;border-bottom:1px solid #eef2f7;text-align:left;font-size:.9rem;vertical-align:top}.admin-table th{background:#fff;color:#475569;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}.badge{display:inline-flex;border-radius:999px;padding:4px 10px;font-size:.75rem;font-weight:900}.badge.admin{background:#fef3c7;color:#92400e}.badge.editor{background:#dbeafe;color:#1e40af}.badge.user{background:#f1f5f9;color:#334155}.badge.active{background:#dcfce7;color:#166534}.badge.inactive{background:#fee2e2;color:#991b1b}.muted{color:#64748b}.row-actions{display:flex;gap:8px;flex-wrap:wrap}.flash-stack{display:grid;gap:10px;margin-bottom:18px}.flash{padding:12px 14px;border-radius:14px;font-weight:700}.flash.success{background:#eefaf3;color:#17623c}.flash.danger{background:#fff1f1;color:#9f1f1f}.flash.warning{background:#fff8e8;color:#97630a}.flash.info{background:#eef6ff;color:#1e3a8a}@media(max-width:760px){.admin-table{display:block;overflow:auto}.admin-head{flex-direction:column}}
+</style>
+<div class="admin-wrap">
+  <div class="admin-head">
+    <div><div class="admin-kicker">Admin Portal</div><h1 class="admin-title">User Management</h1><p class="admin-sub">Create users, assign roles, activate/deactivate accounts, and open tab permissions.</p></div>
+    <div class="admin-actions"><a class="admin-btn" href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a><a class="admin-btn primary" href="{{ url_for('admin.add_user') }}">Add User</a></div>
+  </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+  <div class="admin-panel">
+    <form class="filter-bar" method="GET">
+      <input type="text" name="q" value="{{ search }}" placeholder="Search name or email">
+      <select name="role"><option value="">All roles</option>{% for role in roles %}<option value="{{ role }}" {% if selected_role == role %}selected{% endif %}>{{ role|title if role != 'user' else 'Basic User' }}</option>{% endfor %}</select>
+      <select name="status"><option value="">All status</option><option value="1" {% if selected_status == '1' %}selected{% endif %}>Active</option><option value="0" {% if selected_status == '0' %}selected{% endif %}>Inactive</option></select>
+      <button class="admin-btn primary" type="submit">Filter</button>
+      <a class="admin-btn" href="{{ url_for('admin.users') }}">Reset</a>
+    </form>
+    <table class="admin-table">
+      <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Last Login</th><th>Created</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td><strong>{{ user.name }}</strong><br><span class="muted">{{ user.email }}</span></td>
+          <td><span class="badge {{ user.role }}">{{ user.role|title if user.role != 'user' else 'Basic User' }}</span></td>
+          <td><span class="badge {{ 'active' if user.is_active else 'inactive' }}">{{ 'Active' if user.is_active else 'Inactive' }}</span></td>
+          <td>{{ user.last_login or 'Never' }}</td>
+          <td>{{ user.created_at }}</td>
+          <td><div class="row-actions"><a class="admin-btn" href="{{ url_for('admin.edit_user', user_id=user.id) }}">Edit</a><a class="admin-btn" href="{{ url_for('admin.user_permissions', user_id=user.id) }}">Permissions</a><form method="POST" action="{{ url_for('admin.toggle_user_status', user_id=user.id) }}" onsubmit="return confirm('Change user status?')"><button class="admin-btn danger" type="submit">{{ 'Deactivate' if user.is_active else 'Activate' }}</button></form></div></td>
+        </tr>
+        {% else %}<tr><td colspan="6" class="muted">No users found.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

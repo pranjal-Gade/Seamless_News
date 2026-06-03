@@ -31,6 +31,7 @@
       </button>
     </div>
 
+    <!-- New Chat button -->
     <div style="padding:10px 10px 0">
       <button class="ca-new-chat-btn" id="newChatBtn">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -38,6 +39,7 @@
       </button>
     </div>
 
+    <!-- Quick Actions -->
     <div class="ca-sidebar-section">
       <div class="ca-sidebar-label">Quick Actions</div>
       <button class="ca-nav-btn" data-action="top_news">
@@ -57,6 +59,7 @@
       </button>
     </div>
 
+    <!-- Past Sessions -->
     <div class="ca-sidebar-section ca-sessions-section">
       <div class="ca-sidebar-label-row">
         <span class="ca-sidebar-label">Past Chats</span>
@@ -67,6 +70,7 @@
       </div>
     </div>
 
+    <!-- Help / Concern -->
     <div class="ca-sidebar-section">
       <div class="ca-sidebar-label">Support</div>
       <button class="ca-nav-btn" data-action="help">
@@ -111,8 +115,10 @@
       </div>
     </header>
 
+    <!-- Chat messages -->
     <div class="ca-messages" id="caMessages"></div>
 
+    <!-- Typing indicator -->
     <div class="ca-typing-wrap hidden" id="typingWrap">
       <div class="ca-msg-row ca-bot-row">
         <div class="ca-bot-orb">AI</div>
@@ -125,25 +131,12 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Concern mode — describe your issue and send
       </div>
-      <div id="caVoiceBanner" class="ca-voice-banner hidden">
-        <div class="ca-voice-left">
-          <span class="ca-voice-dot"></span>
-          <span id="caVoiceText" class="ca-voice-text">Listening… Speak now</span>
-        </div>
-        <button type="button" id="caVoiceCancelBtn" class="ca-voice-cancel-btn">Cancel</button>
-      </div>
       <div class="ca-input-row">
         <div class="ca-input-wrap">
-          <textarea id="caInput" class="ca-input" placeholder="Ask anything…" rows="1"></textarea>
+          <textarea id="caInput" class="ca-input" placeholder='Ask anything…' rows="1"></textarea>
         </div>
-
-        <button id="caMicBtn" class="ca-voice-btn" type="button" title="Voice input">🎤</button>
-
         <button id="caSendBtn" class="ca-send-btn" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"/>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
       <div class="ca-input-hint">Enter to send · Shift+Enter for new line · <span id="msgCountHint">0 messages this session</span></div>
@@ -153,6 +146,7 @@
 
 <div class="ca-mob-overlay hidden" id="mobOverlay"></div>
 
+<!-- ══ STYLES ════════════════════════════════════════════════════════════════ -->
 <style>
 :root {
   --bg:#080d17; --panel:#0d1526; --panel2:#111c2e; --panel3:#162035;
@@ -188,6 +182,7 @@ html,body{height:100%;overflow:hidden}
   transition:background .25s;
 }
 
+/* ── Sidebar ── */
 .ca-sidebar{
   width:268px;
   flex-shrink:0;
@@ -209,6 +204,7 @@ html,body{height:100%;overflow:hidden}
 .ca-icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--b2);background:transparent;color:var(--mu);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
 .ca-icon-btn:hover{background:var(--panel3);color:var(--tx)}
 
+/* New Chat */
 .ca-new-chat-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 14px;border-radius:10px;border:1.5px dashed var(--b2);background:transparent;color:var(--ac);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
 .ca-new-chat-btn:hover{background:rgba(59,130,246,.09);border-color:rgba(59,130,246,.4);border-style:solid}
 
@@ -226,8 +222,23 @@ html,body{height:100%;overflow:hidden}
 .ca-nav-desc{display:block;font-size:10px;color:var(--mu);margin-top:1px}
 .ca-nav-arr{font-size:14px;opacity:.28;color:var(--tx)}
 
-.ca-sessions-section{flex:1;min-height:0;display:flex;flex-direction:column}
-.ca-sessions-list{display:flex;flex-direction:column;gap:2px;flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+/* Sessions list */
+.ca-sessions-section{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.ca-sessions-list{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--b2) transparent;
+}
 .ca-session-item{padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .15s;border:1px solid transparent;flex-shrink:0}
 .ca-session-item:hover{background:var(--panel3);border-color:var(--b)}
 .ca-session-item.active-session{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.22)}
@@ -240,6 +251,7 @@ html,body{height:100%;overflow:hidden}
 .ca-status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pg 2.5s infinite;flex-shrink:0}
 @keyframes pg{0%,100%{box-shadow:0 0 5px var(--green)}50%{box-shadow:0 0 14px var(--green)}}
 
+/* ── Main ── */
 .ca-main{flex:1;display:flex;flex-direction:column;background:var(--bg);min-width:0;transition:background .25s}
 .ca-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--b);background:var(--topbar-bg);backdrop-filter:blur(16px);flex-shrink:0;transition:background .25s,border-color .25s}
 .ca-topbar-left{display:flex;align-items:center;gap:12px}
@@ -253,12 +265,14 @@ html,body{height:100%;overflow:hidden}
 .ca-session-badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 8px;border:1px solid var(--b2);border-radius:6px;color:var(--mu);background:var(--panel2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ca-model-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 9px;border:1px solid var(--b2);border-radius:7px;color:var(--mu);background:var(--panel2)}
 
+/* Theme icon toggle */
 [data-theme="light"] .icon-moon{display:none}
 [data-theme="light"] .icon-sun{display:block}
-[data-theme="dark"] .icon-sun{display:none}
-[data-theme="dark"] .icon-moon{display:block}
+[data-theme="dark"]  .icon-sun{display:none}
+[data-theme="dark"]  .icon-moon{display:block}
 .icon-sun{display:none}.icon-moon{display:block}
 
+/* ── Messages ── */
 .ca-messages{flex:1;overflow-y:auto;padding:20px 22px 8px;display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth}
 .ca-messages::-webkit-scrollbar{width:4px}
 .ca-messages::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
@@ -278,9 +292,11 @@ html,body{height:100%;overflow:hidden}
 .ca-bubble-body em{font-style:normal;color:var(--ac2);font-weight:500}
 .ca-bubble-time{padding:0 15px 9px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--mu);text-align:right;opacity:.65}
 
+/* ── History dividers ── */
 .ca-hist-divider{text-align:center;font-size:11px;color:var(--mu);padding:6px 12px 2px;display:flex;align-items:center;gap:8px;flex-shrink:0}
 .ca-hist-divider::before,.ca-hist-divider::after{content:'';flex:1;height:1px;background:var(--b)}
 
+/* ── Welcome ── */
 .ca-welcome-bubble{max-width:min(92%,840px)}
 .ca-welcome-hdr{display:flex;align-items:center;gap:12px;padding:15px 15px 0}
 .ca-welcome-icon{width:36px;height:36px;border-radius:10px;background:var(--welcome-bg);border:1px solid rgba(110,231,183,.22);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
@@ -300,14 +316,16 @@ html,body{height:100%;overflow:hidden}
 .ca-chip{padding:6px 12px;border:1px solid var(--b2);border-radius:999px;background:var(--chip-bg);color:var(--tx);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
 .ca-chip:hover{background:var(--chip-hover);border-color:rgba(59,130,246,.4);color:var(--ac);transform:translateY(-1px)}
 
+/* ── Badges ── */
 .ca-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:999px;margin-bottom:4px}
-.ca-badge-news{color:#93c5fd;background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.22)}
-.ca-badge-pub{color:#86efac;background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.22)}
-.ca-badge-npub{color:#fcd34d;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22)}
-.ca-badge-comm{color:#6ee7b7;background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.22)}
+.ca-badge-news   {color:#93c5fd;background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.22)}
+.ca-badge-pub    {color:#86efac;background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.22)}
+.ca-badge-npub   {color:#fcd34d;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22)}
+.ca-badge-comm   {color:#6ee7b7;background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.22)}
 .ca-badge-weather{color:#7dd3fc;background:rgba(125,211,252,.08);border:1px solid rgba(125,211,252,.22)}
 .ca-badge-general{color:#94a3b8;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.2)}
 
+/* ── News sections ── */
 .ca-news-sections{display:flex;flex-direction:column;gap:10px;padding:2px 14px 14px}
 .ca-news-group{border:1px solid var(--b);border-radius:12px;overflow:hidden}
 .ca-news-group-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--panel3);border-bottom:1px solid var(--b);cursor:pointer;user-select:none;transition:background .15s}
@@ -337,6 +355,7 @@ html,body{height:100%;overflow:hidden}
 .ca-article-date{font-size:9.5px;font-family:'JetBrains Mono',monospace;color:var(--mu);opacity:.7}
 .ca-kw{font-size:9px;padding:2px 6px;border-radius:999px;background:rgba(110,231,183,.07);border:1px solid rgba(110,231,183,.16);color:var(--ac2)}
 
+/* ── Commodity tiles ── */
 .ca-comm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:7px;padding:2px 14px 14px}
 .ca-comm-tile{background:var(--panel3);border:1px solid var(--b);border-radius:11px;padding:10px 12px;transition:border-color .15s,transform .15s,box-shadow .15s;cursor:pointer}
 .ca-comm-tile:hover{border-color:rgba(110,231,183,.35);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow)}
@@ -345,6 +364,7 @@ html,body{height:100%;overflow:hidden}
 .ca-comm-sub{font-size:10px;color:var(--mu);margin-top:2px}
 .ca-up{color:#4ade80!important}.ca-dn{color:#f87171!important}
 
+/* ── Commodity table ── */
 .ca-item-list{display:flex;flex-direction:column;gap:6px;padding:2px 14px 14px}
 .ca-item-card{background:var(--panel3);border:1px solid var(--b);border-radius:11px;padding:11px 13px}
 .ca-comm-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:7px}
@@ -355,6 +375,7 @@ html,body{height:100%;overflow:hidden}
 .ca-comm-table td:not(:first-child){text-align:right}
 .ca-comm-table tr:last-child td{border-bottom:none}
 
+/* ── Weather ── */
 .ca-weather-wrap{padding:2px 14px 14px}
 .ca-weather-card{background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(14,165,233,.05));border:1px solid rgba(59,130,246,.22);border-radius:12px;padding:14px}
 [data-theme="light"] .ca-weather-card{background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(14,165,233,.04))}
@@ -369,6 +390,7 @@ html,body{height:100%;overflow:hidden}
 .ca-weather-adv{margin-top:10px;padding:8px 11px;background:rgba(59,130,246,.07);border-left:3px solid rgba(59,130,246,.4);border-radius:0 8px 8px 0;font-size:12px;color:#93c5fd;line-height:1.55}
 [data-theme="light"] .ca-weather-adv{color:#1d4ed8;background:rgba(37,99,235,.07);border-left-color:rgba(37,99,235,.4)}
 
+/* ── Typing ── */
 .ca-typing-wrap{padding:0 22px 4px}
 .ca-typing-bubble{display:flex!important;align-items:center;gap:5px;padding:13px 16px!important;width:fit-content}
 .ca-typing-bubble span{width:6px;height:6px;border-radius:50%;background:var(--mu);animation:db 1.4s infinite ease-in-out}
@@ -378,6 +400,7 @@ html,body{height:100%;overflow:hidden}
 .ca-reveal{animation:si .28s ease both}
 @keyframes si{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── Input bar ── */
 .ca-input-bar{border-top:1px solid var(--b);background:var(--topbar-bg);backdrop-filter:blur(16px);padding:12px 22px 15px;flex-shrink:0;transition:background .25s,border-color .25s}
 .ca-concern-banner{display:flex;align-items:center;gap:7px;margin-bottom:9px;padding:7px 12px;border-radius:9px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.22);color:var(--amber);font-size:11.5px;font-weight:500}
 .ca-input-row{display:flex;align-items:flex-end;gap:9px}
@@ -390,83 +413,6 @@ html,body{height:100%;overflow:hidden}
 .ca-send-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 20px rgba(37,99,235,.5)}
 .ca-send-btn:disabled{opacity:.25;cursor:not-allowed;transform:none;box-shadow:none}
 .ca-input-hint{font-size:10px;color:var(--mu);margin-top:7px;text-align:center;opacity:.5}
-
-.ca-voice-btn{
-  width:50px;height:50px;border-radius:13px;border:1px solid var(--b2);
-  background:var(--panel2);color:var(--tx);cursor:pointer;display:flex;
-  align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
-  transition:all .15s;
-}
-.ca-voice-btn:hover{transform:translateY(-1px);border-color:rgba(59,130,246,.35);background:var(--panel3)}
-.ca-voice-btn.active{background:rgba(37,99,235,.12);border-color:rgba(37,99,235,.35);color:var(--ac)}
-.ca-voice-btn.listening{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.35);color:var(--green);box-shadow:0 0 0 4px rgba(34,197,94,.10)}
-
-.ca-voice-banner{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:10px;
-  padding:10px 12px;
-  border-radius:14px;
-  background:#0f172a;
-  color:#ffffff;
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 8px 20px rgba(0,0,0,.18);
-}
-
-[data-theme="light"] .ca-voice-banner{
-  background:#111827;
-  color:#ffffff;
-}
-
-.ca-voice-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-width:0;
-  flex:1;
-}
-
-.ca-voice-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:#ef4444;
-  flex-shrink:0;
-  box-shadow:0 0 0 0 rgba(239,68,68,.55);
-  animation:caVoicePulse 1.4s infinite;
-}
-
-.ca-voice-text{
-  font-size:12.5px;
-  font-weight:600;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.ca-voice-cancel-btn{
-  border:none;
-  background:#ffffff;
-  color:#111827;
-  font-size:12px;
-  font-weight:700;
-  padding:8px 14px;
-  border-radius:999px;
-  cursor:pointer;
-  flex-shrink:0;
-}
-
-.ca-voice-cancel-btn:hover{
-  background:#e5e7eb;
-}
-
-@keyframes caVoicePulse{
-  0%{ box-shadow:0 0 0 0 rgba(239,68,68,.55); }
-  70%{ box-shadow:0 0 0 10px rgba(239,68,68,0); }
-  100%{ box-shadow:0 0 0 0 rgba(239,68,68,0); }
-}
 
 .hidden{display:none!important}
 .ca-mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;backdrop-filter:blur(4px)}
@@ -485,6 +431,7 @@ html,body{height:100%;overflow:hidden}
 }
 </style>
 
+<!-- ══ SCRIPT ════════════════════════════════════════════════════════════════ -->
 <script>
 (function(){
 'use strict';
@@ -494,7 +441,6 @@ const root          = document.getElementById('caRoot');
 const msgsEl        = document.getElementById('caMessages');
 const inputEl       = document.getElementById('caInput');
 const sendBtn       = document.getElementById('caSendBtn');
-const micBtn        = document.getElementById('caMicBtn');
 const typingWrap    = document.getElementById('typingWrap');
 const statusText    = document.getElementById('statusText');
 const msgCountHint  = document.getElementById('msgCountHint');
@@ -506,18 +452,12 @@ const mobMenuBtn    = document.getElementById('mobMenuBtn');
 const mobOverlay    = document.getElementById('mobOverlay');
 const newChatBtn    = document.getElementById('newChatBtn');
 const sidebar       = document.getElementById('caSidebar');
-const voiceBanner    = document.getElementById('caVoiceBanner');
-const voiceText      = document.getElementById('caVoiceText');
-const voiceCancelBtn = document.getElementById('caVoiceCancelBtn');
 
 /* ── State ── */
 let concernMode  = false;
 let msgCount     = 0;
-let history      = [];
-let currentSid   = null;
-let recognition = null;
-let isListening = false;
-let voiceCancelled = false;
+let history      = [];          // in-memory conversation context for Groq
+let currentSid   = null;        // active session_id
 
 /* ── Theme ── */
 const savedTheme = localStorage.getItem('ca-theme') || 'dark';
@@ -551,161 +491,6 @@ function fmt(n){ return Number(n).toLocaleString('en-IN',{minimumFractionDigits:
 function scrollBot(d=0){ setTimeout(()=>{ msgsEl.scrollTop=msgsEl.scrollHeight; }, d); }
 function upCount(){ msgCountHint.textContent=`${msgCount} message${msgCount!==1?'s':''} this session`; }
 
-function showVoiceBanner(text='Listening… Speak now'){
-  if(voiceText) voiceText.textContent = text;
-  voiceBanner.classList.remove('hidden');
-}
-
-function hideVoiceBanner(){
-  voiceBanner.classList.add('hidden');
-}
-
-function cancelVoiceInput(){
-  voiceCancelled = true;
-
-  if(recognition && isListening){
-    recognition.abort();
-  }
-
-  inputEl.value = '';
-  inputEl.dispatchEvent(new Event('input'));
-
-  micBtn.classList.remove('listening');
-  isListening = false;
-  hideVoiceBanner();
-
-  if(!concernMode){
-    setStatus('<span class="ca-pulse"></span> Online · Ready to help','var(--green)');
-  }
-}
-
-/* ── Voice assistant ── */
-/* ── Voice assistant ── */
-function initVoiceRecognition(){
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if(!SpeechRecognition){
-    if(micBtn){
-      micBtn.disabled = true;
-      micBtn.title = 'Voice input not supported in this browser';
-    }
-    return;
-  }
-
-  recognition = new SpeechRecognition();
-  recognition.lang = 'en-IN';
-  recognition.interimResults = true;
-  recognition.continuous = false;
-
-  recognition.onstart = function(){
-    voiceCancelled = false;
-    isListening = true;
-    micBtn.classList.add('listening');
-    showVoiceBanner('Listening… Speak now');
-    setStatus('🎤 Listening...','var(--green)');
-  };
-
-  recognition.onresult = function(event){
-    let finalText = '';
-    let interimText = '';
-
-    for(let i = event.resultIndex; i < event.results.length; i++){
-      const transcript = event.results[i][0].transcript;
-      if(event.results[i].isFinal){
-        finalText += transcript + ' ';
-      } else {
-        interimText += transcript;
-      }
-    }
-
-    inputEl.value = (finalText || interimText).trim();
-    inputEl.dispatchEvent(new Event('input'));
-
-    if(interimText.trim()){
-      showVoiceBanner(`Listening: ${interimText.trim()}`);
-    } else if(finalText.trim()){
-      showVoiceBanner(`Heard: ${finalText.trim()}`);
-    }
-  };
-
-  recognition.onerror = function(event){
-    console.error('Speech recognition error:', event.error);
-
-    micBtn.classList.remove('listening');
-    isListening = false;
-    hideVoiceBanner();
-
-    let msg = 'Voice input failed.';
-    if (event.error === 'network') {
-      msg = 'Voice service is blocked or unavailable. Try Chrome/Edge and allow microphone.';
-    } else if (event.error === 'not-allowed') {
-      msg = 'Microphone permission is blocked. Please allow microphone access.';
-    } else if (event.error === 'no-speech') {
-      msg = 'No speech detected. Please try again.';
-    } else if (event.error === 'audio-capture') {
-      msg = 'Microphone not detected. Check your microphone device.';
-    }
-
-    setStatus(msg, 'var(--amber)');
-  };
-
-  recognition.onend = function(){
-    micBtn.classList.remove('listening');
-    isListening = false;
-
-    if(voiceCancelled){
-      voiceCancelled = false;
-      hideVoiceBanner();
-      return;
-    }
-
-    const spokenText = inputEl.value.trim();
-    hideVoiceBanner();
-
-    if (spokenText) {
-      submit();
-      return;
-    }
-
-    if(!concernMode){
-      setStatus('<span class="ca-pulse"></span> Online · Ready to help','var(--green)');
-    }
-  };
-}
-
-if(micBtn){
-  micBtn.addEventListener('click', function(){
-    if(!recognition) return;
-
-    if(isListening){
-      recognition.stop();
-      return;
-    }
-
-    inputEl.focus();
-    recognition.start();
-  });
-}
-
-if(voiceCancelBtn){
-  voiceCancelBtn.addEventListener('click', cancelVoiceInput);
-}
-
-
-if(micBtn){
-  micBtn.addEventListener('click', function(){
-    if(!recognition) return;
-
-    if(isListening){
-      recognition.stop();
-      return;
-    }
-
-    inputEl.focus();
-    recognition.start();
-  });
-}
-
 /* ── Input resize ── */
 inputEl.addEventListener('input', function(){
   this.style.height='auto';
@@ -728,13 +513,17 @@ document.querySelectorAll('.ca-nav-btn').forEach(btn=>{
   });
 });
 
-/* ── Chips ── */
+/* ── Chips (inside welcome card) ── */
 msgsEl.addEventListener('click', function(e){
   const chip=e.target.closest('.ca-chip');
   if(chip) sendAction(chip.dataset.action, chip.textContent.trim());
 });
 
-/* Session management */
+/* ══════════════════════════════════════════════════════════
+   SESSION MANAGEMENT
+══════════════════════════════════════════════════════════ */
+
+/* Start a brand-new session */
 newChatBtn.addEventListener('click', ()=>{ startNewSession(true); closeSidebar(); });
 
 async function startNewSession(clearUI=true){
@@ -743,6 +532,7 @@ async function startNewSession(clearUI=true){
     const data = await res.json();
     currentSid = data.session_id || null;
   } catch(e){
+    // Fallback: generate a client-side UUID so history still associates
     currentSid = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36);
   }
   sessionBadge.textContent = currentSid ? currentSid.slice(0,8)+'…' : 'session';
@@ -759,6 +549,7 @@ async function startNewSession(clearUI=true){
   loadSessions();
 }
 
+/* Load a past session by session_id */
 async function loadPastSession(sid, title){
   currentSid = sid;
   sessionBadge.textContent = sid.slice(0,8)+'…';
@@ -769,6 +560,7 @@ async function loadPastSession(sid, title){
   concernBanner.classList.add('hidden');
   msgsEl.innerHTML='';
 
+  // Divider
   const div=document.createElement('div');
   div.className='ca-hist-divider';
   div.textContent=`Session: ${title||sid}`;
@@ -798,6 +590,7 @@ async function loadPastSession(sid, title){
     msgsEl.appendChild(err);
   }
 
+  // Mark active session in sidebar
   document.querySelectorAll('.ca-session-item').forEach(el=>{
     el.classList.toggle('active-session', el.dataset.sid===sid);
   });
@@ -807,7 +600,9 @@ async function loadPastSession(sid, title){
   closeSidebar();
 }
 
+/* Render a user+bot pair from DB history */
 function renderHistoryPair(entry){
+  // Restore frontend memory/context also, so follow-up questions keep context.
   if(entry.user_message && !entry.user_message.startsWith('action:')){
     history.push({role:'user', content:entry.user_message});
   }
@@ -815,6 +610,7 @@ function renderHistoryPair(entry){
     history.push({role:'assistant', content:entry.bot_reply});
   }
 
+  // User row
   const uRow=document.createElement('div');
   uRow.className='ca-msg-row ca-user-row';
   uRow.innerHTML=`<div class="ca-bubble ca-user-bubble">
@@ -823,6 +619,7 @@ function renderHistoryPair(entry){
   </div>`;
   msgsEl.appendChild(uRow);
 
+  // Bot row
   const bRow=document.createElement('div');
   bRow.className='ca-msg-row ca-bot-row';
   bRow.innerHTML=`<div class="ca-bot-orb">AI</div>
@@ -834,6 +631,7 @@ function renderHistoryPair(entry){
   msgsEl.appendChild(bRow);
 }
 
+/* Load sessions list into sidebar */
 async function loadSessions(){
   try{
     const res  = await fetch('/api/chatbot/sessions');
@@ -853,6 +651,7 @@ async function loadSessions(){
       item.className='ca-session-item'+(s.session_id===currentSid?' active-session':'');
       item.dataset.sid=s.session_id;
 
+      // Backend sends message_count and last_at.
       const count=s.message_count?`${s.message_count} msg`:'';
       const lastTime=s.last_at||'';
 
@@ -871,6 +670,9 @@ async function loadSessions(){
   }
 }
 
+/* ══════════════════════════════════════════════════════════
+   WELCOME CARD
+══════════════════════════════════════════════════════════ */
 function renderWelcomeCard(){
   const row=document.createElement('div');
   row.className='ca-msg-row ca-bot-row ca-reveal';
@@ -912,14 +714,14 @@ function renderWelcomeCard(){
   msgsEl.appendChild(row);
 }
 
+/* ══════════════════════════════════════════════════════════
+   SEND / APPEND
+══════════════════════════════════════════════════════════ */
 function submit(){
-  const msg=inputEl.value.trim();
-  if(!msg) return;
+  const msg=inputEl.value.trim(); if(!msg) return;
   appendUser(msg);
   callAPI({message: concernMode ? 'Concern: '+msg : msg, history, session_id: currentSid});
-  inputEl.value='';
-  inputEl.style.height='auto';
-  sendBtn.disabled=true;
+  inputEl.value=''; inputEl.style.height='auto'; sendBtn.disabled=true;
 }
 
 function sendAction(action, label){
@@ -929,8 +731,7 @@ function sendAction(action, label){
 }
 
 function appendUser(text){
-  msgCount++;
-  upCount();
+  msgCount++; upCount();
   history.push({role:'user',content:text});
   const row=document.createElement('div');
   row.className='ca-msg-row ca-user-row ca-reveal';
@@ -938,14 +739,11 @@ function appendUser(text){
     <div class="ca-bubble-body">${md(text)}</div>
     <div class="ca-bubble-time">${ts()}</div>
   </div>`;
-  msgsEl.appendChild(row);
-  scrollBot();
-  setLoading(true);
+  msgsEl.appendChild(row); scrollBot(); setLoading(true);
 }
 
 function appendBot(reply, items, type, sections){
-  msgCount++;
-  upCount();
+  msgCount++; upCount();
   history.push({role:'assistant',content:reply});
   const row=document.createElement('div');
   row.className='ca-msg-row ca-bot-row ca-reveal';
@@ -958,7 +756,7 @@ function appendBot(reply, items, type, sections){
     </div>`;
   msgsEl.appendChild(row);
 
-
+  // Wire collapsibles
   row.querySelectorAll('.ca-news-group-hdr').forEach(hdr=>{
     hdr.addEventListener('click',function(){
       this.nextElementSibling.classList.toggle('open');
@@ -971,20 +769,21 @@ function appendBot(reply, items, type, sections){
       this.querySelector('.ca-cat-toggle').classList.toggle('open');
     });
   });
+  // Commodity tile click
   row.querySelectorAll('.ca-comm-tile').forEach(tile=>{
     tile.addEventListener('click',function(){
       const name=this.dataset.name;
-      if(name){
-        appendUser(`Price of ${name}`);
-        callAPI({message:`Price of ${name}`,history,session_id:currentSid});
-      }
+      if(name){ appendUser(`Price of ${name}`); callAPI({message:`Price of ${name}`,history,session_id:currentSid}); }
     });
   });
 
   scrollBot(60);
-  loadSessions();
+  loadSessions(); // keep sessions list fresh
 }
 
+/* ══════════════════════════════════════════════════════════
+   CARD BUILDER
+══════════════════════════════════════════════════════════ */
 function buildCards(items, type, sections){
   if(type==='top_news' && sections) return buildNewsSections(sections);
 
@@ -1092,11 +891,14 @@ function buildNewsSections(sections){
     </div>`;
   }
 
-  h+=renderGroup("✅ Today's Published", 'ca-badge-pub', sections.published, true);
+  h+=renderGroup("✅ Today's Published", 'ca-badge-pub',  sections.published,     true);
   h+=renderGroup("⏳ Pending / Non-Published", 'ca-badge-npub', sections.non_published, false);
   return h+'</div>';
 }
 
+/* ══════════════════════════════════════════════════════════
+   API CALL
+══════════════════════════════════════════════════════════ */
 async function callAPI(payload){
   try{
     const res  = await fetch('/api/chatbot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -1107,12 +909,10 @@ async function callAPI(payload){
     }
 
     if(data.type==='concern_prompt'){
-      concernMode=true;
-      concernBanner.classList.remove('hidden');
+      concernMode=true; concernBanner.classList.remove('hidden');
       setStatus('⚠️ Concern mode','var(--amber)');
     } else if(data.type==='concern_saved'){
-      concernMode=false;
-      concernBanner.classList.add('hidden');
+      concernMode=false; concernBanner.classList.add('hidden');
       setStatus('<span class="ca-pulse"></span> Online · Ready to help','var(--green)');
     }
     appendBot(data.reply||'Empty response.', data.items||[], data.type||'', data.sections||null);
@@ -1123,58 +923,62 @@ async function callAPI(payload){
   }
 }
 
+/* ── Loading state ── */
 function setLoading(on){
   typingWrap.classList.toggle('hidden',!on);
   inputEl.disabled=sendBtn.disabled=on;
-  if(micBtn) micBtn.disabled = on || !recognition;
-  if(!on){
-    sendBtn.disabled=!inputEl.value.trim();
-    inputEl.focus();
-  }
+  if(!on){ sendBtn.disabled=!inputEl.value.trim(); inputEl.focus(); }
   if(on) setStatus('Processing…','var(--mu)');
   else if(!concernMode) setStatus('<span class="ca-pulse"></span> Online · Ready to help','var(--green)');
   scrollBot();
 }
 function setStatus(html,color){ statusText.innerHTML=html; statusText.style.color=color||''; }
 
+/* ══════════════════════════════════════════════════════════
+   INIT — auto-load last session on page refresh
+══════════════════════════════════════════════════════════ */
 async function init(){
-  initVoiceRecognition();
-
+  // 1. Load sessions list
   await loadSessions();
 
+  // 2. Try to restore the most recent session automatically
   try{
     const res  = await fetch('/api/chatbot/sessions');
     const data = await res.json();
     const sessions = data.sessions || [];
 
     if(sessions.length){
+      // Auto-restore the most recent session (first in list = newest)
       const latest = sessions[0];
       currentSid   = latest.session_id;
       sessionBadge.textContent = currentSid.slice(0,8)+'…';
 
+      // Fetch its messages
       const hres  = await fetch(`/api/chatbot/history?session_id=${encodeURIComponent(currentSid)}`);
       const hdata = await hres.json();
       const msgs  = (hdata.history||[]).filter(e=>!e.user_message.startsWith('action:'));
 
       if(msgs.length){
+        // Divider
         const div=document.createElement('div');
         div.className='ca-hist-divider';
         div.textContent=`Restored: ${latest.title||latest.session_id}`;
         msgsEl.appendChild(div);
-
+        // Render all pairs
         msgs.forEach(entry=> renderHistoryPair(entry));
-        msgCount=msgs.length * 2;
-        upCount();
+        msgCount=msgs.length * 2; upCount();
         scrollBot(100);
 
+        // Mark active in sidebar
         document.querySelectorAll('.ca-session-item').forEach(el=>{
           el.classList.toggle('active-session', el.dataset.sid===currentSid);
         });
-        return;
+        return; // done — skip welcome card
       }
     }
-  } catch(e){}
+  } catch(e){ /* fall through to welcome */ }
 
+  // 3. No history or failed — show welcome card + create new session silently
   await startNewSession(false);
   renderWelcomeCard();
   scrollBot(50);

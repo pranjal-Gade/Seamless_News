@@ -24,9 +24,20 @@ def create_app():
     # Register blueprints
     from .routes.auth import auth_bp
     from .routes.main import main_bp
+    from .routes.admin import admin_bp
+    from .permissions import get_role_label, has_permission, load_allowed_tabs
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
+    app.register_blueprint(admin_bp)
+
+    @app.context_processor
+    def inject_permission_helpers():
+        return {
+            'can_access': has_permission,
+            'allowed_tabs': load_allowed_tabs,
+            'current_role_label': get_role_label,
+        }
 
     # Start scheduler
     init_scheduler(app)

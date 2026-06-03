@@ -10,7 +10,7 @@ Key behaviours
   - 'Run All Together' → only the global schedule is checked; all active
     categories are scraped together when it fires.
   - Per-category mode → each category fires independently on its own schedule.
-
+  
 • Category filtering
   - target_categories passed directly to run_news_scraper().
   - news_scraper.py keeps only articles whose headlines/body contain
