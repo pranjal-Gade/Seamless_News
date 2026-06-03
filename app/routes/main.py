@@ -55,6 +55,17 @@ _featured_cards_cache = {
     "data": [],
     "ts": 0,
 }
+_agri_trend_cache = {
+    "data": {},
+    "ts": {}
+}
+
+MIN_REQUEST_INTERVAL = {
+    "agmarknet": 2.0,
+    "agmarknet_commodities": 5.0,
+    "openweather": 1.0,
+    "agmarknet_trend": 0.35,
+}
 
 FEATURED_AGRI_MAX = 8
 
@@ -75,100 +86,6 @@ DEFAULT_FEATURED_AGRI = [
 
 def _raw_conn(db_cfg: dict):
     return mysql.connector.connect(**db_cfg)
-
-def get_featured_agri_cards():
-    cache_age = time.time() - _featured_cards_cache["ts"]
-
-    if _featured_cards_cache["data"] and cache_age < 3600:
-        return _featured_cards_cache["data"]
-
-    featured_cards = [
-        {
-            "name": "Rice",
-            "price": "4,461.47",
-            "unit": "Quintal",
-            "change": "0.13",
-            "is_positive": True,
-            "image": "images/crops/rice.png",
-            "line_points": "6,38 45,38 84,40 123,12 162,48 214,47",
-            "fill_points": "6,46 6,38 45,38 84,40 123,12 162,48 214,47 214,46",
-        },
-        {
-            "name": "Wheat",
-            "price": "2,672.36",
-            "unit": "Quintal",
-            "change": "0.03",
-            "is_positive": False,
-            "image": "images/crops/wheat.png",
-            "line_points": "6,16 45,36 84,35 123,12 162,46 214,48",
-            "fill_points": "6,46 6,16 45,36 84,35 123,12 162,46 214,48 214,46",
-        },
-        {
-            "name": "Maize",
-            "price": "1,999.19",
-            "unit": "Quintal",
-            "change": "8.12",
-            "is_positive": False,
-            "image": "images/crops/maize.png",
-            "line_points": "6,12 45,34 84,33 123,31 162,29 214,48",
-            "fill_points": "6,46 6,12 45,34 84,33 123,31 162,29 214,48 214,46",
-        },
-        {
-            "name": "Soyabean",
-            "price": "5,054.12",
-            "unit": "Quintal",
-            "change": "5.52",
-            "is_positive": True,
-            "image": "images/crops/soyabean.png",
-            "line_points": "6,48 45,36 84,47 123,28 162,28 214,12",
-            "fill_points": "6,46 6,48 45,36 84,47 123,28 162,28 214,12 214,46",
-        },
-        {
-            "name": "Cotton",
-            "price": "6,218.55",
-            "unit": "Quintal",
-            "change": "1.87",
-            "is_positive": True,
-            "image": "images/crops/cotton.png",
-            "line_points": "6,42 45,34 84,38 123,24 162,18 214,10",
-            "fill_points": "6,46 6,42 45,34 84,38 123,24 162,18 214,10 214,46",
-        },
-        {
-            "name": "Groundnut",
-            "price": "5,846.90",
-            "unit": "Quintal",
-            "change": "2.41",
-            "is_positive": True,
-            "image": "images/crops/groundnut.png",
-            "line_points": "6,40 45,30 84,36 123,20 162,24 214,14",
-            "fill_points": "6,46 6,40 45,30 84,36 123,20 162,24 214,14 214,46",
-        },
-        {
-            "name": "Onion",
-            "price": "1,785.60",
-            "unit": "Quintal",
-            "change": "4.25",
-            "is_positive": False,
-            "image": "images/crops/onion.png",
-            "line_points": "6,14 45,26 84,22 123,30 162,34 214,44",
-            "fill_points": "6,46 6,14 45,26 84,22 123,30 162,34 214,44 214,46",
-        },
-        {
-            "name": "Sugarcane",
-            "price": "315.40",
-            "unit": "Quintal",
-            "change": "0.92",
-            "is_positive": True,
-            "image": "images/crops/sugarcane.png",
-            "line_points": "6,44 45,40 84,32 123,28 162,18 214,16",
-            "fill_points": "6,46 6,44 45,40 84,32 123,28 162,18 214,16 214,46",
-        },
-    ]
-
-    _featured_cards_cache["data"] = featured_cards
-    _featured_cards_cache["ts"] = time.time()
-
-    return featured_cards
 
 def get_featured_metal_cards():
     return [
@@ -236,6 +153,130 @@ def _get_mail_cfg() -> dict:
         "BASE_URL": cfg.get("BASE_URL", "http://127.0.0.1:5000"),
     }
 
+@main_bp.route("/api/agri-trend-range")
+@login_required
+def api_agri_trend_range():
+    selected_id = request.args.get("cmdt_id", "").strip()
+    start_year = request.args.get("start_year", "").strip()
+    start_month = request.args.get("start_month", "").strip()
+    end_year = request.args.get("end_year", "").strip()
+    end_month = request.args.get("end_month", "").strip()
+
+    if not all([selected_id, start_year, start_month, end_year, end_month]):
+        return jsonify({"success": False, "message": "Missing required parameters"})
+
+    month_names_short = {
+        1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr",
+        5: "May", 6: "Jun", 7: "Jul", 8: "Aug",
+        9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec",
+    }
+
+    month_names_full = {
+        1: "january", 2: "february", 3: "march", 4: "april",
+        5: "may", 6: "june", 7: "july", 8: "august",
+        9: "september", 10: "october", 11: "november", 12: "december",
+    }
+
+    def to_float(value):
+        try:
+            if value in (None, "", "N/A", "-"):
+                return None
+            return float(str(value).replace(",", "").replace("₹", "").strip())
+        except Exception:
+            return None
+
+    def avg_price_from_rows(rows, key_name):
+        values = []
+        for row in rows:
+            val = to_float(row.get(key_name))
+            if val is not None:
+                values.append(val)
+        if not values:
+            return None
+        return round(sum(values) / len(values), 2)
+
+    def month_range(sy, sm, ey, em):
+        months = []
+        cy, cm = sy, sm
+        while (cy < ey) or (cy == ey and cm <= em):
+            months.append((cy, cm))
+            cm += 1
+            if cm > 12:
+                cm = 1
+                cy += 1
+        return months
+
+    cache_key = f"{selected_id}_{start_year}_{start_month}_{end_year}_{end_month}"
+    cached_data = _agri_trend_cache["data"].get(cache_key)
+    cached_ts = _agri_trend_cache["ts"].get(cache_key)
+
+    if cached_data and cached_ts and (time.time() - cached_ts < 1800):
+        return jsonify({"success": True, "data": cached_data})
+
+    agmark_headers = {
+        "accept": "application/json, text/plain, */*",
+        "accept-language": "en-US,en;q=0.8",
+        "origin": "https://www.agmarknet.gov.in",
+        "referer": "https://www.agmarknet.gov.in/",
+        "user-agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/146.0.0.0 Safari/537.36"
+        ),
+    }
+
+    try:
+        sy = int(start_year)
+        sm = int(start_month)
+        ey = int(end_year)
+        em = int(end_month)
+
+        if (sy > ey) or (sy == ey and sm > em):
+            return jsonify({"success": False, "message": "Invalid date range"})
+
+        months_to_fetch = month_range(sy, sm, ey, em)
+
+        if len(months_to_fetch) > 24:
+            return jsonify({"success": False, "message": "Please select a range up to 24 months only"})
+
+        points = []
+
+        for y, m in months_to_fetch:
+            result = _make_api_request_with_retry(
+                url="https://api.agmarknet.gov.in/v1/price-trend/wholesale-prices-monthly",
+                params={
+                    "report_mode": "Statewise",
+                    "commodity": selected_id,
+                    "year": str(y),
+                    "month": str(m),
+                    "state": "0",
+                    "district": "0",
+                    "export": "false",
+                },
+                headers=agmark_headers,
+                timeout=8,
+                api_name="agmarknet_trend",
+                max_retries=2,
+            )
+
+            rows = result.get("rows", []) if isinstance(result, dict) else []
+            key_name = f"prices_{month_names_full[m]}_{y}"
+            avg_price = avg_price_from_rows(rows, key_name)
+
+            points.append({
+                "label": f"{month_names_short[m]} {y}",
+                "value": avg_price
+            })
+
+        _agri_trend_cache["data"][cache_key] = points
+        _agri_trend_cache["ts"][cache_key] = time.time()
+
+        return jsonify({"success": True, "data": points})
+
+    except Exception as e:
+        print(f"Agri Trend Range API Error: {e}")
+        return jsonify({"success": False, "message": "Unable to fetch agri trend range data"})
+
 def _parse_sched_from_form(form, cat_key):
     stype = form.get(f"sched_{cat_key}_type")
     
@@ -268,6 +309,113 @@ def _safe_json_load(val):
         return json.loads(val)
     except Exception:
         return {}
+
+@main_bp.route("/api/agri-trend")
+@login_required
+def api_agri_trend():
+    selected_id = request.args.get("cmdt_id", "").strip()
+    selected_year = request.args.get("year", "").strip()
+    selected_month = request.args.get("month", "").strip()
+
+    if not selected_id or not selected_year or not selected_month:
+        return jsonify({"success": False, "message": "Missing required parameters"})
+
+    month_names_short = {
+        1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr",
+        5: "May", 6: "Jun", 7: "Jul", 8: "Aug",
+        9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec",
+    }
+
+    month_names_full = {
+        1: "january", 2: "february", 3: "march", 4: "april",
+        5: "may", 6: "june", 7: "july", 8: "august",
+        9: "september", 10: "october", 11: "november", 12: "december",
+    }
+
+    def prev_month(year_num, month_num):
+        if month_num == 1:
+            return year_num - 1, 12
+        return year_num, month_num - 1
+
+    def avg_price_from_rows(rows, key_name):
+        values = []
+        for row in rows:
+            val = to_float(row.get(key_name))
+            if val is not None:
+                values.append(val)
+        if not values:
+            return None
+        return round(sum(values) / len(values), 2)
+
+    cache_key = f"{selected_id}_{selected_year}_{selected_month}_6m"
+    cached_data = _agri_trend_cache["data"].get(cache_key)
+    cached_ts = _agri_trend_cache["ts"].get(cache_key)
+
+    if cached_data and cached_ts and (time.time() - cached_ts < 1800):
+        return jsonify({"success": True, "data": cached_data})
+
+    agmark_headers = {
+        "accept": "application/json, text/plain, */*",
+        "accept-language": "en-US,en;q=0.8",
+        "origin": "https://www.agmarknet.gov.in",
+        "referer": "https://www.agmarknet.gov.in/",
+        "user-agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/146.0.0.0 Safari/537.36"
+        ),
+    }
+
+    try:
+        year_num = int(selected_year)
+        month_num = int(selected_month)
+
+        months_to_fetch = []
+        temp_year, temp_month = year_num, month_num
+
+        for _ in range(6):
+            months_to_fetch.append((temp_year, temp_month))
+            temp_year, temp_month = prev_month(temp_year, temp_month)
+
+        months_to_fetch.reverse()
+
+        points = []
+
+        for y, m in months_to_fetch:
+            result = _make_api_request_with_retry(
+                url="https://api.agmarknet.gov.in/v1/price-trend/wholesale-prices-monthly",
+                params={
+                    "report_mode": "Statewise",
+                    "commodity": selected_id,
+                    "year": str(y),
+                    "month": str(m),
+                    "state": "0",
+                    "district": "0",
+                    "export": "false",
+                },
+                headers=agmark_headers,
+                timeout=8,
+                api_name="agmarknet_trend",
+                max_retries=2,
+            )
+
+            rows = result.get("rows", []) if isinstance(result, dict) else []
+            key_name = f"prices_{month_names_full[m]}_{y}"
+            avg_price = avg_price_from_rows(rows, key_name)
+
+            points.append({
+                "label": f"{month_names_short[m]} {y}",
+                "value": avg_price
+            })
+
+        _agri_trend_cache["data"][cache_key] = points
+        _agri_trend_cache["ts"][cache_key] = time.time()
+
+        return jsonify({"success": True, "data": points})
+
+    except Exception as e:
+        print(f"Agri Trend API Error: {e}")
+        return jsonify({"success": False, "message": "Unable to fetch agri trend data"})
 
 
 def _interval_minutes_from_schedule(schedule_dict):
@@ -1063,14 +1211,8 @@ _api_request_times = {
     "agmarknet": None,
     "agmarknet_commodities": None,
     "openweather": None,
+    "agmarknet_trend": None,
 }
-
-MIN_REQUEST_INTERVAL = {
-    "agmarknet": 2.0,
-    "agmarknet_commodities": 5.0,
-    "openweather": 1.0,
-}
-
 
 def _wait_for_rate_limit(api_name: str):
     last_time = _api_request_times.get(api_name)
@@ -1337,13 +1479,12 @@ def fetch_month_average_for_crop(crop_id, year_num, month_num, agmark_headers, m
         print(f"Month average fetch error for crop_id={crop_id}, {month_num}/{year_num}: {e}")
         return None
 
-
 def get_selected_featured_agri():
     selected = session.get("featured_agri_selection")
 
-    if not selected:
-        session["featured_agri_selection"] = DEFAULT_FEATURED_AGRI[:]
-        selected = DEFAULT_FEATURED_AGRI[:]
+    if selected is None:
+        session["featured_agri_selection"] = []
+        selected = []
 
     cleaned = []
     seen = set()
@@ -1361,7 +1502,6 @@ def get_selected_featured_agri():
 
     session["featured_agri_selection"] = cleaned
     return cleaned
-
 
 def _get_prev_month_year(year_num, month_num):
     if month_num == 1:
@@ -1448,13 +1588,36 @@ def get_featured_agri_cards_live(selected_items):
             )
 
             rows = result.get("rows", []) if isinstance(result, dict) else []
+
             if not rows:
+                card_data = {
+                    "id": commodity_id,
+                    "name": commodity_name,
+                    "price": "N/A",
+                    "unit": "Quintal",
+                    "change": "0.00",
+                    "is_positive": True,
+                    "has_data": False,
+                }
+                cached_map[cache_key] = card_data
+                cards.append(card_data)
                 continue
 
             current_avg = _avg_price_from_rows(rows, current_key)
             previous_avg = _avg_price_from_rows(rows, previous_key)
 
             if current_avg is None:
+                card_data = {
+                    "id": commodity_id,
+                    "name": commodity_name,
+                    "price": "N/A",
+                    "unit": "Quintal",
+                    "change": "0.00",
+                    "is_positive": True,
+                    "has_data": False,
+                }
+                cached_map[cache_key] = card_data
+                cards.append(card_data)
                 continue
 
             change_pct = 0.0
@@ -1468,6 +1631,7 @@ def get_featured_agri_cards_live(selected_items):
                 "unit": "Quintal",
                 "change": f"{abs(change_pct):.2f}",
                 "is_positive": change_pct >= 0,
+                "has_data": True,
             }
 
             cached_map[cache_key] = card_data
@@ -1476,9 +1640,22 @@ def get_featured_agri_cards_live(selected_items):
         except Exception as e:
             print(f"[FEATURED AGRI CARD ERROR] {commodity_name}: {e}", flush=True)
 
+            card_data = {
+                "id": commodity_id,
+                "name": commodity_name,
+                "price": "N/A",
+                "unit": "Quintal",
+                "change": "0.00",
+                "is_positive": True,
+                "has_data": False,
+            }
+            cached_map[cache_key] = card_data
+            cards.append(card_data)
+
     _featured_cards_cache["data"] = cached_map
     _featured_cards_cache["ts"] = time.time()
     return cards
+
 
 @main_bp.route("/api/weather-data")
 @login_required
@@ -1680,6 +1857,8 @@ def update_featured_agri_selection():
         commodity_name = request.form.get("commodity_name", "").strip()
 
         selected = get_selected_featured_agri()
+        print("Selected featured agri session list:", selected)
+        print("Selected featured agri count:", len(selected))
 
         if action == "add":
             if not commodity_id or not commodity_name:
@@ -1687,9 +1866,6 @@ def update_featured_agri_selection():
 
             if any(str(item["id"]) == commodity_id for item in selected):
                 return jsonify({"success": False, "message": "Commodity already added"})
-
-            if len(selected) >= FEATURED_AGRI_MAX:
-                return jsonify({"success": False, "message": f"Maximum {FEATURED_AGRI_MAX} cards allowed"})
 
             selected.append({
                 "id": commodity_id,
@@ -1702,9 +1878,6 @@ def update_featured_agri_selection():
 
             selected = [item for item in selected if str(item["id"]) != commodity_id]
 
-            if not selected:
-                return jsonify({"success": False, "message": "At least one card must remain"})
-
         else:
             return jsonify({"success": False, "message": "Invalid action"})
 
@@ -1714,6 +1887,79 @@ def update_featured_agri_selection():
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})
 
+
+# @main_bp.route("/api/featured-agri-cards")
+# @login_required
+# def featured_agri_cards_api():
+#     try:
+#         selected_featured_agri = get_selected_featured_agri()
+#         cards = get_featured_agri_cards_live(selected_featured_agri)
+#         return jsonify({
+#             "success": True,
+#             "cards": cards
+#         })
+#     except Exception as e:
+#         import traceback
+#         traceback.print_exc()
+#         return jsonify({
+#             "success": False,
+#             "message": str(e),
+#             "cards": []
+#         }), 500
+
+@main_bp.route("/api/featured-agri-card")
+@login_required
+def featured_agri_card_api():
+    commodity_id = request.args.get("commodity_id", "").strip()
+    commodity_name = request.args.get("commodity_name", "").strip()
+
+    if not commodity_id or not commodity_name:
+        return jsonify({"success": False, "message": "Commodity id or name missing"})
+
+    try:
+        cards = get_featured_agri_cards_live([{
+            "id": commodity_id,
+            "name": commodity_name
+        }])
+
+        # no card built at all
+        if not cards:
+            selected = get_selected_featured_agri()
+            selected = [item for item in selected if str(item["id"]) != commodity_id]
+            session["featured_agri_selection"] = selected
+            session.modified = True
+
+            return jsonify({
+                "success": False,
+                "message": f"Data is not available for {commodity_name}."
+            })
+
+        card = cards[0]
+
+        # card built but has no usable data
+        if not card.get("has_data", True) or card.get("price") in ("N/A", "", None):
+            selected = get_selected_featured_agri()
+            selected = [item for item in selected if str(item["id"]) != commodity_id]
+            session["featured_agri_selection"] = selected
+            session.modified = True
+
+            return jsonify({
+                "success": False,
+                "message": f"Data is not available for {commodity_name}."
+            })
+
+        return jsonify({"success": True, "card": card})
+
+    except Exception as e:
+        selected = get_selected_featured_agri()
+        selected = [item for item in selected if str(item["id"]) != commodity_id]
+        session["featured_agri_selection"] = selected
+        session.modified = True
+
+        return jsonify({
+            "success": False,
+            "message": f"Unable to load data for {commodity_name}."
+        })
 
 @main_bp.route("/home")
 @login_required
@@ -1942,8 +2188,14 @@ def home():
     }
 
     recent_searches = session.get("recent_searches", [])
+
+    if "featured_agri_reset_done" not in session:
+        session["featured_agri_selection"] = []
+        session["featured_agri_reset_done"] = True
+        session.modified = True
+
     selected_featured_agri = get_selected_featured_agri()
-    featured_cards = get_featured_agri_cards_live(selected_featured_agri)
+    featured_cards = []
 
     selected_ids = {str(item["id"]) for item in selected_featured_agri}
     available_featured_agri = [
@@ -1978,7 +2230,7 @@ def home():
         news_categories=news_categories,
         category_news=category_news,
         commodity_summary=commodity_summary,
-        featured_cards=featured_cards,
+        featured_cards= [],
         recent_searches=recent_searches,
         metal_cards=metal_cards,
         selected_featured_agri=selected_featured_agri,
@@ -2193,6 +2445,8 @@ def chatbot_sessions_api():
 @login_required
 def chatbot_new_session_api():
     return handle_chatbot_new_session()
+
+
 @main_bp.route("/view-news-type", methods=["GET", "POST"])
 @login_required
 def view_news_type():
@@ -2742,7 +2996,7 @@ def send_email_today():
 
     try:
         cursor.execute(
-            "SELECT id, news_date, news_type, news_headline, news_url, pdf_path "
+            "SELECT id, news_date, 4news_type, news_headline, news_url, pdf_path "
             "FROM published_news WHERE DATE(published_at)=%s "
             "ORDER BY published_at DESC",
             (today,)
