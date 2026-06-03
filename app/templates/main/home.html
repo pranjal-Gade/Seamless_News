@@ -339,14 +339,6 @@
   /* =========================
      FEATURED AGRI CARDS
   ========================= */
-  .featured-agri-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
 
   .featured-agri-actions {
     display: flex;
@@ -393,69 +385,58 @@
     box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
   }
 
-  .featured-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 14px;
+
+
+ 
+
+.featured-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+
+
+
+
+.featured-price span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  margin-left: 4px;
+}
+
+.featured-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .featured-agri-toolbar {
     align-items: stretch;
-    margin-bottom: 10px;
   }
 
-  .featured-market-card {
-    position: relative;
-    background: #ffffff;
-    border: 1px solid #dbe4f0;
-    border-radius: 16px;
-    padding: 14px 14px 12px;
-    min-height: 110px;
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
-    overflow: hidden;
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  .featured-agri-actions {
+    width: 100%;
   }
 
-  .featured-market-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
-  }
-
-  .featured-market-card.positive {
-    border-top: 4px solid #b9ebc6;
-  }
-
-  .featured-market-card.negative {
-    border-top: 4px solid #f6c3c3;
-  }
-
-  .featured-card-top {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .featured-card-left {
-    min-width: 0;
+  .featured-agri-select {
     flex: 1;
+    min-width: 0;
+    width: 100%;
   }
+}
 
-  .featured-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: #14214d;
-    margin-bottom: 6px;
-    line-height: 1.2;
-    word-break: break-word;
-  }
 
-  .featured-price {
-    font-size: 14px;
-    font-weight: 900;
-    color: #111827;
-    margin-bottom: 6px;
-    line-height: 1.3;
-  }
 
   .featured-price span {
     font-size: 12px;
@@ -463,47 +444,6 @@
     color: #64748b;
     margin-left: 4px;
   }
-
-  .featured-change {
-    font-size: 13px;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 0;
-  }
-
-  .featured-change.positive {
-    color: #16a34a;
-  }
-
-  .featured-change.negative {
-    color: #dc2626;
-  }
-
-  .featured-remove-btn {
-    width: 22px;
-    height: 22px;
-    border: none;
-    border-radius: 50%;
-    background: #f1f5f9;
-    color: #94a3b8;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    z-index: 1;
-  }
-
-  .featured-remove-btn:hover {
-    background: #e2e8f0;
-    color: #475569;
-  }
-
   /* =========================
      AGRI ANALYSIS
   ========================= */
@@ -845,23 +785,12 @@
     font-weight: 800;
   }
 
-  /* =========================
-     RESPONSIVE
-  ========================= */
-  @media (max-width: 1400px) {
-    .featured-cards-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-
   @media (max-width: 1200px) {
     .metal-cards-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .featured-cards-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+   
   }
 
   @media (max-width: 1100px) {
@@ -892,11 +821,363 @@
     }
   }
 
-  @media (max-width: 900px) {
-    .featured-cards-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+/* =========================
+   FEATURED AGRI CARDS
+========================= */
+.featured-agri-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.featured-agri-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.featured-agri-select {
+  min-width: 260px;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid #d7dfeb;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
+}
+
+.featured-agri-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.featured-agri-add-btn {
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.featured-agri-add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
+}
+
+.featured-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 12px;
+}
+
+.featured-market-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  border-radius: 16px;
+  padding: 12px 14px;
+  min-height: 100px;
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.featured-market-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  border-color: #cfd9e8;
+}
+
+.featured-market-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.featured-market-card.positive::before {
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.28), rgba(34, 197, 94, 0.05));
+}
+
+.featured-market-card.negative::before {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.24), rgba(239, 68, 68, 0.05));
+}
+
+.featured-market-card::after {
+  display: none;
+}
+
+.featured-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.featured-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #14214d;
+  line-height: 1.2;
+  word-break: break-word;
+  margin: 0;
+}
+
+.featured-remove-btn {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #94a3b8;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.featured-remove-btn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.featured-price {
+  font-size: 13px;
+  font-weight: 900;
+  color: #111827;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.featured-price span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  margin-left: 3px;
+}
+
+.featured-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+.featured-change {
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.featured-change.positive {
+  color: #16a34a;
+}
+
+.featured-change.negative {
+  color: #dc2626;
+}
+
+.featured-trend-link {
+  border: none;
+  background: #eef4ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.featured-trend-link:hover {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+@media (max-width: 1200px) {
+  .featured-cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+@media (max-width: 900px) {
+  .featured-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .featured-agri-toolbar {
+    align-items: stretch;
+  }
+
+  .featured-agri-actions {
+    width: 100%;
+  }
+
+  .featured-agri-select {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .featured-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.agri-trend-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.agri-trend-modal.hidden {
+  display: none !important;
+}
+
+.agri-trend-modal-content {
+  width: min(900px, 100%);
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #dbe4f0;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+  padding: 22px;
+}
+
+.agri-trend-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.agri-trend-modal-header h3 {
+  margin: 0;
+  color: var(--navy-dark);
+  font-size: 20px;
+}
+
+.agri-trend-close {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.agri-trend-close:hover {
+  background: #e2e8f0;
+}
+
+.agri-trend-chart-wrap {
+  height: 360px;
+}
+
+.agri-trend-filter-bar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.agri-trend-filter-group {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.agri-trend-filter-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.agri-trend-filter-group select {
+  min-width: 110px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+}
+
+.agri-trend-apply-btn {
+  height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+.agri-trend-apply-btn:hover {
+  background: #1d4ed8;
+}
+
 
   @media (max-width: 768px) {
     .metal-cards-grid {
@@ -926,10 +1207,6 @@
       width: 100%;
     }
 
-    .featured-cards-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     .agri-summary-grid,
     .premium-weather-grid {
       grid-template-columns: 1fr;
@@ -948,10 +1225,6 @@
 
   @media (max-width: 640px) {
     .default-city-weather-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .featured-cards-grid {
       grid-template-columns: 1fr;
     }
   }
@@ -1071,7 +1344,6 @@
     </div>
     {% endif %}
 
-    {% if featured_cards %}
     <div style="margin-bottom: 30px;">
       <div class="featured-agri-toolbar">
         <div class="section-tag" style="margin-bottom:0;">Featured Agri Markets</div>
@@ -1090,33 +1362,12 @@
         </div>
       </div>
 
-      <div class="featured-cards-grid">
-        {% for card in featured_cards %}
-        <div class="featured-market-card {% if card.is_positive %}positive{% else %}negative{% endif %}">
-          <div class="featured-card-top">
-            <div class="featured-card-left">
-              <div class="featured-title">{{ card.name }}</div>
-
-              <div class="featured-price">
-                ₹{{ card.price }}<span>/{{ card.unit }}</span>
-              </div>
-
-              <div class="featured-change {% if card.is_positive %}positive{% else %}negative{% endif %}">
-                {% if card.is_positive %}▲{% else %}▼{% endif %} {{ card.change }}%
-              </div>
-            </div>
-
-            <button type="button"
-                    class="featured-remove-btn"
-                    onclick="removeFeaturedAgriCard('{{ card.id }}')">
-              ×
-            </button>
-          </div>
+      <div id="featuredAgriGrid" class="featured-cards-grid">
+        <div class="results-empty" style="grid-column: 1 / -1;">
+          Loading featured agri cards...
         </div>
-        {% endfor %}
       </div>
     </div>
-    {% endif %}
 
     <div id="agri-intelligence" class="dashboard-panel">
       <h3>Agriculture Market</h3>
@@ -1362,71 +1613,368 @@
 
   </div>
 </div>
+<div id="agriTrendModal" class="agri-trend-modal hidden">
+  <div class="agri-trend-modal-content">
+    <div class="agri-trend-modal-header">
+      <h3 id="agriTrendModalTitle">Price Trend</h3>
+      <button type="button" class="agri-trend-close" onclick="closeAgriTrendModal()">×</button>
+    </div>
+
+    <div class="agri-trend-filter-bar">
+      <div class="agri-trend-filter-group">
+        <label>From</label>
+        <select id="trendStartMonth">
+          <option value="1">Jan</option>
+          <option value="2">Feb</option>
+          <option value="3">Mar</option>
+          <option value="4">Apr</option>
+          <option value="5">May</option>
+          <option value="6">Jun</option>
+          <option value="7">Jul</option>
+          <option value="8">Aug</option>
+          <option value="9">Sep</option>
+          <option value="10">Oct</option>
+          <option value="11">Nov</option>
+          <option value="12">Dec</option>
+        </select>
+
+        <select id="trendStartYear">
+          {% for y in year_options %}
+          <option value="{{ y }}">{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="agri-trend-filter-group">
+        <label>To</label>
+        <select id="trendEndMonth">
+          <option value="1">Jan</option>
+          <option value="2">Feb</option>
+          <option value="3">Mar</option>
+          <option value="4">Apr</option>
+          <option value="5">May</option>
+          <option value="6">Jun</option>
+          <option value="7">Jul</option>
+          <option value="8">Aug</option>
+          <option value="9">Sep</option>
+          <option value="10">Oct</option>
+          <option value="11">Nov</option>
+          <option value="12">Dec</option>
+        </select>
+
+        <select id="trendEndYear">
+          {% for y in year_options %}
+          <option value="{{ y }}">{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="button" class="agri-trend-apply-btn" onclick="applyTrendRange()">
+        Apply
+      </button>
+    </div>
+
+    <div id="agriTrendLoader" class="loader-overlay hidden" style="margin-top:0;">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Loading graphical analysis...</div>
+    </div>
+
+    <div class="agri-trend-chart-wrap">
+      <canvas id="agriTrendChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  function showNewsCategory(category, btn) {
-    document.querySelectorAll('.news-category-panel').forEach(panel => {
-      panel.classList.remove('active');
-    });
+let agriTrendChart = null;
+let currentTrendCommodityId = null;
+let currentTrendCommodityName = "";
 
-    document.querySelectorAll('.news-top-nav-item').forEach(tab => {
-      tab.classList.remove('active');
-    });
+function closeAgriTrendModal() {
+  const modal = document.getElementById("agriTrendModal");
+  modal.classList.add("hidden");
 
-    document.getElementById('panel-' + category).classList.add('active');
-    btn.classList.add('active');
+  if (agriTrendChart) {
+    agriTrendChart.destroy();
+    agriTrendChart = null;
+  }
+}
+
+async function openAgriTrendModal(commodityId, commodityName) {
+  currentTrendCommodityId = commodityId;
+  currentTrendCommodityName = commodityName;
+
+  const modal = document.getElementById("agriTrendModal");
+  const title = document.getElementById("agriTrendModalTitle");
+
+  title.textContent = `${commodityName} Price Trend`;
+  modal.classList.remove("hidden");
+
+  const now = new Date();
+  const endMonth = now.getMonth() + 1;
+  const endYear = now.getFullYear();
+
+  let startMonth = endMonth - 2;
+  let startYear = endYear;
+
+  while (startMonth <= 0) {
+    startMonth += 12;
+    startYear -= 1;
   }
 
-  function formatNumber(value) {
-    if (value === null || value === undefined || value === "" || value === "N/A") return "N/A";
-    const num = Number(String(value).replace(/,/g, ""));
-    if (Number.isNaN(num)) return value;
-    return num.toLocaleString("en-IN", { maximumFractionDigits: 2 });
-  }
+  document.getElementById("trendStartMonth").value = String(startMonth);
+  document.getElementById("trendStartYear").value = String(startYear);
+  document.getElementById("trendEndMonth").value = String(endMonth);
+  document.getElementById("trendEndYear").value = String(endYear);
 
-  function toFloat(value) {
-    if (value === null || value === undefined || value === "" || value === "N/A" || value === "-") return null;
-    const num = Number(String(value).replace(/,/g, "").replace("₹", "").trim());
-    return Number.isNaN(num) ? null : num;
-  }
+  await loadAgriTrendByRange();
+}
 
-  async function addFeaturedAgriCard() {
-    const select = document.getElementById("featuredAgriSelect");
-    const commodityId = select.value;
+async function applyTrendRange() {
+  if (!currentTrendCommodityId) return;
+  await loadAgriTrendByRange();
+}
 
-    if (!commodityId) {
-      alert("Please select a commodity.");
-      return;
-    }
+async function loadAgriTrendByRange() {
+  const loader = document.getElementById("agriTrendLoader");
+  loader.classList.remove("hidden");
+  loader.classList.add("show");
 
-    const selectedOption = select.options[select.selectedIndex];
-    const commodityName = selectedOption.getAttribute("data-name");
+  const startMonth = document.getElementById("trendStartMonth").value;
+  const startYear = document.getElementById("trendStartYear").value;
+  const endMonth = document.getElementById("trendEndMonth").value;
+  const endYear = document.getElementById("trendEndYear").value;
 
-    const formData = new FormData();
-    formData.append("action", "add");
-    formData.append("commodity_id", commodityId);
-    formData.append("commodity_name", commodityName);
-
-    const res = await fetch("/api/featured-agri-selection", {
-      method: "POST",
-      body: formData
-    });
+  try {
+    const res = await fetch(
+      `/api/agri-trend-range?cmdt_id=${encodeURIComponent(currentTrendCommodityId)}&start_year=${encodeURIComponent(startYear)}&start_month=${encodeURIComponent(startMonth)}&end_year=${encodeURIComponent(endYear)}&end_month=${encodeURIComponent(endMonth)}`
+    );
 
     const result = await res.json();
 
     if (!result.success) {
-      alert(result.message || "Unable to add commodity.");
+      alert(result.message || "Unable to fetch trend data.");
       return;
     }
 
-    window.location.reload();
+    const points = result.data || [];
+    const labels = points.map(item => item.label);
+    const values = points.map(item => item.value);
+
+    const canvas = document.getElementById("agriTrendChart");
+    const ctx = canvas.getContext("2d");
+
+    if (agriTrendChart) {
+      agriTrendChart.destroy();
+    }
+
+    agriTrendChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Average Price",
+          data: values,
+          borderColor: "#2563eb",
+          backgroundColor: "rgba(37, 99, 235, 0.12)",
+          fill: true,
+          tension: 0.35,
+          borderWidth: 3,
+          pointRadius: 4,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: "top"
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            ticks: {
+              callback: function(value) {
+                return "₹" + value;
+              }
+            }
+          }
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error("Trend range error:", err);
+    alert("Something went wrong while loading trend data.");
+  } finally {
+    loader.classList.remove("show");
+    loader.classList.add("hidden");
+  }
+}
+
+function showNewsCategory(category, btn) {
+  document.querySelectorAll(".news-category-panel").forEach(panel => {
+    panel.classList.remove("active");
+  });
+
+  document.querySelectorAll(".news-top-nav-item").forEach(tab => {
+    tab.classList.remove("active");
+  });
+
+  const targetPanel = document.getElementById("panel-" + category);
+  if (targetPanel) {
+    targetPanel.classList.add("active");
   }
 
-  async function removeFeaturedAgriCard(commodityId) {
-    const formData = new FormData();
-    formData.append("action", "remove");
-    formData.append("commodity_id", commodityId);
+  if (btn) {
+    btn.classList.add("active");
+  }
+}
 
+function formatNumber(value) {
+  if (value === null || value === undefined || value === "" || value === "N/A") return "N/A";
+  const num = Number(String(value).replace(/,/g, ""));
+  if (Number.isNaN(num)) return value;
+  return num.toLocaleString("en-IN", { maximumFractionDigits: 2 });
+}
+
+function toFloat(value) {
+  if (value === null || value === undefined || value === "" || value === "N/A" || value === "-") return null;
+  const num = Number(String(value).replace(/,/g, "").replace("₹", "").trim());
+  return Number.isNaN(num) ? null : num;
+}
+
+function buildFeaturedAgriCardHtml(card) {
+  return `
+    <div class="featured-market-card ${card.is_positive ? "positive" : "negative"}" data-card-id="${card.id}">
+      <div class="featured-title-row">
+        <div class="featured-title">${card.name}</div>
+        <button type="button"
+                class="featured-remove-btn"
+                onclick="event.stopPropagation(); removeFeaturedAgriCard('${card.id}', '${card.name}')">
+          ×
+        </button>
+      </div>
+
+      <div class="featured-price">
+        ${card.price === "N/A" ? "N/A" : `₹${card.price}`}<span>/${card.unit}</span>
+      </div>
+
+      <div class="featured-card-bottom">
+        <div class="featured-change ${card.has_data === false ? "" : (card.is_positive ? "positive" : "negative")}">
+          ${card.has_data === false ? "Data unavailable" : `${card.is_positive ? "▲" : "▼"} ${card.change}%`}
+        </div>
+
+        <button type="button"
+                class="featured-trend-link"
+                onclick="openAgriTrendModal('${card.id}', '${card.name}')">
+          View trend
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function addFeaturedAgriCard() {
+  const select = document.getElementById("featuredAgriSelect");
+  const grid = document.getElementById("featuredAgriGrid");
+  const commodityId = select.value;
+
+  if (!commodityId) {
+    alert("Please select a commodity.");
+    return;
+  }
+
+  const selectedOption = select.options[select.selectedIndex];
+  const commodityName = selectedOption.getAttribute("data-name");
+
+  const formData = new FormData();
+  formData.append("action", "add");
+  formData.append("commodity_id", commodityId);
+  formData.append("commodity_name", commodityName);
+
+  try {
+    const saveRes = await fetch("/api/featured-agri-selection", {
+      method: "POST",
+      body: formData
+    });
+    const saveResult = await saveRes.json();
+
+    if (!saveResult.success) {
+      alert(saveResult.message || "Unable to add commodity.");
+      return;
+    }
+
+    const emptyState = grid.querySelector(".results-empty");
+    if (emptyState) emptyState.remove();
+
+    const placeholder = document.createElement("div");
+    placeholder.className = "featured-market-card";
+    placeholder.setAttribute("data-card-id", commodityId);
+    placeholder.innerHTML = `
+      <div class="featured-title-row">
+        <div class="featured-title">${commodityName}</div>
+      </div>
+      <div class="featured-price">Loading...<span>/Quintal</span></div>
+    `;
+    grid.appendChild(placeholder);
+
+    select.remove(select.selectedIndex);
+    select.value = "";
+
+    const cardRes = await fetch(
+      `/api/featured-agri-card?commodity_id=${encodeURIComponent(commodityId)}&commodity_name=${encodeURIComponent(commodityName)}`
+    );
+    const cardResult = await cardRes.json();
+
+    if (!cardResult.success) {
+      placeholder.remove();
+
+      const option = document.createElement("option");
+      option.value = commodityId;
+      option.setAttribute("data-name", commodityName);
+      option.textContent = commodityName;
+      select.appendChild(option);
+
+      if (!grid.children.length) {
+        grid.innerHTML = `
+          <div class="results-empty" style="grid-column: 1 / -1;">
+            No featured agri cards loaded yet. Add a commodity to display it here.
+          </div>
+        `;
+      }
+
+      alert(cardResult.message || `Data is not available for ${commodityName}.`);
+      return;
+    }
+
+    placeholder.outerHTML = buildFeaturedAgriCardHtml(cardResult.card);
+
+  } catch (err) {
+    console.error("Add featured agri error:", err);
+    alert("Something went wrong while adding the commodity.");
+  }
+}
+
+async function removeFeaturedAgriCard(commodityId, commodityName) {
+  const grid = document.getElementById("featuredAgriGrid");
+  const select = document.getElementById("featuredAgriSelect");
+  const cardEl = grid.querySelector(`[data-card-id="${commodityId}"]`);
+
+  if (cardEl) {
+    cardEl.remove();
+  }
+
+  const formData = new FormData();
+  formData.append("action", "remove");
+  formData.append("commodity_id", commodityId);
+
+  try {
     const res = await fetch("/api/featured-agri-selection", {
       method: "POST",
       body: formData
@@ -1439,149 +1987,117 @@
       return;
     }
 
-    window.location.reload();
+    const option = document.createElement("option");
+    option.value = commodityId;
+    option.setAttribute("data-name", commodityName);
+    option.textContent = commodityName;
+    select.appendChild(option);
+
+    if (!grid.children.length) {
+      grid.innerHTML = `
+        <div class="results-empty" style="grid-column: 1 / -1;">
+          No featured agri cards loaded yet. Add a commodity to display it here.
+        </div>
+      `;
+    }
+
+  } catch (err) {
+    console.error("Remove featured agri error:", err);
+    alert("Something went wrong while removing the commodity.");
+  }
+}
+
+async function loadWeather() {
+  const cityInput = document.getElementById("city_search");
+  const city = cityInput.value.trim();
+
+  if (!city) {
+    alert("Please enter a city name.");
+    return;
   }
 
+  const loader = document.getElementById("weatherLoader");
+  loader.classList.remove("hidden");
+  loader.classList.add("show");
 
-  async function loadWeather() {
-    const cityInput = document.getElementById("city_search");
-    const city = cityInput.value.trim();
-    if (!city) {
-      alert("Please enter a city name.");
-      return;
-    }
-
-    const loader = document.getElementById("weatherLoader");
-    loader.classList.remove("hidden");
-    loader.classList.add("show");
-
-    try {
-      const res = await fetch(`/api/weather-data?city=${encodeURIComponent(city)}`);
-      const result = await res.json();
-
-      if (!result.success) {
-        alert(result.message || "Unable to fetch weather data.");
-        return;
-      }
-
-      const data = result.data;
-
-      document.getElementById("weatherLocation").textContent =
-        data.country && data.country !== "--" ? `${data.location}, ${data.country}` : data.location;
-
-      document.getElementById("weatherDesc").textContent = data.desc || "--";
-      document.getElementById("weatherTemp").textContent = `${data.temp}°C`;
-      document.getElementById("feelsLikeText").textContent = `Feels like ${data.feels_like}°C`;
-
-      const iconEl = document.getElementById("weatherIcon");
-      if (data.icon) {
-        iconEl.src = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
-        iconEl.style.display = "block";
-      } else {
-        iconEl.style.display = "none";
-      }
-
-      document.getElementById("mHumidity").textContent = `${data.humidity}%`;
-      document.getElementById("mWind").textContent = `${data.wind} m/s`;
-      document.getElementById("mVisibility").textContent = `${data.visibility} km`;
-      document.getElementById("mFeelsLike").textContent = `${data.feels_like}°C`;
-      document.getElementById("mPressure").textContent = `${data.pressure} hPa`;
-      document.getElementById("mClouds").textContent = `${data.clouds}%`;
-      document.getElementById("mMinTemp").textContent = `${data.temp_min}°C`;
-      document.getElementById("mMaxTemp").textContent = `${data.temp_max}°C`;
-      document.getElementById("mSunrise").textContent = data.sunrise || "--";
-      document.getElementById("mSunset").textContent = data.sunset || "--";
-
-      const badge = document.getElementById("weatherBadge");
-      if ((data.desc || "").toLowerCase().includes("rain") || (data.desc || "").toLowerCase().includes("storm")) {
-        badge.textContent = "Caution";
-        badge.style.background = "#fee2e2";
-        badge.style.color = "#b91c1c";
-        badge.style.borderColor = "#fecaca";
-      } else if ((data.desc || "").toLowerCase().includes("clear")) {
-        badge.textContent = "Stable";
-        badge.style.background = "#dcfce7";
-        badge.style.color = "#166534";
-        badge.style.borderColor = "#bbf7d0";
-      } else {
-        badge.textContent = "Live Weather";
-        badge.style.background = "#dbeafe";
-        badge.style.color = "#1d4ed8";
-        badge.style.borderColor = "#bfdbfe";
-      }
-
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong while loading weather.");
-    } finally {
-      loader.classList.remove("show");
-      loader.classList.add("hidden");
-    }
-  }
-
-  async function addFeaturedAgriCard() {
-    const select = document.getElementById("featuredAgriSelect");
-    const commodityId = select.value;
-
-    if (!commodityId) {
-      alert("Please select a commodity.");
-      return;
-    }
-
-    const selectedOption = select.options[select.selectedIndex];
-    const commodityName = selectedOption.getAttribute("data-name");
-
-    const formData = new FormData();
-    formData.append("action", "add");
-    formData.append("commodity_id", commodityId);
-    formData.append("commodity_name", commodityName);
-
-    const res = await fetch("/api/featured-agri-selection", {
-      method: "POST",
-      body: formData
-    });
-
+  try {
+    const res = await fetch(`/api/weather-data?city=${encodeURIComponent(city)}`);
     const result = await res.json();
 
     if (!result.success) {
-      alert(result.message || "Unable to add commodity.");
+      alert(result.message || "Unable to fetch weather data.");
       return;
     }
 
-    window.location.reload();
-  }
+    const data = result.data;
 
-  async function removeFeaturedAgriCard(commodityId) {
-    const formData = new FormData();
-    formData.append("action", "remove");
-    formData.append("commodity_id", commodityId);
+    document.getElementById("weatherLocation").textContent =
+      data.country && data.country !== "--" ? `${data.location}, ${data.country}` : data.location;
 
-    const res = await fetch("/api/featured-agri-selection", {
-      method: "POST",
-      body: formData
-    });
+    document.getElementById("weatherDesc").textContent = data.desc || "--";
+    document.getElementById("weatherTemp").textContent = `${data.temp}°C`;
+    document.getElementById("feelsLikeText").textContent = `Feels like ${data.feels_like}°C`;
 
-    const result = await res.json();
-
-    if (!result.success) {
-      alert(result.message || "Unable to remove commodity.");
-      return;
+    const iconEl = document.getElementById("weatherIcon");
+    if (data.icon) {
+      iconEl.src = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
+      iconEl.style.display = "block";
+    } else {
+      iconEl.style.display = "none";
     }
 
-    window.location.reload();
+    document.getElementById("mHumidity").textContent = `${data.humidity}%`;
+    document.getElementById("mWind").textContent = `${data.wind} m/s`;
+    document.getElementById("mVisibility").textContent = `${data.visibility} km`;
+    document.getElementById("mFeelsLike").textContent = `${data.feels_like}°C`;
+    document.getElementById("mPressure").textContent = `${data.pressure} hPa`;
+    document.getElementById("mClouds").textContent = `${data.clouds}%`;
+    document.getElementById("mMinTemp").textContent = `${data.temp_min}°C`;
+    document.getElementById("mMaxTemp").textContent = `${data.temp_max}°C`;
+    document.getElementById("mSunrise").textContent = data.sunrise || "--";
+    document.getElementById("mSunset").textContent = data.sunset || "--";
+
+    const badge = document.getElementById("weatherBadge");
+    const desc = (data.desc || "").toLowerCase();
+
+    if (desc.includes("rain") || desc.includes("storm")) {
+      badge.textContent = "Caution";
+      badge.style.background = "#fee2e2";
+      badge.style.color = "#b91c1c";
+      badge.style.borderColor = "#fecaca";
+    } else if (desc.includes("clear")) {
+      badge.textContent = "Stable";
+      badge.style.background = "#dcfce7";
+      badge.style.color = "#166534";
+      badge.style.borderColor = "#bbf7d0";
+    } else {
+      badge.textContent = "Live Weather";
+      badge.style.background = "#dbeafe";
+      badge.style.color = "#1d4ed8";
+      badge.style.borderColor = "#bfdbfe";
+    }
+
+  } catch (err) {
+    console.error("Weather load error:", err);
+    alert("Something went wrong while loading weather.");
+  } finally {
+    loader.classList.remove("show");
+    loader.classList.add("hidden");
   }
+}
 
-  async function loadDefaultCityWeather() {
-    const cards = document.querySelectorAll(".default-city-card");
+async function loadDefaultCityWeather() {
+  const cards = document.querySelectorAll(".default-city-card");
 
-    for (const card of cards) {
+  await Promise.all(
+    Array.from(cards).map(async (card) => {
       const city = card.getAttribute("data-city");
 
       try {
         const res = await fetch(`/api/weather-data?city=${encodeURIComponent(city)}`);
         const result = await res.json();
 
-        if (!result.success) continue;
+        if (!result.success) return;
 
         const data = result.data;
         card.querySelector(".default-city-temp").textContent = `${data.temp}°C`;
@@ -1591,155 +2107,244 @@
       } catch (err) {
         console.error("Default city weather error:", city, err);
       }
-    }
+    })
+  );
+}
+
+async function loadAgriData() {
+  const cmdtSelect = document.getElementById("cmdt_id");
+  const yearSelect = document.getElementById("year");
+  const monthSelect = document.getElementById("month");
+
+  const cmdtId = cmdtSelect.value;
+  const year = yearSelect.value;
+  const month = monthSelect.value;
+
+  if (!cmdtId || !year || !month) {
+    alert("Please select commodity, year, and month.");
+    return;
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    loadDefaultCityWeather();
-  });
+  const emptyState = document.getElementById("agriEmptyState");
+  const summarySection = document.getElementById("agriSummarySection");
+  const loader = document.getElementById("agriLoader");
 
-  async function loadAgriData() {
-    const cmdtSelect = document.getElementById("cmdt_id");
-    const yearSelect = document.getElementById("year");
-    const monthSelect = document.getElementById("month");
+  emptyState.classList.add("hidden");
+  summarySection.style.display = "none";
+  loader.classList.remove("hidden");
+  loader.classList.add("show");
 
-    const cmdtId = cmdtSelect.value;
-    const year = yearSelect.value;
-    const month = monthSelect.value;
+  try {
+    const res = await fetch(`/api/agri-data?cmdt_id=${encodeURIComponent(cmdtId)}&year=${encodeURIComponent(year)}&month=${encodeURIComponent(month)}`);
+    const result = await res.json();
 
-    if (!cmdtId || !year || !month) {
-      alert("Please select commodity, year, and month.");
+    if (!result.success) {
+      alert(result.message || "Unable to fetch agri data.");
+      emptyState.classList.remove("hidden");
       return;
     }
 
-    const emptyState = document.getElementById("agriEmptyState");
-    const summarySection = document.getElementById("agriSummarySection");
-    const loader = document.getElementById("agriLoader");
+    const data = result.data || {};
+    const rows = data.rows || [];
+    const currentKey = data.current_price_key;
+    const previousKey = data.previous_price_key;
+
+    if (!rows.length) {
+      emptyState.innerHTML = `
+        <div style="font-size: 40px; margin-bottom: 10px;">📭</div>
+        <p>No agri data found for the selected commodity and period.</p>
+      `;
+      emptyState.classList.remove("hidden");
+      return;
+    }
+
+    document.getElementById("agriTableTitle").textContent = data.title || "Price Analysis";
+    document.getElementById("currLabel").textContent = `Price (${data.current_price_label || "Current"})`;
+    document.getElementById("prevLabel").textContent = `Prev Month (${data.previous_price_label || "Previous"})`;
+
+    const tbody = document.getElementById("agriTableBody");
+    tbody.innerHTML = "";
+
+    let priceRows = [];
+    let changeValues = [];
+
+    rows.forEach(row => {
+      const currentPrice = row[currentKey] || "N/A";
+      const previousPrice = row[previousKey] || "N/A";
+      const changeValue = toFloat(row.change_over_previous_month);
+
+      const tr = document.createElement("tr");
+      tr.style.borderBottom = "1px solid #f1f5f9";
+
+      let badgeBg = "#e2e8f0";
+      let badgeColor = "#334155";
+      let symbol = "■";
+
+      if (changeValue !== null) {
+        if (changeValue > 0) {
+          badgeBg = "#dcfce7";
+          badgeColor = "#166534";
+          symbol = "▲";
+        } else if (changeValue < 0) {
+          badgeBg = "#fee2e2";
+          badgeColor = "#991b1b";
+          symbol = "▼";
+        }
+      }
+
+      tr.innerHTML = `
+        <td style="padding: 15px 10px; font-weight: 700;">${row.state || "-"}</td>
+        <td style="padding: 15px 10px; color: var(--accent); font-weight: 800;">₹${currentPrice}</td>
+        <td style="padding: 15px 10px; color: var(--muted);">₹${previousPrice}</td>
+        <td style="padding: 15px 10px;">
+          <span style="padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: 11px; background:${badgeBg}; color:${badgeColor};">
+            ${symbol} ${row.change_over_previous_month ?? 0}%
+          </span>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      const curr = toFloat(currentPrice);
+      if (curr !== null) {
+        priceRows.push({ state: row.state || "-", price: curr });
+      }
+      if (changeValue !== null) {
+        changeValues.push(changeValue);
+      }
+    });
+
+    if (priceRows.length > 0) {
+      const avgPrice = priceRows.reduce((a, b) => a + b.price, 0) / priceRows.length;
+      const highest = priceRows.reduce((a, b) => a.price > b.price ? a : b);
+      const lowest = priceRows.reduce((a, b) => a.price < b.price ? a : b);
+
+      document.getElementById("avgPrice").textContent = `₹${formatNumber(avgPrice)}`;
+      document.getElementById("highestPrice").textContent = `₹${formatNumber(highest.price)}`;
+      document.getElementById("highestState").textContent = highest.state;
+      document.getElementById("lowestPrice").textContent = `₹${formatNumber(lowest.price)}`;
+      document.getElementById("lowestState").textContent = lowest.state;
+    } else {
+      document.getElementById("avgPrice").textContent = "N/A";
+      document.getElementById("highestPrice").textContent = "N/A";
+      document.getElementById("highestState").textContent = "-";
+      document.getElementById("lowestPrice").textContent = "N/A";
+      document.getElementById("lowestState").textContent = "-";
+    }
+
+    if (changeValues.length > 0) {
+      const avgChange = changeValues.reduce((a, b) => a + b, 0) / changeValues.length;
+      document.getElementById("avgChange").textContent = `${avgChange.toFixed(1)}%`;
+    } else {
+      document.getElementById("avgChange").textContent = "N/A";
+    }
 
     emptyState.classList.add("hidden");
-    summarySection.style.display = "none";
-    loader.classList.remove("hidden");
-    loader.classList.add("show");
+    summarySection.style.display = "block";
 
-    try {
-      const res = await fetch(`/api/agri-data?cmdt_id=${encodeURIComponent(cmdtId)}&year=${encodeURIComponent(year)}&month=${encodeURIComponent(month)}`);
-      const result = await res.json();
+    cmdtSelect.selectedIndex = "";
+    yearSelect.selectedIndex = "";
+    monthSelect.selectedIndex = "";
 
-      if (!result.success) {
-        alert(result.message || "Unable to fetch agri data.");
-        emptyState.classList.remove("hidden");
-        return;
-      }
-
-      const data = result.data || {};
-      const rows = data.rows || [];
-      const currentKey = data.current_price_key;
-      const previousKey = data.previous_price_key;
-
-      if (!rows.length) {
-        emptyState.innerHTML = `
-          <div style="font-size: 40px; margin-bottom: 10px;">📭</div>
-          <p>No agri data found for the selected commodity and period.</p>
-        `;
-        emptyState.classList.remove("hidden");
-        return;
-      }
-
-      document.getElementById("agriTableTitle").textContent = data.title || "Price Analysis";
-      document.getElementById("currLabel").textContent = `Price (${data.current_price_label || "Current"})`;
-      document.getElementById("prevLabel").textContent = `Prev Month (${data.previous_price_label || "Previous"})`;
-
-      const tbody = document.getElementById("agriTableBody");
-      tbody.innerHTML = "";
-
-      let priceRows = [];
-      let changeValues = [];
-
-      rows.forEach(row => {
-        const currentPrice = row[currentKey] || "N/A";
-        const previousPrice = row[previousKey] || "N/A";
-        const changeValue = toFloat(row.change_over_previous_month);
-
-        const tr = document.createElement("tr");
-        tr.style.borderBottom = "1px solid #f1f5f9";
-
-        let badgeBg = "#e2e8f0";
-        let badgeColor = "#334155";
-        let symbol = "■";
-
-        if (changeValue !== null) {
-          if (changeValue > 0) {
-            badgeBg = "#dcfce7";
-            badgeColor = "#166534";
-            symbol = "▲";
-          } else if (changeValue < 0) {
-            badgeBg = "#fee2e2";
-            badgeColor = "#991b1b";
-            symbol = "▼";
-          }
-        }
-
-        tr.innerHTML = `
-          <td style="padding: 15px 10px; font-weight: 700;">${row.state || "-"}</td>
-          <td style="padding: 15px 10px; color: var(--accent); font-weight: 800;">₹${currentPrice}</td>
-          <td style="padding: 15px 10px; color: var(--muted);">₹${previousPrice}</td>
-          <td style="padding: 15px 10px;">
-            <span style="padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: 11px; background:${badgeBg}; color:${badgeColor};">
-              ${symbol} ${row.change_over_previous_month ?? 0}%
-            </span>
-          </td>
-        `;
-        tbody.appendChild(tr);
-
-        const curr = toFloat(currentPrice);
-        if (curr !== null) {
-          priceRows.push({ state: row.state || "-", price: curr });
-        }
-        if (changeValue !== null) {
-          changeValues.push(changeValue);
-        }
-      });
-
-      if (priceRows.length > 0) {
-        const avgPrice = priceRows.reduce((a, b) => a + b.price, 0) / priceRows.length;
-        const highest = priceRows.reduce((a, b) => a.price > b.price ? a : b);
-        const lowest = priceRows.reduce((a, b) => a.price < b.price ? a : b);
-
-        document.getElementById("avgPrice").textContent = `₹${formatNumber(avgPrice)}`;
-        document.getElementById("highestPrice").textContent = `₹${formatNumber(highest.price)}`;
-        document.getElementById("highestState").textContent = highest.state;
-        document.getElementById("lowestPrice").textContent = `₹${formatNumber(lowest.price)}`;
-        document.getElementById("lowestState").textContent = lowest.state;
-      } else {
-        document.getElementById("avgPrice").textContent = "N/A";
-        document.getElementById("highestPrice").textContent = "N/A";
-        document.getElementById("highestState").textContent = "-";
-        document.getElementById("lowestPrice").textContent = "N/A";
-        document.getElementById("lowestState").textContent = "-";
-      }
-
-      if (changeValues.length > 0) {
-        const avgChange = changeValues.reduce((a, b) => a + b, 0) / changeValues.length;
-        document.getElementById("avgChange").textContent = `${avgChange.toFixed(1)}%`;
-      } else {
-        document.getElementById("avgChange").textContent = "N/A";
-      }
-
-      emptyState.classList.add("hidden");
-      summarySection.style.display = "block";
-
-      cmdtSelect.selectedIndex = "";
-      yearSelect.selectedIndex = "";
-      monthSelect.selectedIndex = "";
-
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong while loading agri data.");
-      emptyState.classList.remove("hidden");
-    } finally {
-      loader.classList.remove("show");
-      loader.classList.add("hidden");
-    }
+  } catch (err) {
+    console.error("Agri data load error:", err);
+    alert("Something went wrong while loading agri data.");
+    emptyState.classList.remove("hidden");
+  } finally {
+    loader.classList.remove("show");
+    loader.classList.add("hidden");
   }
+}
+
+
+async function loadFeaturedAgriCards() {
+  const grid = document.getElementById("featuredAgriGrid");
+  if (!grid) return;
+
+  grid.innerHTML = `
+    <div class="results-empty" style="grid-column: 1 / -1;">
+      Loading featured agri cards...
+    </div>
+  `;
+
+  try {
+    const res = await fetch("/api/featured-agri-cards");
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Featured agri HTTP error:", res.status, text);
+      grid.innerHTML = `
+        <div class="results-empty" style="grid-column: 1 / -1;">
+          Server error while loading featured agri cards.
+        </div>
+      `;
+      return;
+    }
+
+    const result = await res.json();
+    console.log("Featured agri API result:", result);
+
+    if (!result.success) {
+      grid.innerHTML = `
+        <div class="results-empty" style="grid-column: 1 / -1;">
+          ${result.message || "Unable to load featured agri cards."}
+        </div>
+      `;
+      return;
+    }
+
+    const cards = result.cards || [];
+
+    if (!cards.length) {
+      grid.innerHTML = `
+        <div class="results-empty" style="grid-column: 1 / -1;">
+          No featured agri cards loaded yet. Add a commodity to display it here.
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = cards.map(card => `
+      <div class="featured-market-card ${card.is_positive ? "positive" : "negative"}">
+        <div class="featured-title-row">
+          <div class="featured-title">${card.name}</div>
+          <button type="button"
+                  class="featured-remove-btn"
+                  onclick="event.stopPropagation(); removeFeaturedAgriCard('${card.id}')">
+            ×
+          </button>
+        </div>
+
+        <div class="featured-price">
+          ₹${card.price}<span>/${card.unit}</span>
+        </div>
+
+        <div class="featured-card-bottom">
+          <div class="featured-change ${card.is_positive ? "positive" : "negative"}">
+            ${card.is_positive ? "▲" : "▼"} ${card.change}%
+          </div>
+
+          <button type="button"
+                  class="featured-trend-link"
+                  onclick="openAgriTrendModal('${card.id}', '${card.name}')">
+            View trend
+          </button>
+        </div>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error("Featured agri cards load error:", err);
+    grid.innerHTML = `
+      <div class="results-empty" style="grid-column: 1 / -1;">
+        Something went wrong while loading featured agri cards.
+      </div>
+    `;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  loadDefaultCityWeather();
+  loadFeaturedAgriCards();
+});
 </script>
 {% endblock %}
